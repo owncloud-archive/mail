@@ -30,15 +30,7 @@ Mail = {
                             folder_id = first_folder.data('folder_id');
                             account_id = first_folder.parent().data('account_id');
 
-
-                            $.ajax(OC.filePath('mail', 'ajax', 'messages.php'), {
-                                data:{'account_id':account_id, 'folder_id':folder_id},
-                                type:'GET',
-                                success:function (jsondata) {
-                                    messages = jsondata.data;
-                                    Mail.UI.addMessages(messages);
-                                }
-                            });
+							Mail.UI.loadMessages(account_id, folder_id);
 
                             // Save current folder
                             Mail.UI.setFolderActive(account_id, folder_id);
@@ -61,6 +53,7 @@ Mail = {
             table.empty();
             table.append(template);
             table.append(template_loading);
+			$('#messages-loading').fadeIn();
         },
 
         addMessages:function (data) {
@@ -101,8 +94,12 @@ Mail = {
             Mail.UI.setFolderActive(account_id, folder_id);
             Mail.UI.clearMessages();
 
+			$('#mail_new_message').fadeIn();
+
             $.getJSON(OC.filePath('mail', 'ajax', 'messages.php'), {'account_id':account_id, 'folder_id':folder_id}, function (jsondata) {
-                if (jsondata.status == 'success') {
+				$('#messages-loading').fadeOut();
+
+				if (jsondata.status == 'success') {
                     // Add messages
                     Mail.UI.addMessages(jsondata.data);
 
@@ -234,10 +231,10 @@ $(document).ready(function () {
     // auto detect button handling
     $('#auto_detect_account').click(function () {
         $('#auto_detect_account').attr('disabled', "disabled");
-        $('#auto_detect_account').val(t('mail', 'Checking ...'));
+        $('#auto_detect_account').val(t('mail', 'Connecting ...'));
         var email_address, password;
-        email_address = $('#email_address').val();
-        password = $('#password').val();
+        email_address = $('#mail-address').val();
+        password = $('#mail-password').val();
         $.ajax(OC.filePath('mail', 'ajax', 'account/autodetect.php'), {
             data:{email_address:email_address, password:password},
             type:'POST',
@@ -247,7 +244,7 @@ $(document).ready(function () {
                     window.location.reload();
                 } else {
                     $('#auto_detect_account').attr('disabled', 'false');
-                    $('#auto_detect_account').val(t('mail', 'Auto Detect'));
+                    $('#auto_detect_account').val(t('mail', 'Connect'));
                     var error;
 
                     if (jsondata.message == 'email') {
@@ -263,10 +260,27 @@ $(document).ready(function () {
 
 	// new mail message button handling
 	$(document).on('click', '#mail_new_message', function () {
-		$('#to').val('');
-		$('#subject').val('');
-		$('#body').val('');
-		$('#mail_editor').dialog("open");
+//		$('#to').val('');
+//		$('#subject').val('');
+//		$('#body').val('');
+//		$('#mail_editor').dialog("open");
+		$('#mail_new_message').hide();
+		$('#new-message-fields').slideDown();
+	});
+
+	$(document).on('click', '#new-message-send', function ()
+	{
+		//
+		// TODO:
+		//  - disable fields
+		//  - loading animation
+		//  - input validation
+		//  - send email
+		//  - fadeout on success
+		//  - undo lie - very important
+		//
+		$('#new-message-fields').slideUp();
+		$('#mail_new_message').fadeIn();
 	});
 
 	// Clicking on a folder loads the message list

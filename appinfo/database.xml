@@ -65,6 +65,13 @@
 				<length>255</length>
 			</field>
 			<field>
+				<name>inboundservice</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>10</length>
+			</field>
+			<field>
 				<name>outboundhost</name>
 				<type>text</type>
 				<default></default>
@@ -99,6 +106,21 @@
 				<notnull>false</notnull>
 				<length>255</length>
 			</field>
+			<field>
+				<name>outboundservice</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>10</length>
+			</field>
+			
+			<index>
+				<name>mail_ocuserid_index</name>
+				<field>
+					<name>ocuserid</name>
+					<sorting>ascending</sorting>
+				</field>
+			</index>
 		</declaration>
 	</table>
 </database>

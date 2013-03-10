@@ -121,6 +121,13 @@
 					<sorting>ascending</sorting>
 				</field>
 			</index>
+			<index>
+				<name>mail_mailaccountid_index</name>
+				<field>
+					<name>mailaccountid</name>
+					<sorting>ascending</sorting>
+				</field>
+			</index>
 		</declaration>
 	</table>
 </database>

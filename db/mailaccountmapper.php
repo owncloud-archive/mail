@@ -47,7 +47,7 @@ class MailAccountMapper extends Mapper {
 	 }
 	
 	/**
-	 * Finds all Mail Account by user id existing for this user
+	 * Finds all Mail Accounts by user id existing for this user
 	 * @param string $ocUserId the id of the user that we want to find
 	 * @throws DoesNotExistException if no Mail Account exists
 	 * @return all Mail Accounts for that User as an Array
@@ -77,6 +77,7 @@ class MailAccountMapper extends Mapper {
 		 $sql = 'INSERT INTO ' . $this->tableName . '(
 			 ocuserid,
 			 mailaccountid,
+			 mailaccountname,
 			 email,
 			 inboundhost,
 			 inboundHostPort,
@@ -94,7 +95,8 @@ class MailAccountMapper extends Mapper {
 		 
 		 $params = array(
 			 $mailAccount->getOcUserId(),
-			 $mailAccount->getMailAccountId();
+			 $mailAccount->getMailAccountId(),
+			 $mailAccount->getMailAccountName(),
 			 $mailAccount->getEmail(),
 			 $mailAccount->getInboundHost(),
 			 $mailAccount->getInboundHostPort(),
@@ -112,8 +114,6 @@ class MailAccountMapper extends Mapper {
 		 		 
 		 $this->execute($sql, $params);
 		 
-		 $mailAccount->setId($this->api->getInsertId());
-		 
 		 return $mailAccount;
 	 }
 	 
@@ -123,6 +123,7 @@ class MailAccountMapper extends Mapper {
 	  */
 	 public function update($mailAccount){
 		 $sql = 'UPDATE ' . $this->tableName . 'SET
+		 	mailaccountname = ?,
 		 	email = ?,
 		 	inboundhost = ?,
 		 	inboundHostPort = ?,
@@ -139,6 +140,7 @@ class MailAccountMapper extends Mapper {
 			WHERE mailaccountid = ?';
 			
    		 $params = array(
+			 $mailAccount->getMailAccountName(),
    			 $mailAccount->getEmail(),
    			 $mailAccount->getInboundHost(),
    			 $mailAccount->getInboundHostPort(),

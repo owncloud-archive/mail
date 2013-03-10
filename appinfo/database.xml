@@ -23,6 +23,13 @@
 				<length>4</length>
 			</field>
 			<field>
+				<name>mailaccountname</name>
+				<type>text</type>
+				<default></default>
+				<notnull>false</notnull>
+				<length>64</length>
+			</field>
+			<field>
 				<name>email</name>
 				<type>text</type>
 				<default></default>

@@ -26,6 +26,7 @@ class MailAccount {
 
 	private $ocUserId;
 	private $mailAccountId;
+	private $mailAccountName;
 	private $email;
 	private $inboundHost;
 	private $inboundHostPort;
@@ -46,12 +47,28 @@ class MailAccount {
 		}
 	}
 	
-	public function getOcUserid(){
+	public function getOcUserId(){
 		return $this->ocUserId;
+	}
+	
+	public function setOcUserId($ocUserId){
+		$this->ocUserId = $ocUserId;
 	}
 	
 	public function getMailAccountId(){
 		return $this->mailAccountId;
+	}
+	
+	public function setMailAccountId($mailAccountId){
+		$this->mailAccountId = $mailAccountId;
+	}
+	
+	public function getMailAccountName(){
+		return $this->mailAccountName;
+	}
+	
+	public function setMailAccountName($mailAccountName){
+		$this->mailAccountName = $mailAccountName;
 	}
 	
 	public function getEmail(){

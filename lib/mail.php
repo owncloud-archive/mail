@@ -70,24 +70,25 @@ namespace OCA\Mail {
 		}
 
 		/**
-		 * Loads all user's accounts, connects to each server and queries all folders
+		 * Loads all user mail accounts, connects to each mail account and queries all folders
 		 *
 		 * @static
-		 * @param $user_id
+		 * @param the owncloud user id as $ocUserId
 		 * @return array
 		 */
-		public static function getFolders($user_id) {
+		public static function getFolders($ocUserId) {
 			$response = array();
 
-			// get all account configured by the user
-			$accounts = App::getAccounts($user_id);
-
-			// iterate ...
-			foreach ($accounts as $account) {
+			// get all mail accounts configured for this user
+			$mailAccounts = App::getAccounts($ocUserId);
+			
+			// get all folders for all mail accounts
+			foreach ($mailAccounts as $mailAccount) {
 				try {
+					$account = new Account($mailAccount)
 					$response[] = $account->getListArray();
 				} catch (\Horde_Imap_Client_Exception $e) {
-					$response[] = array('id' => $account->getId(), 'email' => $account->getEMailAddress(), 'error' => $e->getMessage());
+					$response[] = array('id' => $account->getAccountId(), 'email' => $account->getEMailAddress(), 'error' => $e->getMessage());
 				}
 			}
 
@@ -163,74 +164,40 @@ namespace OCA\Mail {
 		}
 
 		/**
-		 * @param $user_id
-		 * @return Account[]
+		 * Finds all configured mail accounts for the specific owncloud user
+		 * @param owncloud UserId as $ocUserId
+		 * @return an Array of MailAccount Objects OR false if no mail account is configured
 		 */
-		private static function getAccounts($user_id) {
-			$account_ids = \OCP\Config::getUserValue($user_id, 'mail', 'accounts', '');
-			if ($account_ids == "") {
-				return array();
+		public static function getAccounts($ocUserId) {
+			try{
+				$mailAccounts = new MailAccountMapper.findByUserId($ocUserId);
+			}catch(DoesNotExistException $e){
+				return false;
 			}
-
-			$account_ids = explode(',', $account_ids);
-
-			$accounts = array();
-			foreach ($account_ids as $id) {
-				$account_string = 'account[' . $id . ']';
-
-				$accounts[$id] = new Account(array(
-					'id'       => $id,
-					'name'     => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[name]'),
-					'email'    => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[email]'),
-					'host'     => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[host]'),
-					'port'     => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[port]'),
-					'user'     => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[user]'),
-					'password' => base64_decode(\OCP\Config::getUserValue($user_id, 'mail', $account_string . '[password]')),
-					'ssl_mode' => \OCP\Config::getUserValue($user_id, 'mail', $account_string . '[ssl_mode]')
-				));
-			}
-
-			return $accounts;
+			
+			return $mailAccounts;
 		}
 
 		/**
-		 * @param $user_id
-		 * @param $account_id
-		 * @return Account|bool
+		 * Saves the mail account credentials for a users mail account
+		 * @return the MailAccountId
 		 */
-		public static function getAccount($user_id, $account_id) {
-			$accounts = App::getAccounts($user_id);
+		public static function addAccount($ocUserId, $email, $inboundHost, $inboundHostPort, $inboundUser, $inboundPassword, $inboundSslMode) {
+			
+			$mailAccount = new MailAccount();
+			$mailAccount->setOcUserId($ocUserId);
+			$mailAccount->setMailAccountId(time());
+			$mailAccount->setEmail($email);
+			$mailAccount->setInboundHost($inboundHost);
+			$mailAccount->setInboundHostPort($inboundHostPort);
+			$mailAccount->setInboundSslMode($inboundSslMode);
+			$mailAccount->setInboundUser($inboundUser);
+			$mailAccount->setInboundPassword($inboundPassword);
+			
+			$mailAccountMapper = new MailAccountMapper();
+			$mailAccount = $mailAccountMapper->save($mailAccount);
 
-			if (isset($accounts[$account_id])) {
-				return $accounts[$account_id];
-			}
-
-			return false;
-		}
-
-		public static function addAccount($user_id, $email, $host, $port, $user, $password, $ssl_mode) {
-			$id = time();
-			$account_string = 'account[' . $id . ']';
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[name]', $user);
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[email]', $email);
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[host]', $host);
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[port]', $port);
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[user]', $user);
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[password]', base64_encode($password));
-			\OCP\Config::setUserValue($user_id, 'mail', $account_string . '[ssl_mode]', $ssl_mode);
-
-			$account_ids = \OCP\Config::getUserValue($user_id, 'mail', 'accounts', '');
-			if ($account_ids) {
-				$account_ids = explode(',', $account_ids);
-			} else {
-				$account_ids = array();
-			}
-			$account_ids[] = $id;
-			$account_ids = implode(",", $account_ids);
-
-			\OCP\Config::setUserValue($user_id, 'mail', 'accounts', $account_ids);
-
-			return $id;
+			return $mailAccount->getMailAccountId();
 		}
 
 		public static function autoDetectAccount($user_id, $email, $password) {

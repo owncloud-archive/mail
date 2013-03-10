@@ -123,6 +123,7 @@
 			</index>
 			<index>
 				<name>mail_mailaccountid_index</name>
+				<unique>true</unique>
 				<field>
 					<name>mailaccountid</name>
 					<sorting>ascending</sorting>

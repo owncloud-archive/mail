@@ -1,6 +1,3 @@
-mail
-====
+owncloud Mail
 
-Repo for the mail app
-
-(test) edited by me
+This App provides access to existing IMAP Mailboxes within owncloud.

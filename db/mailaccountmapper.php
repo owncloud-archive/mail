@@ -53,7 +53,7 @@ class MailAccountMapper extends Mapper {
 	 * @return all Mail Accounts for that User as an Array
 	 */
 	public function findByUserId($ocUserId)
-		$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE userid = ?';
+		$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ocuserid = ?';
 		$params = array($ocUserId);
 		
 		$results = $this->execute($sql, $params)->fetchRow();
@@ -74,15 +74,42 @@ class MailAccountMapper extends Mapper {
 	 * @return User Account the User Account with the filled in mailaccountid
 	 */
 	public function save($mailAccount){
-		 $sql = 'INSERT INTO ' . $this->tableName . '(email, inboundHost, inboundHostPort, etc)' . 
-		 	'VALUES(?, ?, ?)';
+		 $sql = 'INSERT INTO ' . $this->tableName . '(
+			 ocuserid,
+			 mailaccountid,
+			 email,
+			 inboundhost,
+			 inboundHostPort,
+			 inboundsslmode,
+			 inbounduser,
+			 inboundpassword,
+			 inboundservice,
+			 outboundhost,
+			 outboundhostport,
+			 outboundsslmode,
+			 outbounduser,
+			 outboundpassword,
+			 outboundservice
+			 )' . 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		 
 		 $params = array(
+			 $mailAccount->getOcUserId(),
+			 $mailAccount->getMailAccountId();
 			 $mailAccount->getEmail(),
 			 $mailAccount->getInboundHost(),
-			 $mailAccount->getInboundHostPort()
+			 $mailAccount->getInboundHostPort(),
+			 $mailAccount->getInboundSslMode(),
+			 $mailAccount->getInboundUser(),
+			 $mailAccount->getInboundPassword(),
+			 $mailAccount->getInboundService(),
+			 $mailAccount->getOutboundHost(),
+			 $mailAccount->getOutboundHostPort(),
+			 $mailAccount->getOutboundSslMode(),
+			 $mailAccount->getOutboundUser(),
+			 $mailAccount->getOutboundPassword(),
+			 $mailAccount->getOutboundService()
 		 );
-		 
+		 		 
 		 $this->execute($sql, $params);
 		 
 		 $mailAccount->setId($this->api->getInsertId());
@@ -97,13 +124,35 @@ class MailAccountMapper extends Mapper {
 	 public function update($mailAccount){
 		 $sql = 'UPDATE ' . $this->tableName . 'SET
 		 	email = ?,
-			inboundHost = ?
+		 	inboundhost = ?,
+		 	inboundHostPort = ?,
+		 	inboundsslmode = ?,
+		 	inbounduser = ?,
+		 	inboundpassword = ?,
+		 	inboundservice = ?,
+		 	outboundhost = ?,
+		 	outboundhostport = ?,
+		 	outboundsslmode = ?,
+		 	outbounduser = ?,
+		 	outboundpassword = ?,
+		 	outboundservice = ?
 			WHERE mailaccountid = ?';
 			
-		$params = array(
-			$mailaccount->getEmail(),
-			$mailaccount->getInboundHost()
-		);
+   		 $params = array(
+   			 $mailAccount->getEmail(),
+   			 $mailAccount->getInboundHost(),
+   			 $mailAccount->getInboundHostPort(),
+   			 $mailAccount->getInboundSslMode(),
+   			 $mailAccount->getInboundUser(),
+   			 $mailAccount->getInboundPassword(),
+   			 $mailAccount->getInboundService(),
+   			 $mailAccount->getOutboundHost(),
+   			 $mailAccount->getOutboundHostPort(),
+   			 $mailAccount->getOutboundSslMode(),
+   			 $mailAccount->getOutboundUser(),
+   			 $mailAccount->getOutboundPassword(),
+   			 $mailAccount->getOutboundService()
+   		 );
 		
 		$this->execute($sql, $params);
 	 }

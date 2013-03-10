@@ -32,11 +32,13 @@ class MailAccount {
 	private $inboundSslMode;
 	private $inboundUser;
 	private $inboundPassword;
+	private $inboundService;
 	private $outboundHost;
 	private $outboundHostPort;
 	private $outboundSslMode;
 	private $outboundUser;
 	private $outboundPassword;
+	private $outboundService;
 	
 	public function __construct($fromRow=null){
 		if($fromRow){
@@ -93,11 +95,19 @@ class MailAccount {
 	}
 	
 	public function getInboundPassword(){
-		return $this->inboundPassword;
+		return $this->decryptPassword($this->inboundPassword);
 	}
 	
 	public function setInboundPassword($inboundPassword){
-		$this->inboundPassword = $inboundPassword;
+		$this->inboundPassword = $this->encryptPassword($inboundPassword);
+	}
+	
+	public function getInboundService(){
+		return $this->inboundService;
+	}
+	
+	public function setInboundService($inboundService){
+		$this->inboundService = $inboundService;
 	}
 	
 	public function getOutboundHost(){
@@ -133,11 +143,19 @@ class MailAccount {
 	}
 	
 	public function getOutboundPassword(){
-		return $this->outboundPassword;
+		return $this->decryptPassword($this->outboundPassword);
 	}
 	
 	public function setOutboundPassword($outboundPassword){
-		$this->outboundPassword = $outboundpassword;
+		$this->outboundPassword = $this->encryptPassword($outboundPassword);
+	}
+	
+	public function getOutboundService(){
+		return $this->outboundService;
+	}
+	
+	public function setOutboundService($outboundService){
+		$this->outboundService = $outboundService;
 	}
 	
 	
@@ -154,11 +172,13 @@ class MailAccount {
 		$this->inboundSslMode = $row['inboundsslmode'];
 		$this->inboundUser = $row['inbounduser'];
 		$this->inboundPassword = $row['inboundpassword'];
+		$hits->inboundService = $row['inboundservice'];
 		$this->outboundHost = $row['outboundhost'];
 		$this->outboundHostPort = $row['outboundhostport'];
 		$this->outboundSslMode = $row['outboundsslmode'];
 		$this->outboundUser = $row['outbounduser'];
 		$this->outboundPassword = $row['outboundpassword'];
+		$this->outboundService = $row['outboundservice'];
 	}
 	
 	/**
@@ -180,7 +200,7 @@ class MailAccount {
 	 * @param bool $encrypted if 1 then the string $password will be decrypted
 	 * @return the password encrypted or decrypted as a string
 	 */
-	private function ciphering($encrypted, $password, $salt='!kQm*fF3pXe1Kbm%9'){
+	private function ciphering($encrypted, $password, $salt='!oScf3b0!7w%rLd13'){
 		// create the key which is a SHA256 hash of $salt and $ocUserId
 		$key = hash('SHA256', $salt . $this->ocUserId, true);
 		

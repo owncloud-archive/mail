@@ -29,23 +29,8 @@ $this->create('mail_index', '/')->action(
 	}
 );
 
-$this->create('mail_create_mailaccount', '/createmailaccount')->post()->action(
+$this->create('mail_mailaccount_create', '/mailaccount/create')->post()->action(
 	function($params){
 		App::main('MailAccountController', 'create', $params, new DIContainer());
 	}
 );
-
-/**
- * Ajax Routes
- */
-/*$this->create('apptemplate_advanced_ajax_setsystemvalue', '/setsystemvalue')->post()->action(
-	function($params){
-		App::main('ItemController', 'setSystemValue', $params, new DIContainer());
-	}
-);
-
-$this->create('apptemplate_advanced_ajax_getsystemvalue', '/getsystemvalue')->post()->action(
-	function($params){
-		App::main('ItemController', 'getSystemValue', $params, new DIContainer());
-	}
-);*/

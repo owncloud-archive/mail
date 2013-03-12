@@ -20,7 +20,7 @@
  *
  */
 
-namespace \OCA\mail\Db;
+namespace OCA\Mail\Db;
 
 class MailAccount {
 
@@ -112,11 +112,13 @@ class MailAccount {
 	}
 	
 	public function getInboundPassword(){
-		return $this->decryptPassword($this->inboundPassword);
+		//return $this->decryptPassword($this->inboundPassword);
+		return $this->inboundPassword;
 	}
 	
 	public function setInboundPassword($inboundPassword){
-		$this->inboundPassword = $this->encryptPassword($inboundPassword);
+		//$this->inboundPassword = $this->encryptPassword($inboundPassword);
+		$this->inboundPassword = $inboundPassword;
 	}
 	
 	public function getInboundService(){
@@ -160,11 +162,13 @@ class MailAccount {
 	}
 	
 	public function getOutboundPassword(){
-		return $this->decryptPassword($this->outboundPassword);
+		//return $this->decryptPassword($this->outboundPassword);
+		return $this->outboundPassword;
 	}
 	
 	public function setOutboundPassword($outboundPassword){
-		$this->outboundPassword = $this->encryptPassword($outboundPassword);
+		//$this->outboundPassword = $this->encryptPassword($outboundPassword);
+		$this->outboundPassword = $outboundPassword;
 	}
 	
 	public function getOutboundService(){

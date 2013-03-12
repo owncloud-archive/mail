@@ -82,21 +82,21 @@
 				<name>outboundhost</name>
 				<type>text</type>
 				<default></default>
-				<notnull>true</notnull>
+				<notnull>false</notnull>
 				<length>64</length>
 			</field>
 			<field>
 				<name>outboundhostport</name>
 				<type>text</type>
 				<default></default>
-				<notnull>true</notnull>
+				<notnull>false</notnull>
 				<length>6</length>
 			</field>
 			<field>
 				<name>outboundsslmode</name>
 				<type>text</type>
 				<default></default>
-				<notnull>true</notnull>
+				<notnull>false</notnull>
 				<length>10</length>
 			</field>
 			<field>

@@ -30,9 +30,12 @@ namespace {
 
 	// bypass Horde Translation system
 	Horde_Translation::setHandler('Horde_Imap_Client', new OC_Translation_Handler());
+	
 }
 
 namespace OCA\Mail {
+
+	use OCA\AppFramework\Core;
 
 	class App
 	{
@@ -85,7 +88,7 @@ namespace OCA\Mail {
 			// get all folders for all mail accounts
 			foreach ($mailAccounts as $mailAccount) {
 				try {
-					$account = new Account($mailAccount)
+					$account = new Account($mailAccount);
 					$response[] = $account->getListArray();
 				} catch (\Horde_Imap_Client_Exception $e) {
 					$response[] = array('id' => $account->getAccountId(), 'email' => $account->getEMailAddress(), 'error' => $e->getMessage());
@@ -170,7 +173,8 @@ namespace OCA\Mail {
 		 */
 		public static function getAccounts($ocUserId) {
 			try{
-				$mailAccounts = new MailAccountMapper.findByUserId($ocUserId);
+				$mailAccounts = new MailAccountMapper();
+				$mailAccounts->findByUserId($ocUserId);
 			}catch(DoesNotExistException $e){
 				return false;
 			}

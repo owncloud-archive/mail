@@ -9,13 +9,11 @@
 namespace OCA\Mail;
 
 class Account {
-	private $mailAccount;
 
 	/**
 	 * @param an object of MailAccount as $mailAccount
 	 */
-	function __construct($mailAccount) {
-		$this->mailAccount = $mailAccount;
+	function __construct() {
 	}
 
 	/**
@@ -36,21 +34,13 @@ class Account {
 	/**
 	 * @return a ready to use IMAP connection
 	 */
-	public function getImapConnection() {
-		//
-		// TODO: cache connections for / within accounts???
-		//
-		$host = $this->mailAccount.getInboundHost();
-		$port = $this->mailAccount.getInboundHostPort();
-		$user = $this->mailAccount.getInboundUser();
-		$password = $this->mailAccount.getInboundPassword();
-		$ssl_mode = $this->mailAccount.getInboundSslMode();
-
+	public function getImapConnection($host, $port, $user, $password, $ssl_mode) {
 		$imapConnection = new \Horde_Imap_Client_Socket(array(
 			'username' => $user, 'password' => $password, 'hostspec' => $host, 'port' => $port, 'secure' => $ssl_mode, 'timeout' => 2));
 		$imapConnection->login();
 		return $imapConnection;
 	}
+
 
 	/**
 	 * @param $pattern

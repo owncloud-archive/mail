@@ -20,10 +20,11 @@
  *
  */
 
-namespace \OCA\mail\Db;
+namespace OCA\Mail\Db;
 
-use \OCA\AppFramework\Db\DoesNotExistException;
-use \OCA\AppFramework\Db\Mapper;
+use OCA\AppFramework\Db\DoesNotExistException;
+use OCA\AppFramework\Db\Mapper;
+use OCA\AppFramework\Core\API;
 
 class MailAccountMapper extends Mapper {
 
@@ -52,7 +53,7 @@ class MailAccountMapper extends Mapper {
 	 * @throws DoesNotExistException if no Mail Account exists
 	 * @return all Mail Accounts for that User as an Array
 	 */
-	public function findByUserId($ocUserId)
+	public function findByUserId($ocUserId){
 		$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ocuserid = ?';
 		$params = array($ocUserId);
 		
@@ -91,7 +92,7 @@ class MailAccountMapper extends Mapper {
 			 outbounduser,
 			 outboundpassword,
 			 outboundservice
-			 )' . 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+			 )' . 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		 
 		 $params = array(
 			 $mailAccount->getOcUserId(),
@@ -137,7 +138,7 @@ class MailAccountMapper extends Mapper {
 		 	outbounduser = ?,
 		 	outboundpassword = ?,
 		 	outboundservice = ?
-			WHERE mailaccountid = ?';
+			WHERE mailaccountid = ?'; 
 			
    		 $params = array(
 			 $mailAccount->getMailAccountName(),
@@ -153,7 +154,8 @@ class MailAccountMapper extends Mapper {
    			 $mailAccount->getOutboundSslMode(),
    			 $mailAccount->getOutboundUser(),
    			 $mailAccount->getOutboundPassword(),
-   			 $mailAccount->getOutboundService()
+   			 $mailAccount->getOutboundService(),
+			 $mailAccount->getMailAccountId()
    		 );
 		
 		$this->execute($sql, $params);

@@ -24,7 +24,6 @@
  
  use OCA\AppFramework\Controller\Controller;
  use OCA\AppFramework\Db\DoesNotExistException;
- use OCA\AppFramework\Http\RedirectResponse;
 
  use OCA\Mail\Db\MailAccount;
 

@@ -120,7 +120,7 @@
 		} else {
 			$templateName = 'part.no-accounts';
 			$params = array(
-				'url_create' => $this->api->linkToRoute('mail_create_mailaccount')
+				'url_create' => $this->api->linkToRoute('mail_mailaccount_create')
 			);
 			return $this->render($templateName, $params);
 		}

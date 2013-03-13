@@ -1,4 +1,4 @@
-<form id="mail-setup">
+<form id="mail-setup" action="createmailaccount" method="post">
 	<fieldset>
 		<legend><?php p($l->t('Connect your mail account')) ?></legend>
 

@@ -1,4 +1,9 @@
-mail
-====
+owncloud Mail
+=============
 
-Repo for the mail app
+This App provides access to existing IMAP Mailboxes within owncloud.
+
+Contribution
+============
+
+Please see the CONTRIBUTING.md file.

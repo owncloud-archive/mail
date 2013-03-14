@@ -9,40 +9,38 @@
 namespace OCA\Mail;
 
 class Account {
-	private $info;
 
-	// input $conn = IMAP conn, $folder_id = folder id
-	function __construct($info) {
-		$this->info = $info;
+	/**
+	 * @param an object of MailAccount as $mailAccount
+	 */
+	function __construct() {
 	}
 
-	public function getId() {
-		return $this->info['id'];
+	/**
+	 * @return the internal AccountId for this mail account
+	 */
+	public function getAccountId() {
+		return $this->mailAccount.getMailAccountId();
 	}
 
 	public function getName() {
-		return $this->info['name'];
+		return $this->mailAccount.getMailAccountName();
 	}
 
 	public function getEMailAddress() {
-		return $this->info['email'];
+		return $this->mailAccount.getEmail();
 	}
 
-	public function getImapConnection() {
-		//
-		// TODO: cache connections for / within accounts???
-		//
-		$host = $this->info['host'];
-		$user = $this->info['user'];
-		$password = $this->info['password'];
-		$port = $this->info['port'];
-		$ssl_mode = $this->info['ssl_mode'];
-
-		$client = new \Horde_Imap_Client_Socket(array(
+	/**
+	 * @return a ready to use IMAP connection
+	 */
+	public function getImapConnection($host, $port, $user, $password, $ssl_mode) {
+		$imapConnection = new \Horde_Imap_Client_Socket(array(
 			'username' => $user, 'password' => $password, 'hostspec' => $host, 'port' => $port, 'secure' => $ssl_mode, 'timeout' => 2));
-		$client->login();
-		return $client;
+		$imapConnection->login();
+		return $imapConnection;
 	}
+
 
 	/**
 	 * @param $pattern

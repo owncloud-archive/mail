@@ -65,27 +65,19 @@
 		
 		try {
 			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
+			$templateName = 'index';
+			$params = $accounts;
 		} catch (DoesNotExistException $e) {
-			$accounts = NULL;
-			echo "no accounts";
-			echo $this->api->getUserId();
-		}
-		
-		if ($accounts == NULL) {
 			$templateName = 'part.no-accounts';
 			$params = array(
 				'accounts' => $accounts
 			);
-		} else {
-			$templateName = 'index';
-			$params = $accounts;
 		}
 
 		return $this->render($templateName, $params);
 	}
 	
 	/**
-	 * @CSRFExemption
 	 * @IsAdminExemption
 	 * @IsSubAdminExemption
 	 *
@@ -115,7 +107,8 @@
 		
 		
 		if($isNewAccount) {
-			//$this->index();
+			$templateName = 'index';
+			$params = array();
 		} else {
 			$templateName = 'part.no-accounts';
 			$params = array(
@@ -123,9 +116,7 @@
 			);
 			return $this->render($templateName, $params);
 		}
-		
-		$templateName = 'index';
-		$params = array();
+
 		return $this->render($templateName, $params);
 		
 	}
@@ -185,10 +176,10 @@
 					try {
 						$accountclass = new Account();
 						$accountclass->getImapConnection($h, $port, $user, $password, $sec_mode);
-						error_log("Test-Account-Successful: $user_id, $h, $port, $user, $sec_mode");
+						$this->api->log("Test-Account-Successful: $user_id, $h, $port, $user, $sec_mode");
 						return $this->addAccount($user_id, $email, $h, $port, $user, $password, $sec_mode);
 					} catch (\Horde_Imap_Client_Exception $e) {
-						error_log("Test-Account-Failed: $user_id, $h, $port, $user, $sec_mode");
+						$this->api->log("Test-Account-Failed: $user_id, $h, $port, $user, $sec_mode");
 					}
 				}
 			}
@@ -209,7 +200,6 @@
 	/**
 	 * Saves the mail account credentials for a users mail account
  	 *
- 	 * @CSRFExemption
  	 * @IsAdminExemption
  	 * @IsSubAdminExemption
  	 *

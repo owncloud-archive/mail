@@ -28,37 +28,41 @@ use OCA\AppFramework\Core\API;
 
 class MailAccountMapper extends Mapper {
 
-	private $tablename;
-	
+	private $tableName;
+
 	/**
-	 * @param API @api Instance of the API abstraction layer
+	 * @param \OCA\AppFramework\Core\API $api Instance of the API abstraction layer
 	 */
 	public function __construct($api){
 		parent::__construct($api);
 		$this->tableName = '*PREFIX*mail_mailaccounts';
 	}
-	
+
 	/** Finds an Mail Account by id
-	 * @throws DoesNotExistException if no Mail Account exists
-	 * @return Mail Account
+	 *
+	 * @param $mailAccountId
+	 * @return MailAccount
 	 */
 	public function find($mailAccountId){
-		 $row = $this->findQuery($this->tableName, $mailAccountId);
-		 return new MailAccount($row);
-	 }
-	
+		$row = $this->findQuery($this->tableName, $mailAccountId);
+		return new MailAccount($row);
+	}
+
 	/**
 	 * Finds all Mail Accounts by user id existing for this user
 	 * @param string $ocUserId the id of the user that we want to find
+	 * @param $ocUserId
+	 * @return array
+	 * @throws \OCA\AppFramework\Db\DoesNotExistException
 	 * @throws DoesNotExistException if no Mail Account exists
-	 * @return all Mail Accounts for that User as an Array
 	 */
 	public function findByUserId($ocUserId){
 		$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ocuserid = ?';
 		$params = array($ocUserId);
-		
+
 		$results = $this->execute($sql, $params)->fetchRow();
 		if($results){
+			$mailAccounts = array();
 			foreach ($results as $result){
 				$mailAccount = new MailAccount($result);
 				$mailAccounts[] = $mailAccount;
@@ -68,14 +72,15 @@ class MailAccountMapper extends Mapper {
 			throw new DoesNotExistException('There are no Mail Accounts configured for user id ' . $ocUserId);
 		}
 	}
-	
+
 	/**
 	 * Saves an User Account into the database
-	 * @param User Account $userAccount the User Account to be saved
-	 * @return User Account the User Account with the filled in mailaccountid
+	 * @param MailAccount $mailAccount
+	 * @internal param \OCA\Mail\Db\Account $User $userAccount the User Account to be saved
+	 * @return MailAccount with the filled in mailaccountid
 	 */
 	public function save($mailAccount){
-		 $sql = 'INSERT INTO ' . $this->tableName . '(
+		$sql = 'INSERT INTO ' . $this->tableName . '(
 			 ocuserid,
 			 mailaccountid,
 			 mailaccountname,
@@ -93,37 +98,37 @@ class MailAccountMapper extends Mapper {
 			 outboundpassword,
 			 outboundservice
 			 )' . 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-		 
-		 $params = array(
-			 $mailAccount->getOcUserId(),
-			 $mailAccount->getMailAccountId(),
-			 $mailAccount->getMailAccountName(),
-			 $mailAccount->getEmail(),
-			 $mailAccount->getInboundHost(),
-			 $mailAccount->getInboundHostPort(),
-			 $mailAccount->getInboundSslMode(),
-			 $mailAccount->getInboundUser(),
-			 $mailAccount->getInboundPassword(),
-			 $mailAccount->getInboundService(),
-			 $mailAccount->getOutboundHost(),
-			 $mailAccount->getOutboundHostPort(),
-			 $mailAccount->getOutboundSslMode(),
-			 $mailAccount->getOutboundUser(),
-			 $mailAccount->getOutboundPassword(),
-			 $mailAccount->getOutboundService()
-		 );
-		 		 
-		 $this->execute($sql, $params);
-		 
-		 return $mailAccount;
-	 }
-	 
-	 /**
-	  * Updates a Mail Account
-	  * @param Mail Account $mailAccount: the Mail Account to be updated
-	  */
-	 public function update($mailAccount){
-		 $sql = 'UPDATE ' . $this->tableName . 'SET
+
+		$params = array(
+			$mailAccount->getOcUserId(),
+			$mailAccount->getMailAccountId(),
+			$mailAccount->getMailAccountName(),
+			$mailAccount->getEmail(),
+			$mailAccount->getInboundHost(),
+			$mailAccount->getInboundHostPort(),
+			$mailAccount->getInboundSslMode(),
+			$mailAccount->getInboundUser(),
+			$mailAccount->getInboundPassword(),
+			$mailAccount->getInboundService(),
+			$mailAccount->getOutboundHost(),
+			$mailAccount->getOutboundHostPort(),
+			$mailAccount->getOutboundSslMode(),
+			$mailAccount->getOutboundUser(),
+			$mailAccount->getOutboundPassword(),
+			$mailAccount->getOutboundService()
+		);
+
+		$this->execute($sql, $params);
+
+		return $mailAccount;
+	}
+
+	/**
+	 * Updates a Mail Account
+	 * @param  MailAccount $mailAccount
+	 */
+	public function update($mailAccount){
+		$sql = 'UPDATE ' . $this->tableName . 'SET
 		 	mailaccountname = ?,
 		 	email = ?,
 		 	inboundhost = ?,
@@ -138,35 +143,34 @@ class MailAccountMapper extends Mapper {
 		 	outbounduser = ?,
 		 	outboundpassword = ?,
 		 	outboundservice = ?
-			WHERE mailaccountid = ?'; 
-			
-   		 $params = array(
-			 $mailAccount->getMailAccountName(),
-   			 $mailAccount->getEmail(),
-   			 $mailAccount->getInboundHost(),
-   			 $mailAccount->getInboundHostPort(),
-   			 $mailAccount->getInboundSslMode(),
-   			 $mailAccount->getInboundUser(),
-   			 $mailAccount->getInboundPassword(),
-   			 $mailAccount->getInboundService(),
-   			 $mailAccount->getOutboundHost(),
-   			 $mailAccount->getOutboundHostPort(),
-   			 $mailAccount->getOutboundSslMode(),
-   			 $mailAccount->getOutboundUser(),
-   			 $mailAccount->getOutboundPassword(),
-   			 $mailAccount->getOutboundService(),
-			 $mailAccount->getMailAccountId()
-   		 );
-		
+			WHERE mailaccountid = ?';
+
+		$params = array(
+			$mailAccount->getMailAccountName(),
+			$mailAccount->getEmail(),
+			$mailAccount->getInboundHost(),
+			$mailAccount->getInboundHostPort(),
+			$mailAccount->getInboundSslMode(),
+			$mailAccount->getInboundUser(),
+			$mailAccount->getInboundPassword(),
+			$mailAccount->getInboundService(),
+			$mailAccount->getOutboundHost(),
+			$mailAccount->getOutboundHostPort(),
+			$mailAccount->getOutboundSslMode(),
+			$mailAccount->getOutboundUser(),
+			$mailAccount->getOutboundPassword(),
+			$mailAccount->getOutboundService(),
+			$mailAccount->getMailAccountId()
+		);
+
 		$this->execute($sql, $params);
-	 }
-	 
-	 /**
-	  *
-	  *
-	  */
-	public function delete($mailAccountId){
-		$this->deleteQuery($this->tableName, $mailaccountid);
 	}
-	
+
+	/**
+	 * @param int $mailAccountId
+	 */
+	public function delete($mailAccountId){
+		$this->deleteQuery($this->tableName, $mailAccountId);
+	}
+
 }

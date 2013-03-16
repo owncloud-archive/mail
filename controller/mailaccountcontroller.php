@@ -58,12 +58,11 @@
 		//$this->api->add3rdPartyScript('angular/angular');
 
 		// your own stuff
-		//$this->api->addStyle('style');
+		$this->api->addStyle('mail');
 		//$this->api->addStyle('animation');
 
-		//$this->api->addScript('app');
-		
-		
+		$this->api->addScript('mail');
+
 		try {
 			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
 		} catch (DoesNotExistException $e) {

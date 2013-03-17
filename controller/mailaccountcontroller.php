@@ -20,29 +20,32 @@
  *
  */
 
- namespace OCA\Mail\Controller;
- 
- use OCA\AppFramework\Controller\Controller;
- use OCA\AppFramework\Db\DoesNotExistException;
+namespace OCA\Mail\Controller;
 
- use OCA\Mail\Db\MailAccount;
+use OCA\AppFramework\Controller\Controller;
+use OCA\AppFramework\Db\DoesNotExistException;
 
- use OCA\Mail\Account;
- 
- class MailAccountController extends Controller {
-	 
-	 private $mailAccountMapper;
-	 
- 	/**
- 	 * @param Request $request: an instance of the request
- 	 * @param API $api: an api wrapper instance
- 	 * @param MailAccountMapper $mailAccountMapper: a mailaccountwrapper instance
- 	 */
- 	public function __construct($api, $request, $mailAccountMapper){
- 		parent::__construct($api, $request);
- 		$this->mailAccountMapper = $mailAccountMapper;
- 	}
- 	
+use OCA\Mail\Db\MailAccount;
+
+use OCA\Mail\Account;
+
+class MailAccountController extends Controller {
+
+	/**
+	 * @var \OCA\Mail\Db\MailAccountMapper
+	 */
+	private $mailAccountMapper;
+
+	/**
+	 * @param \OCA\AppFramework\Http\Request $request: an instance of the request
+	 * @param \OCA\AppFramework\Core\API $api: an api wrapper instance
+	 * @param \OCA\Mail\Db\MailAccountMapper $mailAccountMapper: a mail account wrapper instance
+	 */
+	public function __construct($api, $request, $mailAccountMapper){
+		parent::__construct($api, $request);
+		$this->mailAccountMapper = $mailAccountMapper;
+	}
+
 	/**
 	 * @CSRFExemption
 	 * @IsAdminExemption
@@ -52,16 +55,7 @@
 	 * @return an instance of a Response implementation
 	 */
 	public function index() {
-
-		// thirdparty stuff
-		//$this->api->add3rdPartyScript('angular/angular');
-
-		// your own stuff
-		$this->api->addStyle('mail');
-		//$this->api->addStyle('animation');
-
-		$this->api->addScript('mail');
-
+		$accounts = array();
 		try {
 			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
 			$templateName = 'index';
@@ -75,18 +69,18 @@
 
 		return $this->render($templateName, $params);
 	}
-	
+
 	/**
 	 * @IsAdminExemption
 	 * @IsSubAdminExemption
 	 *
-	 * @return
+	 * @return \OCA\AppFramework\Http\TemplateResponse
 	 */
 	public function create() {
 		$ocUserId = $this->api->getUserId();
 		$email = $this->params('mail-address');
 		$password = $this->params('mail-password');
-		
+
 		// splitting the email address into user and host part
 		list($user, $host) = explode("@", $this->params('mail-address'));
 
@@ -96,15 +90,13 @@
 		 */
 		if ($this->isGoogleAppsAccount($host)) {
 			$isNewAccount = $this->testAccount($user, $email, "imap.gmail.com", $email, $password);
+		} else {
+			/*
+			 * IMAP login with full email address as user
+			 * works for a lot of providers (e.g. Google Mail)
+			 */
+			$isNewAccount = $this->testAccount($user, $email, $host, $email, $password);
 		}
-
-		/*
-		 * IMAP login with full email address as user
-		 * works for a lot of providers (e.g. Google Mail)
-		 */
-		$isNewAccount = $this->testAccount($user, $email, $host, $email, $password);
-		
-		
 		if($isNewAccount) {
 			$templateName = 'index';
 			$params = array();
@@ -117,13 +109,12 @@
 		}
 
 		return $this->render($templateName, $params);
-		
 	}
-	
+
 	/**
 	 * check if the host is Google Apps
 	 */
-	 private function isGoogleAppsAccount($host) {
+	private function isGoogleAppsAccount($host) {
 		// filter pure gmail accounts
 		if (stripos($host, 'google') !== false) {
 			return false;
@@ -135,26 +126,24 @@
 		//
 		// TODO: will not work on windows - ignore this for now
 		//
-		if (getmxrr($host, $mx_records, $mx_weight) == false)
-				{
-					return false;
-				}
+		if (getmxrr($host, $mx_records, $mx_weight) == false) {
+			return false;
+		}
 
-		var_dump($mx_records);
 		if (stripos($mx_records[0], 'google') !== false) {
 			return true;
 		}
 		return false;
-	 }
-	 
-	 /**
-	  * try to log into the mail account using different ports
-	  * and use SSL if available
-	  * IMAP - port 143
-	  * Secure IMAP (IMAP4-SSL) - port 585
-	  * IMAP4 over SSL (IMAPS) - port 993
-	  */
-	  private function testAccount($user_id, $email, $host, $user, $password) {
+	}
+
+	/**
+	 * try to log into the mail account using different ports
+	 * and use SSL if available
+	 * IMAP - port 143
+	 * Secure IMAP (IMAP4-SSL) - port 585
+	 * IMAP4 over SSL (IMAPS) - port 993
+	 */
+	private function testAccount($user_id, $email, $host, $user, $password) {
 		$account = array(
 			'name'     => $email,
 			'host'     => $host,
@@ -173,8 +162,8 @@
 				foreach ($sec_modes as $sec_mode) {
 					$account['ssl_mode'] = $sec_mode;
 					try {
-						$accountclass = new Account();
-						$accountclass->getImapConnection($h, $port, $user, $password, $sec_mode);
+						$testAccount = new Account();
+						$testAccount->getImapConnection($h, $port, $user, $password, $sec_mode);
 						$this->api->log("Test-Account-Successful: $user_id, $h, $port, $user, $sec_mode");
 						return $this->addAccount($user_id, $email, $h, $port, $user, $password, $sec_mode);
 					} catch (\Horde_Imap_Client_Exception $e) {
@@ -185,9 +174,14 @@
 		}
 		return false;
 	}
-	
+
 	/**
-	 * @return a ready to use IMAP connection
+	 * @param string $host
+	 * @param int $port
+	 * @param string $user
+	 * @param string $password
+	 * @param string $ssl_mode
+	 * @return \Horde_Imap_Client_Socket a ready to use IMAP connection
 	 */
 	private function getImapConnection($host, $port, $user, $password, $ssl_mode) {
 		$imapConnection = new \Horde_Imap_Client_Socket(array(
@@ -195,17 +189,24 @@
 		$imapConnection->login();
 		return $imapConnection;
 	}
-	
+
 	/**
 	 * Saves the mail account credentials for a users mail account
- 	 *
- 	 * @IsAdminExemption
- 	 * @IsSubAdminExemption
- 	 *
-	 * @return the MailAccountId
+	 *
+	 * @IsAdminExemption
+	 * @IsSubAdminExemption
+	 *
+	 * @param $ocUserId
+	 * @param $email
+	 * @param $inboundHost
+	 * @param $inboundHostPort
+	 * @param $inboundUser
+	 * @param $inboundPassword
+	 * @param $inboundSslMode
+	 * @return int MailAccountId
 	 */
 	private function addAccount($ocUserId, $email, $inboundHost, $inboundHostPort, $inboundUser, $inboundPassword, $inboundSslMode) {
-		
+
 		$mailAccount = new MailAccount();
 		$mailAccount->setOcUserId($ocUserId);
 		$mailAccount->setMailAccountId(time());
@@ -216,10 +217,10 @@
 		$mailAccount->setInboundSslMode($inboundSslMode);
 		$mailAccount->setInboundUser($inboundUser);
 		$mailAccount->setInboundPassword($inboundPassword);
-		
+
 		$this->mailAccountMapper->save($mailAccount);
 
 		return $mailAccount->getMailAccountId();
 	}
-	
- }
+
+}

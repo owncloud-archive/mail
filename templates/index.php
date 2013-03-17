@@ -1,3 +1,5 @@
+<?php \OC_Util::addStyle('mail', 'mail') ?>
+<?php \OC_Util::addScript('mail', 'mail') ?>
 <div id="leftcontent" class="leftcontent">
 	<div id="mail-folders">
 		<img class="loading" src="<?php print_unescaped(OCP\Util::imagePath('core', 'loading.gif')); ?>" />

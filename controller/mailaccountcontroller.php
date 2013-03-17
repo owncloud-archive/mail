@@ -65,10 +65,14 @@ class MailAccountController extends Controller {
 				'api' => $this->api
 			);
 		} catch (DoesNotExistException $e) {
-			$templateName = 'part.no-accounts';
+			$templateName = 'noaccount';
 			$params = array(
 				'accounts' => false,
-				'api' => $this->api
+				'api' => $this->api,
+				'legend' => 'Connect your mail account',
+				'mailAdress' => 'Mail Adress',
+				'imapPassword' => 'IMAP Password',
+				'connect' => 'Connect'
 			);
 		} catch (MultipleObjectsReturnedException $e) {
 			$templateName = 'index';

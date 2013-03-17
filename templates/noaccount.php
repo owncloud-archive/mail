@@ -20,7 +20,7 @@
 			<input type="password" name="mail-password" id="mail-password" value="" placeholder="" />
 			<label for="mail-password" class="infield">{{imapPassword}}</label>
 		</p>
-		<img id="connect-loading" src="<?php print_unescaped(OCP\Util::imagePath('core', 'loading.gif')); ?>" style="display:none;" />
+		<img id="connect-loading" src="{{ image_path('loading.gif') }}" style="display:none;" />
 		<input type="submit" id="mail_mailaccount_create" class="connect primary" value="{{connect}}"/>
 	</fieldset>
 </form>

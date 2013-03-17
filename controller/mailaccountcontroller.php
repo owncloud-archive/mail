@@ -117,10 +117,10 @@ class MailAccountController extends Controller {
 	private function isGoogleAppsAccount($host) {
 		// filter pure gmail accounts
 		if (stripos($host, 'google') !== false) {
-			return false;
+			return true;
 		}
 		if (stripos($host, 'gmail') !== false) {
-			return false;
+			return true;
 		}
 
 		//

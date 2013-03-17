@@ -1,3 +1,16 @@
+<?php
+/**
+ * Scripts
+ */
+$_['api']->addScript('mail');
+
+/**
+ * Styles
+ */
+$_['api']->addStyle('mail');
+
+
+?>
 <form id="mail-setup" action="mailaccount/create" method="post">
 	<fieldset>
 		<legend><?php p($l->t('Connect your mail account')) ?></legend>

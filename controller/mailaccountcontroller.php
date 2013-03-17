@@ -27,7 +27,7 @@
 
  use OCA\Mail\Db\MailAccount;
 
- use OCA\Mail\Account;
+ //use OCA\Mail\Account;
  
  class MailAccountController extends Controller {
 	 
@@ -53,23 +53,24 @@
 	 */
 	public function index() {
 
-		// thirdparty stuff
-		//$this->api->add3rdPartyScript('angular/angular');
-
-		// your own stuff
-		$this->api->addStyle('mail');
-		//$this->api->addStyle('animation');
-
-		$this->api->addScript('mail');
-
 		try {
 			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
 			$templateName = 'index';
-			$params = $accounts;
+			$params = array(
+				'accounts' => $accounts,
+				'api' => $this->api
+			);
 		} catch (DoesNotExistException $e) {
 			$templateName = 'part.no-accounts';
 			$params = array(
-				'accounts' => $accounts
+				'accounts' => false,
+				'api' => $this->api
+			);
+		} catch (MultipleObjectsReturnedException $e) {
+			$templateName = 'index';
+			$params = array(
+				'accounts' => $accounts,
+				'api' => $this->api
 			);
 		}
 
@@ -107,13 +108,14 @@
 		
 		if($isNewAccount) {
 			$templateName = 'index';
-			$params = array();
+			$params = array(
+				'api' => $this->api
+			);
 		} else {
 			$templateName = 'part.no-accounts';
 			$params = array(
-				'url_create' => $this->api->linkToRoute('mail_mailaccount_create')
+				'api' => $this->api
 			);
-			return $this->render($templateName, $params);
 		}
 
 		return $this->render($templateName, $params);
@@ -125,25 +127,21 @@
 	 */
 	 private function isGoogleAppsAccount($host) {
 		// filter pure gmail accounts
-		if (stripos($host, 'google') !== false) {
-			return false;
-		}
-		if (stripos($host, 'gmail') !== false) {
-			return false;
+		if (stripos($host, 'google') === true OR stripos($host, 'gmail') === true) {
+			return true;
 		}
 
 		//
 		// TODO: will not work on windows - ignore this for now
 		//
-		if (getmxrr($host, $mx_records, $mx_weight) == false)
-				{
-					return false;
-				}
+		if (getmxrr($host, $mx_records, $mx_weight) === false) {
+			return false;
+		}
 
-		var_dump($mx_records);
-		if (stripos($mx_records[0], 'google') !== false) {
+		if (stripos($mx_records[0], 'google') === true) {
 			return true;
 		}
+		
 		return false;
 	 }
 	 
@@ -154,7 +152,7 @@
 	  * Secure IMAP (IMAP4-SSL) - port 585
 	  * IMAP4 over SSL (IMAPS) - port 993
 	  */
-	  private function testAccount($user_id, $email, $host, $user, $password) {
+	  private function testAccount($ocUserId, $email, $host, $user, $password) {
 		$account = array(
 			'name'     => $email,
 			'host'     => $host,
@@ -163,22 +161,22 @@
 		);
 
 		$ports = array(143, 585, 993);
-		$sec_modes = array('ssl', 'tls', null);
-		$host_prefixes = array('', 'imap.');
-		foreach ($host_prefixes as $host_prefix) {
-			$h = $host_prefix . $host;
-			$account['host'] = $h;
+		$encryptionProtocols = array('ssl', 'tls', null);
+		$hostPrefixes = array('', 'imap.');
+		foreach ($hostPrefixes as $hostPrefix) {
+			$url = $hostPrefix . $host;
+			$account['host'] = $url;
 			foreach ($ports as $port) {
 				$account['port'] = $port;
-				foreach ($sec_modes as $sec_mode) {
-					$account['ssl_mode'] = $sec_mode;
+				foreach ($encryptionProtocols as $encryptionProtocol) {
+					$account['ssl_mode'] = $encryptionProtocol;
 					try {
-						$accountclass = new Account();
-						$accountclass->getImapConnection($h, $port, $user, $password, $sec_mode);
-						$this->api->log("Test-Account-Successful: $user_id, $h, $port, $user, $sec_mode");
-						return $this->addAccount($user_id, $email, $h, $port, $user, $password, $sec_mode);
+						//$accountclass = new Account();
+						$this->getImapConnection($url, $port, $user, $password, $encryptionProtocol);
+						$this->api->log("Test-Account-Successful: $ocUserId, $url, $port, $user, $encryptionProtocol");
+						return $this->addAccount($ocUserId, $email, $url, $port, $user, $password, $encryptionProtocol);
 					} catch (\Horde_Imap_Client_Exception $e) {
-						$this->api->log("Test-Account-Failed: $user_id, $h, $port, $user, $sec_mode");
+						$this->api->log("Test-Account-Failed: $ocUserId, $url, $port, $user, $encryptionProtocol");
 					}
 				}
 			}

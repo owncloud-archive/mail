@@ -60,7 +60,7 @@ class DIContainer extends BaseContainer {
 	 */
 	public function __construct(){
 		// tell parent container about the app name
-		parent::__construct('Mail');	
+		parent::__construct('mail');	
 
 		// use this to specify the template directory
 		//$this['TwigTemplateDirectory'] = __DIR__ . '/../templates';

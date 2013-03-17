@@ -35,7 +35,7 @@ class MailAccountMapper extends Mapper {
 	 */
 	public function __construct($api){
 		parent::__construct($api);
-		$this->tableName = '*PREFIX*mail_mailaccounts';
+		$this->tableName = '`*PREFIX*mail_mailaccounts`';
 	}
 
 	/** Finds an Mail Account by id
@@ -81,22 +81,22 @@ class MailAccountMapper extends Mapper {
 	 */
 	public function save($mailAccount){
 		$sql = 'INSERT INTO ' . $this->tableName . '(
-			 ocuserid,
-			 mailaccountid,
-			 mailaccountname,
-			 email,
-			 inboundhost,
-			 inboundHostPort,
-			 inboundsslmode,
-			 inbounduser,
-			 inboundpassword,
-			 inboundservice,
-			 outboundhost,
-			 outboundhostport,
-			 outboundsslmode,
-			 outbounduser,
-			 outboundpassword,
-			 outboundservice
+			 `ocuserid`,
+			 `mailaccountid`,
+			 `mailaccountname`,
+			 `email`,
+			 `inboundhost`,
+			 `inboundHostPort`,
+			 `inboundsslmode`,
+			 `inbounduser`,
+			 `inboundpassword`,
+			 `inboundservice`,
+			 `outboundhost`,
+			 `outboundhostport`,
+			 `outboundsslmode`,
+			 `outbounduser`,
+			 `outboundpassword`,
+			 `outboundservice`
 			 )' . 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 		$params = array(
@@ -129,21 +129,21 @@ class MailAccountMapper extends Mapper {
 	 */
 	public function update($mailAccount){
 		$sql = 'UPDATE ' . $this->tableName . 'SET
-		 	mailaccountname = ?,
-		 	email = ?,
-		 	inboundhost = ?,
-		 	inboundHostPort = ?,
-		 	inboundsslmode = ?,
-		 	inbounduser = ?,
-		 	inboundpassword = ?,
-		 	inboundservice = ?,
-		 	outboundhost = ?,
-		 	outboundhostport = ?,
-		 	outboundsslmode = ?,
-		 	outbounduser = ?,
-		 	outboundpassword = ?,
-		 	outboundservice = ?
-			WHERE mailaccountid = ?';
+		 	`mailaccountname` = ?,
+		 	`email` = ?,
+		 	`inboundhost` = ?,
+		 	`inboundHostPort` = ?,
+		 	`inboundsslmode` = ?,
+		 	`inbounduser` = ?,
+		 	`inboundpassword` = ?,
+		 	`inboundservice` = ?,
+		 	`outboundhost` = ?,
+		 	`outboundhostport` = ?,
+		 	`outboundsslmode` = ?,
+		 	`outbounduser` = ?,
+		 	`outboundpassword` = ?,
+		 	`outboundservice` = ?
+			WHERE `mailaccountid` = ?';
 
 		$params = array(
 			$mailAccount->getMailAccountName(),

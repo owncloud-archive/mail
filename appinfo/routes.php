@@ -34,3 +34,12 @@ $this->create('mail_mailaccount_create', '/mailaccount/create')->post()->action(
 		App::main('MailAccountController', 'create', $params, new DIContainer());
 	}
 );
+
+/**
+ * AJAX Routes
+ */
+$this->create('mail_mailaccount_ajax_create', '/mailaccount/create')->post()->action(
+	function($params){
+		App::main('MailAccountController', 'create', $params, new DIContainer());
+	}
+);

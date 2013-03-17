@@ -54,7 +54,10 @@ class MailAccount {
 	public function setOcUserId($ocUserId){
 		$this->ocUserId = $ocUserId;
 	}
-	
+
+	/**
+	 * @return int
+	 */
 	public function getMailAccountId(){
 		return $this->mailAccountId;
 	}
@@ -157,7 +160,7 @@ class MailAccount {
 		return $this->outboundUser;
 	}
 	
-	public function setOutboundUser($outbounduser){
+	public function setOutboundUser($outboundUser){
 		$this->outboundUser = $outboundUser;
 	}
 	
@@ -179,11 +182,9 @@ class MailAccount {
 		$this->outboundService = $outboundService;
 	}
 	
-	
 	/**
 	 * private functions
 	 */
-	
 	private function fromRow($row){
 		$this->ocUserId = $row['ocuserid'];
 		$this->mailAccountId = $row['mailaccountid'];
@@ -193,7 +194,7 @@ class MailAccount {
 		$this->inboundSslMode = $row['inboundsslmode'];
 		$this->inboundUser = $row['inbounduser'];
 		$this->inboundPassword = $row['inboundpassword'];
-		$hits->inboundService = $row['inboundservice'];
+		$this->inboundService = $row['inboundservice'];
 		$this->outboundHost = $row['outboundhost'];
 		$this->outboundHostPort = $row['outboundhostport'];
 		$this->outboundSslMode = $row['outboundsslmode'];
@@ -201,47 +202,51 @@ class MailAccount {
 		$this->outboundPassword = $row['outboundpassword'];
 		$this->outboundService = $row['outboundservice'];
 	}
-	
+
 	/**
-	 * @return the encrypted password as a string
+	 * @param string $decryptedPassword
+	 * @return string the encrypted password
 	 */
 	private function encryptPassword($decryptedPassword){
-		return $this->ciphering($encrypted=0, $decryptedPassword);
+		return $this->ciphering(false, $decryptedPassword);
 	}
-	
+
 	/**
-	 * @return the decrypted password as a string
+	 * @param string $encryptedPassword
+	 * @return string the decrypted password
 	 */
 	private function decryptPassword($encryptedPassword){
-		return $this->ciphering($encrypted=1, $encryptedPassword);
+		return $this->ciphering(true, $encryptedPassword);
 	}
-	
+
 	/**
-	 * This function does the encryption and decreption of the password
-	 * @param bool $encrypted if 1 then the string $password will be decrypted
-	 * @return the password encrypted or decrypted as a string
+	 * This function does the encryption and decryption of the password
+	 * @param bool $encrypted if true then the string $password will be decrypted
+	 * @param string $password
+	 * @param string $salt
+	 * @return string the password encrypted or decrypted as a string
 	 */
 	private function ciphering($encrypted, $password, $salt='!oScf3b0!7w%rLd13'){
 		// create the key which is a SHA256 hash of $salt and $ocUserId
 		$key = hash('SHA256', $salt . $this->ocUserId, true);
 		
 		// open cipher using block size 128-bit to be AES compliant in CBC mode
-		$td = mcrypt_module_open('rijndael-128', '', 'cbc', '');
+		$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
 		
 		// create a initialization vector (iv)
 		$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
 		
 		// initialize encryption/decryption using the generated key
-		mcrypt_generic_init($td, $key, $vi);
+		mcrypt_generic_init($td, $key, $iv);
 		
 		if($encrypted){			
 			// decrypt encrypted password
-			$password = mdecrypt_generic($td, $encrypted);
+			$password = mdecrypt_generic($td, $password);
 			// close decryption handler
 			mcrypt_generic_deinit($td);
 		}else{
 			// encrypt password
-			$password = mcrypt_generic($td, $decrypted);
+			$password = mcrypt_generic($td, $password);
 			// close encryption handler
 			mcrypt_generic_deinit($td);
 		}
@@ -251,5 +256,4 @@ class MailAccount {
 		
 		return $password;
 	}
-
 }

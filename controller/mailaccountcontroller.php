@@ -24,10 +24,9 @@ namespace OCA\Mail\Controller;
 
 use OCA\AppFramework\Controller\Controller;
 use OCA\AppFramework\Db\DoesNotExistException;
+use OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
 use OCA\Mail\Db\MailAccount;
-
-//use OCA\Mail\Account;
 
 class MailAccountController extends Controller {
 
@@ -51,8 +50,7 @@ class MailAccountController extends Controller {
 	 * @IsAdminExemption
 	 * @IsSubAdminExemption
 	 *
-	 * @brief renders the index page
-	 * @return an instance of a Response implementation
+	 * @return \OCA\AppFramework\Http\TemplateResponse renders the index page
 	 */
 	public function index() {
 
@@ -70,7 +68,7 @@ class MailAccountController extends Controller {
 				'accounts' => false,
 				'api' => $this->api,
 				'legend' => 'Connect your mail account',
-				'mailAdress' => 'Mail Adress',
+				'mailAddress' => 'Mail Address',
 				'imapPassword' => 'IMAP Password',
 				'connect' => 'Connect'
 			);

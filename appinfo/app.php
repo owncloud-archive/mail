@@ -28,7 +28,7 @@ OC::$CLASSPATH['OC_Translation_Handler'] = 'apps/mail/lib/OC_Translation_Handler
 	
   	// the title of your application. This will be used in the
   	// navigation or on the settings page of your app
-  	'name' => \OC_L10N::get('mail')->t('Mail App') 
+  	'name' => \OC_L10N::get('mail')->t('Mail')
 	
 ));
 

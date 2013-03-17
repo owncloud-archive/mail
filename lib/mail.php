@@ -30,7 +30,7 @@ namespace {
 
 	// bypass Horde Translation system
 	Horde_Translation::setHandler('Horde_Imap_Client', new OC_Translation_Handler());
-	
+
 }
 
 namespace OCA\Mail {
@@ -64,8 +64,8 @@ namespace OCA\Mail {
 				foreach ($email as $e) {
 					$displayName = $fn . " <$e>";
 					$receivers[] = array('id'    => $id,
-					                     'label' => $displayName,
-					                     'value' => $displayName);
+						'label' => $displayName,
+						'value' => $displayName);
 				}
 			}
 
@@ -84,7 +84,7 @@ namespace OCA\Mail {
 
 			// get all mail accounts configured for this user
 			$mailAccounts = App::getAccounts($ocUserId);
-			
+
 			// get all folders for all mail accounts
 			foreach ($mailAccounts as $mailAccount) {
 				try {
@@ -179,7 +179,7 @@ namespace OCA\Mail {
 			}catch(DoesNotExistException $e){
 				return false;
 			}
-			
+
 			return $mailAccounts;
 		}
 
@@ -188,7 +188,7 @@ namespace OCA\Mail {
 		 * @return the MailAccountId
 		 */
 		public static function addAccount($ocUserId, $email, $inboundHost, $inboundHostPort, $inboundUser, $inboundPassword, $inboundSslMode) {
-			
+
 			$mailAccount = new MailAccount();
 			$mailAccount->setOcUserId($ocUserId);
 			$mailAccount->setMailAccountId(time());
@@ -198,7 +198,7 @@ namespace OCA\Mail {
 			$mailAccount->setInboundSslMode($inboundSslMode);
 			$mailAccount->setInboundUser($inboundUser);
 			$mailAccount->setInboundPassword($inboundPassword);
-			
+
 			$mailAccountMapper = new MailAccountMapper();
 			$mailAccount = $mailAccountMapper->save($mailAccount);
 
@@ -239,12 +239,10 @@ namespace OCA\Mail {
 			//
 			// TODO: will not work on windows - ignore this for now
 			//
-			if (getmxrr($host, $mx_records, $mx_weight) == false)
-					{
-						return false;
-					}
+			if (getmxrr($host, $mx_records, $mx_weight) == false) {
+				return false;
+			}
 
-			var_dump($mx_records);
 			if (stripos($mx_records[0], 'google') !== false) {
 				return true;
 			}

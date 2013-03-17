@@ -1,3 +1,4 @@
+{{ script('vendor/angular/angular', 'appframework') }}
 {{ script('mail') }}
 
 {{ style('mail') }}
@@ -13,7 +14,7 @@
 		<p class="infield grouptop">
 			<input type="text" name="mail-address" id="mail-address" placeholder=""
 				   value="" autofocus autocomplete="off" required/>
-			<label for="mail-address" class="infield">{{mailAdress}}</label>
+			<label for="mail-address" class="infield">{{mailAddress}}</label>
 		</p>
 
 		<p class="infield groupbottom">

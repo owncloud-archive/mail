@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 /**
  * Scripts
@@ -12,10 +11,6 @@ $_['api']->addStyle('mail');
 
 
 ?>
-=======
-<?php \OC_Util::addStyle('mail', 'mail') ?>
-<?php \OC_Util::addScript('mail', 'mail') ?>
->>>>>>> upstream/appframework
 <form id="mail-setup" action="mailaccount/create" method="post">
 	<fieldset>
 		<legend><?php p($l->t('Connect your mail account')) ?></legend>

@@ -20,31 +20,6 @@
  *
  */
 
-<<<<<<< HEAD
- namespace OCA\Mail\Controller;
- 
- use OCA\AppFramework\Controller\Controller;
- use OCA\AppFramework\Db\DoesNotExistException;
-
- use OCA\Mail\Db\MailAccount;
-
- //use OCA\Mail\Account;
- 
- class MailAccountController extends Controller {
-	 
-	 private $mailAccountMapper;
-	 
- 	/**
- 	 * @param Request $request: an instance of the request
- 	 * @param API $api: an api wrapper instance
- 	 * @param MailAccountMapper $mailAccountMapper: a mailaccountwrapper instance
- 	 */
- 	public function __construct($api, $request, $mailAccountMapper){
- 		parent::__construct($api, $request);
- 		$this->mailAccountMapper = $mailAccountMapper;
- 	}
- 	
-=======
 namespace OCA\Mail\Controller;
 
 use OCA\AppFramework\Controller\Controller;
@@ -52,7 +27,7 @@ use OCA\AppFramework\Db\DoesNotExistException;
 
 use OCA\Mail\Db\MailAccount;
 
-use OCA\Mail\Account;
+//use OCA\Mail\Account;
 
 class MailAccountController extends Controller {
 
@@ -71,7 +46,6 @@ class MailAccountController extends Controller {
 		$this->mailAccountMapper = $mailAccountMapper;
 	}
 
->>>>>>> upstream/appframework
 	/**
 	 * @CSRFExemption
 	 * @IsAdminExemption
@@ -81,11 +55,8 @@ class MailAccountController extends Controller {
 	 * @return an instance of a Response implementation
 	 */
 	public function index() {
-<<<<<<< HEAD
 
-=======
 		$accounts = array();
->>>>>>> upstream/appframework
 		try {
 			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
 			$templateName = 'index';
@@ -157,38 +128,22 @@ class MailAccountController extends Controller {
 	 */
 	private function isGoogleAppsAccount($host) {
 		// filter pure gmail accounts
-<<<<<<< HEAD
 		if (stripos($host, 'google') === true OR stripos($host, 'gmail') === true) {
-=======
-		if (stripos($host, 'google') !== false) {
-			return true;
-		}
-		if (stripos($host, 'gmail') !== false) {
->>>>>>> upstream/appframework
 			return true;
 		}
 
 		//
 		// TODO: will not work on windows - ignore this for now
 		//
-<<<<<<< HEAD
 		if (getmxrr($host, $mx_records, $mx_weight) === false) {
 			return false;
 		}
 
 		if (stripos($mx_records[0], 'google') === true) {
-=======
-		if (getmxrr($host, $mx_records, $mx_weight) == false) {
-			return false;
-		}
-
-		if (stripos($mx_records[0], 'google') !== false) {
->>>>>>> upstream/appframework
 			return true;
 		}
 		
 		return false;
-<<<<<<< HEAD
 	 }
 	 
 	 /**
@@ -199,18 +154,6 @@ class MailAccountController extends Controller {
 	  * IMAP4 over SSL (IMAPS) - port 993
 	  */
 	  private function testAccount($ocUserId, $email, $host, $user, $password) {
-=======
-	}
-
-	/**
-	 * try to log into the mail account using different ports
-	 * and use SSL if available
-	 * IMAP - port 143
-	 * Secure IMAP (IMAP4-SSL) - port 585
-	 * IMAP4 over SSL (IMAPS) - port 993
-	 */
-	private function testAccount($user_id, $email, $host, $user, $password) {
->>>>>>> upstream/appframework
 		$account = array(
 			'name'     => $email,
 			'host'     => $host,
@@ -229,17 +172,9 @@ class MailAccountController extends Controller {
 				foreach ($encryptionProtocols as $encryptionProtocol) {
 					$account['ssl_mode'] = $encryptionProtocol;
 					try {
-<<<<<<< HEAD
-						//$accountclass = new Account();
 						$this->getImapConnection($url, $port, $user, $password, $encryptionProtocol);
 						$this->api->log("Test-Account-Successful: $ocUserId, $url, $port, $user, $encryptionProtocol");
 						return $this->addAccount($ocUserId, $email, $url, $port, $user, $password, $encryptionProtocol);
-=======
-						$testAccount = new Account();
-						$testAccount->getImapConnection($h, $port, $user, $password, $sec_mode);
-						$this->api->log("Test-Account-Successful: $user_id, $h, $port, $user, $sec_mode");
-						return $this->addAccount($user_id, $email, $h, $port, $user, $password, $sec_mode);
->>>>>>> upstream/appframework
 					} catch (\Horde_Imap_Client_Exception $e) {
 						$this->api->log("Test-Account-Failed: $ocUserId, $url, $port, $user, $encryptionProtocol");
 					}

@@ -28,6 +28,8 @@ namespace {
 	// load Horde's auto loader
 	require_once 'Horde/Autoloader/Default.php';
 
+	OC::$CLASSPATH['OC_Translation_Handler'] = 'apps/mail/lib/OC_Translation_Handler.php';
+
 	// bypass Horde Translation system
 	Horde_Translation::setHandler('Horde_Imap_Client', new OC_Translation_Handler());
 }

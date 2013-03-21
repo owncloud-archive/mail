@@ -1,4 +1,5 @@
 {{ script('vendor/angular/angular', 'appframework') }}
+{{ script('public/app', 'appframework') }}
 {{ script('mail') }}
 
 {{ style('mail') }}

@@ -225,6 +225,11 @@ Mail = {
     }
 }
 
+angular.module('Mail', ['OC']);
+angular.module('Mail').controller('MailAccountController', ['$scope', function($scope){
+
+}]);
+
 $(document).ready(function () {
     Mail.UI.initializeInterface();
 

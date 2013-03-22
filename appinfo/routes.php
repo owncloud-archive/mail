@@ -25,20 +25,11 @@ $this->create('mail_editor', 'js/mail_editor.js')
  */
 $this->create('mail_index', '/')->action(
 	function($params){
-		App::main('MailAccountController', 'index', $params, new DIContainer());
+		App::main('PageController', 'index', $params, new DIContainer());
 	}
 );
 
-$this->create('mail_mailaccount_create', '/mailaccount/create')->post()->action(
-	function($params){
-		App::main('MailAccountController', 'create', $params, new DIContainer());
-	}
-);
-
-/**
- * AJAX Routes
- */
-$this->create('mail_mailaccount_ajax_create', '/mailaccount/create')->post()->action(
+$this->create('mail_accounts_create', '/accounts/create')->post()->action(
 	function($params){
 		App::main('MailAccountController', 'create', $params, new DIContainer());
 	}

@@ -46,44 +46,6 @@ class MailAccountController extends Controller {
 	}
 
 	/**
-	 * @CSRFExemption
-	 * @IsAdminExemption
-	 * @IsSubAdminExemption
-	 *
-	 * @return \OCA\AppFramework\Http\TemplateResponse renders the index page
-	 */
-	public function index() {
-
-		$accounts = array();
-		try {
-			$accounts = $this->mailAccountMapper->findByUserId($this->api->getUserId());
-			$templateName = 'index';
-			$params = array(
-				'accounts' => $accounts,
-				'api' => $this->api
-			);
-		} catch (DoesNotExistException $e) {
-			$templateName = 'noaccount';
-			$params = array(
-				'accounts' => false,
-				'api' => $this->api,
-				'legend' => 'Connect your mail account',
-				'mailAddress' => 'Mail Address',
-				'imapPassword' => 'IMAP Password',
-				'connect' => 'Connect'
-			);
-		} catch (MultipleObjectsReturnedException $e) {
-			$templateName = 'index';
-			$params = array(
-				'accounts' => $accounts,
-				'api' => $this->api
-			);
-		}
-
-		return $this->render($templateName, $params);
-	}
-
-	/**
 	 * @IsAdminExemption
 	 * @IsSubAdminExemption
 	 *
@@ -91,38 +53,31 @@ class MailAccountController extends Controller {
 	 */
 	public function create() {
 		$ocUserId = $this->api->getUserId();
-		$email = $this->params('mail-address');
-		$password = $this->params('mail-password');
+		$email = $this->params('email');
+		$password = $this->params('password');
 
 		// splitting the email address into user and host part
-		list($user, $host) = explode("@", $this->params('mail-address'));
+		list($user, $host) = explode("@", $email);
 
 		/**
 		 * Google Apps
 		 * used if $host points to Google Apps
 		 */
 		if ($this->isGoogleAppsAccount($host)) {
-			$isNewAccount = $this->testAccount($user, $email, "imap.gmail.com", $email, $password);
+			$newAccountId = $this->testAccount($ocUserId, $email, "imap.gmail.com", $email, $password);
 		} else {
 			/*
 			 * IMAP login with full email address as user
 			 * works for a lot of providers (e.g. Google Mail)
 			 */
-			$isNewAccount = $this->testAccount($user, $email, $host, $email, $password);
-		}
-		if($isNewAccount) {
-			$templateName = 'index';
-			$params = array(
-				'api' => $this->api
-			);
-		} else {
-			$templateName = 'part.no-accounts';
-			$params = array(
-				'api' => $this->api
-			);
+			$newAccountId = $this->testAccount($ocUserId, $email, $host, $email, $password);
 		}
 
-		return $this->render($templateName, $params);
+		if($newAccountId) {
+			return $this->renderJSON(array('data' => array( 'id' => $newAccountId )));
+		}
+
+		return $this->renderJSON(array(), 'Auto detect failed. Please use manual mode.' );
 	}
 
 	/**
@@ -183,7 +138,7 @@ class MailAccountController extends Controller {
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/**

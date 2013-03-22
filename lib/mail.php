@@ -174,118 +174,13 @@ namespace OCA\Mail {
 		 */
 		public static function getAccounts($ocUserId) {
 			try{
-				$mailAccounts = new MailAccountMapper();
+				$mailAccounts = new Db\MailAccountMapper();
 				$mailAccounts->findByUserId($ocUserId);
 			}catch(DoesNotExistException $e){
 				return false;
 			}
 
 			return $mailAccounts;
-		}
-
-		/**
-		 * Saves the mail account credentials for a users mail account
-		 * @return the MailAccountId
-		 */
-		public static function addAccount($ocUserId, $email, $inboundHost, $inboundHostPort, $inboundUser, $inboundPassword, $inboundSslMode) {
-
-			$mailAccount = new MailAccount();
-			$mailAccount->setOcUserId($ocUserId);
-			$mailAccount->setMailAccountId(time());
-			$mailAccount->setEmail($email);
-			$mailAccount->setInboundHost($inboundHost);
-			$mailAccount->setInboundHostPort($inboundHostPort);
-			$mailAccount->setInboundSslMode($inboundSslMode);
-			$mailAccount->setInboundUser($inboundUser);
-			$mailAccount->setInboundPassword($inboundPassword);
-
-			$mailAccountMapper = new MailAccountMapper();
-			$mailAccount = $mailAccountMapper->save($mailAccount);
-
-			return $mailAccount->getMailAccountId();
-		}
-
-		public static function autoDetectAccount($user_id, $email, $password) {
-			list($user, $host) = explode("@", $email);
-
-			//
-			// google apps shortcut
-			//
-			if (self::isGoogleAppsAccount($host)) {
-				$new_account = self::testAccount($user_id, $email, "imap.gmail.com", $email, $password);
-				if ($new_account != null) {
-					return $new_account;
-				}
-			}
-			$new_account = self::testAccount($user_id, $email, $host, $user, $password);
-
-			// try full email address as user name now (e.g. gmail does so)
-			if ($new_account == null) {
-				$new_account = self::testAccount($user_id, $email, $host, $email, $password);
-			}
-
-			return $new_account;
-		}
-
-		private static function isGoogleAppsAccount($host) {
-			// filter pure gmail accounts
-			if (stripos($host, 'google') !== false) {
-				return true;
-			}
-			if (stripos($host, 'gmail') !== false) {
-				return true;
-			}
-
-			//
-			// TODO: will not work on windows - ignore this for now
-			//
-			if (getmxrr($host, $mx_records, $mx_weight) == false) {
-				return false;
-			}
-
-			if (stripos($mx_records[0], 'google') !== false) {
-				return true;
-			}
-			return false;
-		}
-
-		private static function testAccount($user_id, $email, $host, $user, $password) {
-			/*
-			IMAP - port 143
-			Secure IMAP (IMAP4-SSL) - port 585
-			IMAP4 over SSL (IMAPS) - port 993
-			 */
-			$account = array(
-				'name'     => $email,
-				'host'     => $host,
-				'user'     => $user,
-				'password' => $password,
-			);
-
-			$ports = array(143, 585, 993);
-			$sec_modes = array('ssl', 'tls', null);
-			$host_prefixes = array('', 'imap.');
-			foreach ($host_prefixes as $host_prefix) {
-				$h = $host_prefix . $host;
-				$account['host'] = $h;
-				foreach ($ports as $port) {
-					$account['port'] = $port;
-					foreach ($sec_modes as $sec_mode) {
-						$account['ssl_mode'] = $sec_mode;
-						try {
-							$test_account = new Account($account);
-							$client = $test_account->getImapConnection();
-							error_log("Successful: $user_id, $h, $port, $user, $sec_mode");
-							return App::addAccount($user_id, $email, $h, $port, $user, $password, $sec_mode);
-						} catch (\Horde_Imap_Client_Exception $e) {
-							// nothing to do
-							error_log("Failed: $user_id, $h, $port, $user, $sec_mode");
-						}
-					}
-				}
-			}
-
-			return null;
 		}
 	}
 }

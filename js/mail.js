@@ -243,8 +243,9 @@ $(document).ready(function () {
         var email_address, password;
         email_address = $('#mail-address').val();
         password = $('#mail-password').val();
-        $.ajax(OC.filePath('mail', 'ajax', 'account/autodetect.php'), {
-            data:{email_address:email_address, password:password},
+		var url = OC.Router.generate('mail_accounts_create');
+        $.ajax(url, {
+            data:{email:email_address, password:password},
             type:'POST',
             success:function (jsondata) {
                 if (jsondata.status == 'success') {

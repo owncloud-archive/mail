@@ -8,7 +8,7 @@
 	ng-app="Mail"
 	ng-controller="MailAccountController">
 
-	<form id="mail-setup" action="mailaccount/create" method="post">
+	<form id="mail-setup">
 	<fieldset>
 		<legend>{{legend}}</legend>
 
@@ -23,6 +23,6 @@
 			<label for="mail-password" class="infield">{{imapPassword}}</label>
 		</p>
 		<img id="connect-loading" src="{{ image_path('loading.gif') }}" style="display:none;" />
-		<input type="submit" id="mail_mailaccount_create" class="connect primary" value="{{connect}}"/>
+		<input type="submit" id="auto_detect_account" class="connect primary" value="{{connect}}"/>
 	</fieldset>
 </form>

@@ -28,14 +28,11 @@ use OCA\AppFramework\Core\API;
 
 class MailAccountMapper extends Mapper {
 
-	private $tableName;
-
 	/**
 	 * @param \OCA\AppFramework\Core\API $api Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '`*PREFIX*mail_mailaccounts`';
+		parent::__construct($api, 'mail_mailaccounts');
 	}
 
 	/** Finds an Mail Account by id
@@ -44,7 +41,7 @@ class MailAccountMapper extends Mapper {
 	 * @return MailAccount
 	 */
 	public function find($mailAccountId){
-		$row = $this->findQuery($this->tableName, $mailAccountId);
+		$row = $this->findQuery($this->getTableName(), $mailAccountId);
 		return new MailAccount($row);
 	}
 
@@ -57,7 +54,7 @@ class MailAccountMapper extends Mapper {
 	 * @throws DoesNotExistException if no Mail Account exists
 	 */
 	public function findByUserId($ocUserId){
-		$sql = 'SELECT * FROM ' . $this->tableName . ' WHERE ocuserid = ?';
+		$sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE ocuserid = ?';
 		$params = array($ocUserId);
 
 		$results = $this->execute($sql, $params)->fetchRow();
@@ -80,7 +77,7 @@ class MailAccountMapper extends Mapper {
 	 * @return MailAccount with the filled in mailaccountid
 	 */
 	public function save($mailAccount){
-		$sql = 'INSERT INTO ' . $this->tableName . '(
+		$sql = 'INSERT INTO ' . $this->getTableName() . '(
 			 `ocuserid`,
 			 `mailaccountid`,
 			 `mailaccountname`,
@@ -128,7 +125,7 @@ class MailAccountMapper extends Mapper {
 	 * @param  MailAccount $mailAccount
 	 */
 	public function update($mailAccount){
-		$sql = 'UPDATE ' . $this->tableName . 'SET
+		$sql = 'UPDATE ' . $this->getTableName() . 'SET
 		 	`mailaccountname` = ?,
 		 	`email` = ?,
 		 	`inboundhost` = ?,
@@ -170,7 +167,7 @@ class MailAccountMapper extends Mapper {
 	 * @param int $mailAccountId
 	 */
 	public function delete($mailAccountId){
-		$this->deleteQuery($this->tableName, $mailAccountId);
+		$this->deleteQuery($this->getTableName(), $mailAccountId);
 	}
 
 }

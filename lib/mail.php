@@ -174,10 +174,10 @@ namespace OCA\Mail {
 		 */
 		public static function getAccounts($ocUserId) {
 			try{
-				$mailAccounts = new Db\MailAccountMapper();
-				$mailAccounts->findByUserId($ocUserId);
+				$di = new \OCA\Mail\DependencyInjection\DIContainer();
+				$mailAccounts = $di['MailAccountMapper']->findByUserId($ocUserId);
 			}catch(DoesNotExistException $e){
-				return false;
+				return array();
 			}
 
 			return $mailAccounts;

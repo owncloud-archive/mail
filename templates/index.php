@@ -1,8 +1,12 @@
-<?php \OC_Util::addStyle('mail', 'mail') ?>
-<?php \OC_Util::addScript('mail', 'mail') ?>
+{{ script('vendor/angular/angular', 'appframework') }}
+{{ script('public/app', 'appframework') }}
+{{ script('mail') }}
+
+{{ style('mail') }}
+
 <div id="leftcontent" class="leftcontent">
 	<div id="mail-folders">
-		<img class="loading" src="<?php print_unescaped(OCP\Util::imagePath('core', 'loading.gif')); ?>" />
+		<img class="loading" src="{{ image_path('loading.gif') }}" />
 	</div>
 </div>
 <div id="rightcontent" class="rightcontent">
@@ -16,7 +20,7 @@
 		</div>
 	</form>
 
-	<img class="loading" id="messages-loading" src="<?php print_unescaped(OCP\Util::imagePath('core', 'loading.gif')); ?>" />
+	<img class="loading" id="messages-loading" src="{{ image_path('loading.gif') }}" />
 
 	<table id="mail_messages">
 		<tr class="template mail_message_summary" data-message-id="0">
@@ -27,7 +31,7 @@
 		<tr class="template_loading mail_message_loading">
 			<td></td>
 			<td>
-				<img src="<?php print_unescaped(OCP\Util::imagePath('core', 'loading.gif')); ?>" />
+				<img src="{{ image_path('loading.gif') }}" />
 			</td>
 			<td></td>
 		</tr>

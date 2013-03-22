@@ -11,30 +11,40 @@ namespace OCA\Mail;
 class Account {
 
 	/**
+	 * @var \OCA\Mail\Db\MailAccount
+	 */
+	private $mailAccount;
+	/**
 	 * @param an object of MailAccount as $mailAccount
 	 */
-	function __construct() {
+	function __construct($mailAccount) {
+		$this->mailAccount = $mailAccount;
 	}
 
 	/**
 	 * @return the internal AccountId for this mail account
 	 */
 	public function getAccountId() {
-		return $this->mailAccount.getMailAccountId();
+		return $this->mailAccount->getMailAccountId();
 	}
 
 	public function getName() {
-		return $this->mailAccount.getMailAccountName();
+		return $this->mailAccount->getMailAccountName();
 	}
 
 	public function getEMailAddress() {
-		return $this->mailAccount.getEmail();
+		return $this->mailAccount->getEmail();
 	}
 
 	/**
 	 * @return a ready to use IMAP connection
 	 */
-	public function getImapConnection($host, $port, $user, $password, $ssl_mode) {
+	public function getImapConnection() {
+		$host = $this->mailAccount->getInboundHost();
+		$port = $this->mailAccount->getInboundHostPort();
+		$user = $this->mailAccount->getInboundUser();
+		$password = $this->mailAccount->getInboundPassword();
+		$ssl_mode = $this->mailAccount->getInboundSslMode();
 		$imapConnection = new \Horde_Imap_Client_Socket(array(
 			'username' => $user, 'password' => $password, 'hostspec' => $host, 'port' => $port, 'secure' => $ssl_mode, 'timeout' => 2));
 		$imapConnection->login();

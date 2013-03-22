@@ -57,17 +57,18 @@ class MailAccountMapper extends Mapper {
 		$sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE ocuserid = ?';
 		$params = array($ocUserId);
 
-		$results = $this->execute($sql, $params)->fetchRow();
-		if($results){
-			$mailAccounts = array();
-			foreach ($results as $result){
-				$mailAccount = new MailAccount($result);
-				$mailAccounts[] = $mailAccount;
-			}
-			return $mailAccounts;
-		}else{
-			throw new DoesNotExistException('There are no Mail Accounts configured for user id ' . $ocUserId);
+		$result = $this->execute($sql, $params);
+		$mailAccounts = array();
+		while( $row = $result->fetchRow()) {
+			$mailAccount = new MailAccount($row);
+			$mailAccounts[] = $mailAccount;
 		}
+
+//		if (empty($mailAccounts)) {
+//			throw new DoesNotExistException('There are no Mail Accounts configured for user id ' . $ocUserId);
+//		}
+
+		return $mailAccounts;
 	}
 
 	/**

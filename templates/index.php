@@ -11,7 +11,7 @@
 </div>
 <div id="rightcontent" class="rightcontent">
 	<form id="new-message" >
-		<input type="button" id="mail_new_message" value="<?php p($l->t('New Message')); ?>" style="display: none">
+		<input type="button" id="mail_new_message" value="{{ trans('New Message') }}" style="display: none">
 		<div id="new-message-fields" style="display: none">
 			<input type="text" name="to" id="to" placeholder="<?php p($l->t('To')); ?>"/>
 			<input type="text" name="subject" id="subject" placeholder="<?php p($l->t('Subject')); ?>"/>

@@ -22,7 +22,7 @@ class Account {
 	}
 
 	/**
-	 * @return the internal AccountId for this mail account
+	 * @return int internal AccountId for this mail account
 	 */
 	public function getAccountId() {
 		return $this->mailAccount->getMailAccountId();
@@ -101,7 +101,7 @@ class Account {
 			self::move_to_top($folders, $inbox);
 		}
 
-		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => $folders);
+		return array('id' => $this->getAccountId(), 'email' => $this->getEMailAddress(), 'folders' => $folders);
 	}
 
 	private static function move_to_top(&$array, $key) {

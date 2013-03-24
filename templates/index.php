@@ -13,10 +13,10 @@
 	<form id="new-message" >
 		<input type="button" id="mail_new_message" value="{{ trans('New Message') }}" style="display: none">
 		<div id="new-message-fields" style="display: none">
-			<input type="text" name="to" id="to" placeholder="<?php p($l->t('To')); ?>"/>
-			<input type="text" name="subject" id="subject" placeholder="<?php p($l->t('Subject')); ?>"/>
+			<input type="text" name="to" id="to" placeholder="{{ trans('To') }}"/>
+			<input type="text" name="subject" id="subject" placeholder="{{ trans('Subject') }}"/>
 			<textarea name="body" id="new-message-body" ></textarea>
-			<input id="new-message-send" class="send" type="submit" value="<?php p($l->t('Send')) ?>">
+			<input id="new-message-send" class="send" type="submit" value="{{ trans('Send') }}">
 		</div>
 	</form>
 

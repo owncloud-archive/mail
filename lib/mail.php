@@ -116,6 +116,7 @@ namespace OCA\Mail {
 			}
 
 			try {
+				$account = new Account($account);
 				$mailbox = $account->getMailbox($folder_id);
 				$messages = $mailbox->getMessages($from, $count);
 
@@ -142,6 +143,7 @@ namespace OCA\Mail {
 			}
 
 			try {
+				$account = new Account($account);
 				/** @var $mailbox \OCA\Mail\Mailbox */
 				$mailbox = $account->getMailbox($folder_id);
 				$m = $mailbox->getMessage($message_id);
@@ -182,5 +184,16 @@ namespace OCA\Mail {
 
 			return $mailAccounts;
 		}
+
+		private static function getAccount($userId, $accountId) {
+			try{
+				$di = new \OCA\Mail\DependencyInjection\DIContainer();
+				/** @var $mapper \OCA\Mail\Db\MailAccountMapper */
+				$mapper = $di['MailAccountMapper'];
+				return $mapper->find($userId, $accountId);
+			}catch(DoesNotExistException $e){
+				return null;
+			}
+ 		}
 	}
 }

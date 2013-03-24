@@ -37,11 +37,15 @@ class MailAccountMapper extends Mapper {
 
 	/** Finds an Mail Account by id
 	 *
-	 * @param $mailAccountId
+	 * @param int $userId
+	 * @param int $mailAccountId
 	 * @return MailAccount
 	 */
-	public function find($mailAccountId){
-		$row = $this->findQuery($this->getTableName(), $mailAccountId);
+	public function find($userId, $mailAccountId){
+		$sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE ocuserid = ? and mailaccountid = ?';
+		$params = array($userId, $mailAccountId);
+
+		$row = $this->findOneQuery($sql, $params);
 		return new MailAccount($row);
 	}
 

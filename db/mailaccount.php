@@ -188,6 +188,7 @@ class MailAccount {
 	private function fromRow($row){
 		$this->ocUserId = $row['ocuserid'];
 		$this->mailAccountId = $row['mailaccountid'];
+		$this->mailAccountName = $row['mailaccountname'];
 		$this->email = $row['email'];
 		$this->inboundHost = $row['inboundhost'];
 		$this->inboundHostPort = $row['inboundhostport'];

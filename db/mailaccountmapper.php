@@ -129,7 +129,7 @@ class MailAccountMapper extends Mapper {
 	 * Updates a Mail Account
 	 * @param  MailAccount $mailAccount
 	 */
-	public function update($mailAccount){
+	/*public function update($mailAccount){
 		$sql = 'UPDATE ' . $this->getTableName() . 'SET
 		 	`mailaccountname` = ?,
 		 	`email` = ?,
@@ -166,13 +166,13 @@ class MailAccountMapper extends Mapper {
 		);
 
 		$this->execute($sql, $params);
-	}
+	}*/
 
 	/**
 	 * @param int $mailAccountId
 	 */
-	public function delete($mailAccountId){
-		$this->deleteQuery($this->getTableName(), $mailAccountId);
+	public function delete($mailAccount){
+		$this->deleteQuery($this->getTableName(), $mailAccount->getMailAccountId);
 	}
 
 }

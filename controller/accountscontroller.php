@@ -23,12 +23,12 @@
 namespace OCA\Mail\Controller;
 
 use OCA\AppFramework\Controller\Controller;
-use OCA\AppFramework\Db\DoesNotExistException;
-use OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
+
+use OCA\AppFramework\Http\JSONResponse;
 use OCA\Mail\Db\MailAccount;
 
-class MailAccountController extends Controller {
+class AccountsController extends Controller {
 
 	/**
 	 * @var \OCA\Mail\Db\MailAccountMapper
@@ -74,10 +74,10 @@ class MailAccountController extends Controller {
 		}
 
 		if($newAccountId) {
-			return $this->renderJSON(array('data' => array( 'id' => $newAccountId )));
+			return new JSONResponse(array('data' => array( 'id' => $newAccountId )));
 		}
 
-		return $this->renderJSON(array(), 'Auto detect failed. Please use manual mode.' );
+		return new JSONResponse(array('message' => 'Auto detect failed. Please use manual mode.'));
 	}
 
 	/**

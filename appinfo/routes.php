@@ -8,9 +8,10 @@
 
 namespace OCA\Mail;
 
-use \OCA\AppFramework\App;
-
+use OCA\AppFramework\routing\RouteConfig;
 use \OCA\Mail\DependencyInjection\DIContainer;
+
+/** @var $this \OC_Router */
 
 // oC JS config
 $this->create('mail_editor', 'js/mail_editor.js')
@@ -20,17 +21,5 @@ $this->create('mail_editor', 'js/mail_editor.js')
  * Define your routes here
  ************************/
 
-/**
- * Normal Routes
- */
-$this->create('mail_index', '/')->action(
-	function($params){
-		App::main('PageController', 'index', $params, new DIContainer());
-	}
-);
-
-$this->create('mail_accounts_create', '/accounts/create')->post()->action(
-	function($params){
-		App::main('MailAccountController', 'create', $params, new DIContainer());
-	}
-);
+$routeConfig = new RouteConfig(new DIContainer(), $this, __DIR__ . '/routes.yaml');
+$routeConfig->register();

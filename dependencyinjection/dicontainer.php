@@ -46,7 +46,7 @@ use OC_Translation_Handler;
 /**
  * Controllers
  */
-use OCA\Mail\Controller\MailAccountController;
+use OCA\Mail\Controller\AccountsController;
 use OCA\Mail\Controller\PageController;
 
 /**
@@ -78,7 +78,7 @@ class DIContainer extends BaseContainer {
 		 * Controllers
 		 */
 		$this['MailAccountController'] = $this->share(function($c){
-			return new MailAccountController($c['API'], $c['Request'], $c['MailAccountMapper']);
+			return new AccountsController($c['API'], $c['Request'], $c['MailAccountMapper']);
 		});
 		$this['PageController'] = $this->share(function($c){
 			return new PageController($c['API'], $c['Request'], $c['MailAccountMapper']);

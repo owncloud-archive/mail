@@ -4,6 +4,7 @@
 
 {{ style('mail') }}
 
+
 <div id="leftcontent" class="leftcontent">
 	<div id="mail-folders">
 		<img class="loading" src="{{ image_path('loading.gif') }}" />

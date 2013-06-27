@@ -39,5 +39,5 @@ if(\OCP\App::isEnabled('appframework')){
 	));
 } else {
 	$msg = 'Can not enable the Mail app because the App Framework App is disabled';
-	\OCP\Util::writeLog('news', $msg, \OCP\Util::ERROR);
+	\OCP\Util::writeLog('mail', $msg, \OCP\Util::ERROR);
 }

@@ -181,7 +181,23 @@ class MailAccount {
 	public function setOutboundService($outboundService){
 		$this->outboundService = $outboundService;
 	}
-	
+
+	/**
+	 * @return array
+	 */
+	public function toJson() {
+		return array(
+			'accountId' => $this->getMailAccountId(),
+			'name' => $this->getMailAccountName(),
+			'email' => $this->getEmail(),
+			'imap-host' => $this->getInboundHost(),
+			'imap-port' => $this->getInboundHostPort(),
+			'imap-user' => $this->getInboundUser(),
+			'imap-password' => $this->getInboundPassword(),
+			'imap-ssl-mode' => $this->getInboundSslMode(),
+		);
+	}
+
 	/**
 	 * private functions
 	 */

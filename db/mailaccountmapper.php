@@ -42,7 +42,7 @@ class MailAccountMapper extends Mapper {
 	 * @return MailAccount
 	 */
 	public function find($userId, $mailAccountId){
-		$sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE ocuserid = ? and mailaccountid = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE ocuserid = ? and mailaccountid = ?';
 		$params = array($userId, $mailAccountId);
 
 		$row = $this->findOneQuery($sql, $params);
@@ -51,15 +51,15 @@ class MailAccountMapper extends Mapper {
 
 	/**
 	 * Finds all Mail Accounts by user id existing for this user
-	 * @param string $ocUserId the id of the user that we want to find
-	 * @param $ocUserId
-	 * @return array
+	 * @param string $userId the id of the user that we want to find
+	 * @param $userId
+	 * @return MailAccount[]
 	 * @throws \OCA\AppFramework\Db\DoesNotExistException
 	 * @throws DoesNotExistException if no Mail Account exists
 	 */
-	public function findByUserId($ocUserId){
+	public function findByUserId($userId){
 		$sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE ocuserid = ?';
-		$params = array($ocUserId);
+		$params = array($userId);
 
 		$result = $this->execute($sql, $params);
 		$mailAccounts = array();
@@ -67,10 +67,6 @@ class MailAccountMapper extends Mapper {
 			$mailAccount = new MailAccount($row);
 			$mailAccounts[] = $mailAccount;
 		}
-
-//		if (empty($mailAccounts)) {
-//			throw new DoesNotExistException('There are no Mail Accounts configured for user id ' . $ocUserId);
-//		}
 
 		return $mailAccounts;
 	}
@@ -171,8 +167,8 @@ class MailAccountMapper extends Mapper {
 	/**
 	 * @param int $mailAccountId
 	 */
-	public function delete($mailAccount){
-		$this->deleteQuery($this->getTableName(), $mailAccount->getMailAccountId);
+	public function delete($accountId){
+		$this->delete($this->getTableName(), $accountId);
 	}
 
 }

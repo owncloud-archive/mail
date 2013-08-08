@@ -72,12 +72,6 @@ class PageController extends Controller {
 				'imapPassword' => 'IMAP Password',
 				'connect' => 'Connect'
 			);
-		} catch (MultipleObjectsReturnedException $e) {
-			$templateName = 'index';
-			$params = array(
-				'accounts' => $accounts,
-				'api' => $this->api
-			);
 		}
 
 		return $this->render($templateName, $params);

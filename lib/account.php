@@ -70,12 +70,12 @@ class Account {
 	}
 
 	/**
-	 * @param $folder_id
+	 * @param $folderId
 	 * @return Mailbox
 	 */
-	public function getMailbox($folder_id) {
+	public function getMailbox($folderId) {
 		$conn = $this->getImapConnection();
-		return new Mailbox($conn, $folder_id);
+		return new Mailbox($conn, $folderId);
 	}
 
 	/**

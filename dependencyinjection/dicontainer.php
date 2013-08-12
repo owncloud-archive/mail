@@ -86,9 +86,9 @@ namespace OCA\Mail\DependencyInjection {
 			$this['FoldersController'] = $this->share(function ($c) {
 				return new FoldersController($c['API'], $c['Request'], $c['MailAccountMapper']);
 			});
-			//		$this['MessagesController'] = $this->share(function($c){
-			//			return new MessagesController($c['API'], $c['Request'], $c['MailAccountMapper']);
-			//		});
+			$this['MessagesController'] = $this->share(function($c){
+				return new MessagesController($c['API'], $c['Request'], $c['MailAccountMapper']);
+			});
 			$this['PageController'] = $this->share(function ($c) {
 				return new PageController($c['API'], $c['Request'], $c['MailAccountMapper']);
 			});

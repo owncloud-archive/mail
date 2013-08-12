@@ -23,6 +23,11 @@ class Mailbox {
 		$this->folder_id = $folder_id;
 	}
 
+	/**
+	 * @param int $from
+	 * @param int $count
+	 * @return array
+	 */
 	public function getMessages($from = 0, $count = 2) {
 		$total = $this->getTotalMessages();
 		if (($from + $count) > $total) {
@@ -99,6 +104,16 @@ class Mailbox {
 		} catch (\Horde_Imap_Client_Exception $e) {
 			return array('id' => $this->folder_id, 'name' => $display_name, 'unseen' => 0, 'total' => 0, 'error' => $e->getMessage());
 		}
+	}
+
+	/**
+	 * @param $messageId
+	 */
+	public function deleteMessage($messageId)
+	{
+		//
+		// TODO: implement this
+		//
 	}
 
 }

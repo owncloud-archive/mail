@@ -8,6 +8,7 @@
 
 namespace OCA\Mail;
 
+use Horde_Imap_Client;
 use OCA\Mail\Db\MailAccount;
 
 class Account {
@@ -67,21 +68,26 @@ class Account {
 		$conn = $this->getImapConnection();
 
 		// if successful -> get all folders of that account
-		$mboxes = $conn->listMailboxes($pattern);
+		$mboxes = $conn->listMailboxes($pattern, Horde_Imap_Client::MBOX_ALL, array(
+			'attributes' => true,
+			'special_use' => true,
+			'sort' => true
+		));
+
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {
-			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap);
+			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap, $mailbox['attributes']);
 		}
 		return $mailboxes;
 	}
 
 	/**
-	 * @param $folder_id
+	 * @param $folderId
 	 * @return \OCA\Mail\Mailbox
 	 */
-	public function getMailbox($folder_id) {
+	public function getMailbox($folderId) {
 		$conn = $this->getImapConnection();
-		return new Mailbox($conn, $folder_id);
+		return new Mailbox($conn, $folderId, array());
 	}
 
 	/**
@@ -131,6 +137,6 @@ class Account {
 		// TODO: read settings/server special folders how the sent folder is named
 		//
 		$conn = $this->getImapConnection();
-		return new Mailbox($conn, 'Sent');
+		return new Mailbox($conn, 'Sent', array());
 	}
 }

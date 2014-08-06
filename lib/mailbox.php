@@ -20,10 +20,10 @@ class Mailbox {
 
 	private $folderId;
 
-	// input $conn = IMAP conn, $folder_id = folder id
-	function __construct($conn, $folder_id) {
+	function __construct($conn, $folderId, $attributes) {
 		$this->conn = $conn;
-		$this->folderId = $folder_id;
+		$this->folderId = $folderId;
+		$this->attributes = $attributes;
 	}
 
 	public function getMessages($from = 0, $count = 2) {
@@ -162,9 +162,11 @@ class Mailbox {
 	}
 
 	private function isTrash() {
-		//
-		// TODO: where is the trash
-		//
+		if (in_array(Horde_Imap_Client::SPECIALUSE_TRASH, $this->attributes)) {
+			return true;
+		}
+
+		// heuristic - if named Trash - it's a trash
 		return ($this->folderId === 'Trash');
 	}
 

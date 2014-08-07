@@ -74,16 +74,16 @@ class MessagesController extends Controller
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 *
-	 * @param int $id
+	 * 
 	 * @return JSONResponse
 	 */
-	public function show($id)
+	public function show()
 	{
 		$accountId = $this->params('accountId');
 		$folderId = $this->params('folderId');
 		$mailBox = $this->getFolder();
-
+		$id = $this->params('messageId');
+		
 		$m = $mailBox->getMessage($id);
 		$json = $m->as_array();
 		$json['senderImage'] = $this->contactsIntegration->getPhoto($m->getFromEmail());

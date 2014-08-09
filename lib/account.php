@@ -81,6 +81,12 @@ class Account {
 
 		// if successful -> get all folders of that account
 		$mboxes = $conn->listMailboxes($pattern);
+		usort($mboxes, function($a, $b) {
+			if (strpos($a['mailbox'], 'INBOX')===0) {
+				return !$b['mailbox']==='INBOX';
+			}
+			return strcmp($a['mailbox'], $b['mailbox']);
+		});
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {
 			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap);

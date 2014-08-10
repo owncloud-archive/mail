@@ -81,11 +81,21 @@ class Account {
 
 		// if successful -> get all folders of that account
 		$mboxes = $conn->listMailboxes($pattern);
+		
+		// sort mailboxes
 		usort($mboxes, function($a, $b) {
-			if (strpos($a['mailbox'], 'INBOX')===0) {
-				return !$b['mailbox']==='INBOX';
+			if ($a['mailbox'] === 'INBOX') {
+				$result = -1;
+			} elseif ($b['mailbox'] === 'INBOX') {
+				$result = 1;
+			} elseif (strpos($a['mailbox'], 'INBOX')===0 && strpos($b['mailbox'],'INBOX')===false) {
+				$result = -1;
+			} elseif (strpos($b['mailbox'], 'INBOX')===0 && strpos($a['mailbox'],'INBOX')===false) {
+				$result = 1;
+			} else {
+				$result = strcasecmp($a['mailbox'], $b['mailbox']);
 			}
-			return strcmp($a['mailbox'], $b['mailbox']);
+			return $result;
 		});
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {

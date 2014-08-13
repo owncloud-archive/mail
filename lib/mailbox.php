@@ -96,6 +96,10 @@ class Mailbox {
 	public function getDisplayName() {
 		return \Horde_Imap_Client_Utf7imap::Utf7ImapToUtf8($this->folderId);
 	}
+	
+	public function getFolderId() {
+		return $this->folderId;
+	}
 
 	/**
 	 * @return array

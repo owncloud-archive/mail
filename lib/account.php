@@ -82,21 +82,6 @@ class Account {
 		// if successful -> get all folders of that account
 		$mboxes = $conn->listMailboxes($pattern);
 		
-		// sort mailboxes
-		usort($mboxes, function($a, $b) {
-			if ($a['mailbox'] === 'INBOX') {
-				$result = -1;
-			} elseif ($b['mailbox'] === 'INBOX') {
-				$result = 1;
-			} elseif (strpos($a['mailbox'], 'INBOX')===0 && strpos($b['mailbox'],'INBOX')===false) {
-				$result = -1;
-			} elseif (strpos($b['mailbox'], 'INBOX')===0 && strpos($a['mailbox'],'INBOX')===false) {
-				$result = 1;
-			} else {
-				$result = strcasecmp($a['mailbox'], $b['mailbox']);
-			}
-			return $result;
-		});
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {
 			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap);
@@ -119,24 +104,29 @@ class Account {
 	public function getListArray() {
 		// if successful -> get all folders of that account
 		$mboxes = $this->listMailboxes('*');
-
+		// sort mailboxes
+		usort($mboxes, function($a, $b) {
+			if ($a->getFolderId() === 'INBOX') {
+				$result = -1;
+			} elseif ($b->getFolderId() === 'INBOX') {
+				$result = 1;
+			} elseif (strpos($a->getFolderId(), 'INBOX')===0 && strpos($b->getFolderId(),'INBOX')===false) {
+				$result = -1;
+			} elseif (strpos($b->getFolderId(), 'INBOX')===0 && strpos($a->getFolderId(),'INBOX')===false) {
+				$result = 1;
+			} else {
+				$result = strcasecmp($a->getFolderId(), $b->getFolderId());
+			}
+			return $result;
+		});
+		
 		$folders = array();
 		foreach ($mboxes as $mailbox) {
 			$folders[] = $mailbox->getListArray();
 		}
+		
 
-		$inbox = null;
-		foreach ($folders as $key=>$value) {
-			if ($value['id'] === base64_encode('INBOX')) {
-				  $inbox = $key;
-			}
-		}
-
-		if ($inbox) {
-			self::move_to_top($folders, $inbox);
-		}
-
-		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values( $folders));
+		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values($folders));
 	}
 
 	private static function move_to_top(&$array, $key) {

@@ -104,36 +104,38 @@ class Account {
 	public function getListArray() {
 		// if successful -> get all folders of that account
 		$mboxes = $this->listMailboxes('*');
-		// sort mailboxes
-		usort($mboxes, function($a, $b) {
-			if ($a->getFolderId() === 'INBOX') {
-				$result = -1;
-			} elseif ($b->getFolderId() === 'INBOX') {
-				$result = 1;
-			} elseif (strpos($a->getFolderId(), 'INBOX')===0 && strpos($b->getFolderId(),'INBOX')===false) {
-				$result = -1;
-			} elseif (strpos($b->getFolderId(), 'INBOX')===0 && strpos($a->getFolderId(),'INBOX')===false) {
-				$result = 1;
-			} else {
-				$result = strcasecmp($a->getFolderId(), $b->getFolderId());
-			}
-			return $result;
-		});
-		
 		$folders = array();
 		foreach ($mboxes as $mailbox) {
 			$folders[] = $mailbox->getListArray();
 		}
-		
+		// sort mailboxes, with special folders at top
+		usort($folders, function($a, $b) { 
+			if ($a['specialRole'] === null && $b['specialRole'] !== null) {
+				return 1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] === null) {
+				return -1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] !== null) {
+				if ($a['specialRole'] === $b['specialRole']) {
+					return strcasecmp($a['name'], $b['name']);
+				} else {
+					$specialRolesOrder = array(
+						'inbox'   => 0,
+						'draft'   => 1,
+						'sent'    => 2,
+						'archive' => 3,
+						'junk'    => 4,
+						'trash'   => 5,
+					);
+					return $specialRolesOrder[$a['specialRole']] - $specialRolesOrder[$b['specialRole']];
+				}
+			} elseif ($a['specialRole'] === null && $b['specialRole'] === null) {
+				return strcasecmp($a['name'], $b['name']);
+			}
+		});
 
 		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values($folders));
 	}
 
-	private static function move_to_top(&$array, $key) {
-		$temp = array($key => $array[$key]);
-		unset($array[$key]);
-		$array = $temp + $array;
-	}
 
 	/**
 	 * @return \Horde_Mail_Transport_Sendmail

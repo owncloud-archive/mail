@@ -96,37 +96,62 @@ class Mailbox {
 	public function getDisplayName() {
 		return \Horde_Imap_Client_Utf7imap::Utf7ImapToUtf8($this->folderId);
 	}
+	
+	public function getFolderId() {
+		return $this->folderId;
+	}
 
 	/**
 	 * @return array
 	 */
 	public function getListArray() {
-		$display_name = $this->getDisplayName();
+		$displayName = $this->getDisplayName();
 		try {
 			$status = $this->getStatus();
-			$unseen = $status['unseen'];
 			$total = $status['messages'];
-			if ($this->isTrash()) {
-				$unseen = 0;
-			}
+			$specialRole = $this->guessRole();
+			$unseen = ($specialRole === 'trash') ? 0 : $status['unseen'];
 			$isEmpty = ($total === 0);
 			return array(
 				'id' => base64_encode($this->folderId),
-				'name' => $display_name,
+				'name' => $displayName,
+				'specialRole' => $specialRole,
 				'unseen' => $unseen,
 				'total' => $total,
 				'isEmpty' => $isEmpty
 			);
 		} catch (\Horde_Imap_Client_Exception $e) {
 			return array(
-				'id' => $this->folderId,
-				'name' => $display_name,
+				'id' => base64_encode($this->folderId),
+				'name' => $displayName,
+				'specialRole' => null,
 				'unseen' => 0,
 				'total' => 0,
 				'error' => $e->getMessage(),
 				'isEmpty' => true
 			);
 		}
+	}
+	
+	private function guessRole() {
+		
+		$specialFoldersDict = array(
+			'inbox'   => array('inbox'),
+			'sent'    => array('sent', 'sent items', 'sent messages', 'sent-mail'),
+			'draft'   => array('draft', 'drafts'),
+			'archive' => array('archive', 'archives'),
+			'trash'   => array('deleted messages', 'trash'),
+			'junk'    => array('junk'),
+		);
+		$lowercaseId = strtolower(reset(explode('/', $this->folderId, 2)));
+		$result = null;
+		foreach ($specialFoldersDict as $specialRole => $specialNames) {
+			if (in_array($lowercaseId, $specialNames)) {
+				$result = $specialRole;
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -177,13 +202,6 @@ class Mailbox {
 			$options['remove'] = array($flag);
 		}
 		$this->conn->store($this->folderId, $options);
-	}
-
-	private function isTrash() {
-		//
-		// TODO: where is the trash
-		//
-		return ($this->folderId === 'Trash');
 	}
 
 }

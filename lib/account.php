@@ -74,6 +74,7 @@ class Account {
 
 		// if successful -> get all folders of that account
 		$mboxes = $conn->listMailboxes($pattern);
+		
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {
 			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap);
@@ -96,31 +97,38 @@ class Account {
 	public function getListArray() {
 		// if successful -> get all folders of that account
 		$mboxes = $this->listMailboxes('*');
-
 		$folders = array();
 		foreach ($mboxes as $mailbox) {
 			$folders[] = $mailbox->getListArray();
 		}
-
-		$inbox = null;
-		foreach ($folders as $key=>$value) {
-			if ($value['id'] === base64_encode('INBOX')) {
-				  $inbox = $key;
+		// sort mailboxes, with special folders at top
+		usort($folders, function($a, $b) { 
+			if ($a['specialRole'] === null && $b['specialRole'] !== null) {
+				return 1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] === null) {
+				return -1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] !== null) {
+				if ($a['specialRole'] === $b['specialRole']) {
+					return strcasecmp($a['name'], $b['name']);
+				} else {
+					$specialRolesOrder = array(
+						'inbox'   => 0,
+						'draft'   => 1,
+						'sent'    => 2,
+						'archive' => 3,
+						'junk'    => 4,
+						'trash'   => 5,
+					);
+					return $specialRolesOrder[$a['specialRole']] - $specialRolesOrder[$b['specialRole']];
+				}
+			} elseif ($a['specialRole'] === null && $b['specialRole'] === null) {
+				return strcasecmp($a['name'], $b['name']);
 			}
-		}
+		});
 
-		if ($inbox) {
-			self::move_to_top($folders, $inbox);
-		}
-
-		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values( $folders));
+		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values($folders));
 	}
 
-	private static function move_to_top(&$array, $key) {
-		$temp = array($key => $array[$key]);
-		unset($array[$key]);
-		$array = $temp + $array;
-	}
 
 	/**
 	 * @return \Horde_Mail_Transport_Smtphorde

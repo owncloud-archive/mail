@@ -20,10 +20,21 @@ class Mailbox {
 
 	private $folderId;
 
-	function __construct($conn, $folderId, $attributes) {
+	private $attributes;
+
+	private $specialRole;
+
+	private $delimiter;
+
+	function __construct($conn, $folderId, $attributes, $delimiter='/') {
 		$this->conn = $conn;
 		$this->folderId = $folderId;
 		$this->attributes = $attributes;
+		$this->delimiter = $delimiter;
+		$this->specialRole = $this->getSpecialRoleFromAttributes($attributes);
+		if ($this->specialRole === null) {
+			$this->specialRole = $this->guessSpecialRole();
+		}
 	}
 
 	public function getMessages($from = 0, $count = 2) {
@@ -101,6 +112,9 @@ class Mailbox {
 		return $this->folderId;
 	}
 
+	public function getSpecialRole() {
+		return $this->specialRole;
+	}
 	/**
 	 * @return array
 	 */
@@ -109,7 +123,7 @@ class Mailbox {
 		try {
 			$status = $this->getStatus();
 			$total = $status['messages'];
-			$specialRole = $this->guessRole();
+			$specialRole = $this->getSpecialRole();
 			$unseen = ($specialRole === 'trash') ? 0 : $status['unseen'];
 			$isEmpty = ($total === 0);
 			return array(
@@ -132,8 +146,46 @@ class Mailbox {
 			);
 		}
 	}
-	
-	private function guessRole() {
+
+	private function getSpecialRoleFromAttributes($attributes) {
+		/*
+		 * @todo: support multiple attributes on same folder
+		 * "any given server or  message store may support
+		 *  any combination of the attributes"
+		 *  https://tools.ietf.org/html/rfc6154
+		 */
+		$result = null;
+		if (is_array($attributes)) {
+			/* Convert attributes to lowercase, because gmail
+			 * returns them as lowercase (eg. \trash and not \Trash)
+			 */
+			$specialUseAttributes = array(
+				strtolower(Horde_Imap_Client::SPECIALUSE_ALL),
+				strtolower(Horde_Imap_Client::SPECIALUSE_ARCHIVE),
+				strtolower(Horde_Imap_Client::SPECIALUSE_DRAFTS),
+				strtolower(Horde_Imap_Client::SPECIALUSE_FLAGGED),
+				strtolower(Horde_Imap_Client::SPECIALUSE_JUNK),
+				strtolower(Horde_Imap_Client::SPECIALUSE_SENT),
+				strtolower(Horde_Imap_Client::SPECIALUSE_TRASH)
+			);
+
+			$attributes = array_map(function($n) {
+				return strtolower($n);
+			}, $attributes);
+
+			foreach ($specialUseAttributes as $attr)  {
+				if (in_array($attr, $attributes)) {
+					$result = ltrim($attr, '\\');
+					break;
+				}
+			}
+
+		}
+
+		return $result;
+	}
+
+	private function guessSpecialRole() {
 		
 		$specialFoldersDict = array(
 			'inbox'   => array('inbox'),
@@ -141,13 +193,15 @@ class Mailbox {
 			'draft'   => array('draft', 'drafts'),
 			'archive' => array('archive', 'archives'),
 			'trash'   => array('deleted messages', 'trash'),
-			'junk'    => array('junk'),
+			'junk'    => array('junk', 'spam'),
 		);
-		$lowercaseId = strtolower(reset(explode('/', $this->folderId, 2)));
+		
+		$lowercaseId = strtolower(reset(explode($this->delimiter, $this->folderId, 2)));
 		$result = null;
 		foreach ($specialFoldersDict as $specialRole => $specialNames) {
 			if (in_array($lowercaseId, $specialNames)) {
 				$result = $specialRole;
+				break;
 			}
 		}
 
@@ -205,12 +259,7 @@ class Mailbox {
 	}
 
 	private function isTrash() {
-		if (in_array(Horde_Imap_Client::SPECIALUSE_TRASH, $this->attributes)) {
-			return true;
-		}
-
-		// heuristic - if named Trash - it's a trash
-		return ($this->folderId === 'Trash');
+		return $this->getSpecialRole() === 'trash';
 	}
 }
 

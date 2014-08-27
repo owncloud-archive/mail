@@ -22,10 +22,16 @@ class Account {
 	private $account;
 
 	/**
+	 *  @var Mailbox[]
+	 */
+	private $mailboxes;
+
+	/**
 	 * @param MailAccount $info
 	 */
 	function __construct(MailAccount $account) {
 		$this->account = $account;
+		$this->mailboxes = null;
 	}
 
 	public function getId() {
@@ -69,7 +75,7 @@ class Account {
 	 * @param string $pattern
 	 * @return Mailbox[]
 	 */
-	public function listMailboxes($pattern) {
+	private function listMailboxes($pattern) {
 		// open the imap connection
 		$conn = $this->getImapConnection();
 
@@ -82,7 +88,7 @@ class Account {
 
 		$mailboxes = array();
 		foreach ($mboxes as $mailbox) {
-			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap, $mailbox['attributes']);
+			$mailboxes[] = new Mailbox($conn, $mailbox['mailbox']->utf7imap, $mailbox['attributes'], $mailbox['delimiter']);
 		}
 		return $mailboxes;
 	}
@@ -96,42 +102,29 @@ class Account {
 		return new Mailbox($conn, $folderId, array());
 	}
 
+	protected function getMailboxes() {
+		if ($this->mailboxes === null) {
+			$this->mailboxes = $this->listMailboxes('*');
+		}
+
+		return $this->mailboxes;
+	}
 	/**
 	 * @return array
 	 */
 	public function getListArray() {
-		// if successful -> get all folders of that account
-		$mboxes = $this->listMailboxes('*');
+
 		$folders = array();
-		foreach ($mboxes as $mailbox) {
+		foreach ($this->getMailboxes() as $mailbox) {
 			$folders[] = $mailbox->getListArray();
 		}
-		// sort mailboxes, with special folders at top
-		usort($folders, function($a, $b) { 
-			if ($a['specialRole'] === null && $b['specialRole'] !== null) {
-				return 1;
-			} elseif ($a['specialRole'] !== null && $b['specialRole'] === null) {
-				return -1;
-			} elseif ($a['specialRole'] !== null && $b['specialRole'] !== null) {
-				if ($a['specialRole'] === $b['specialRole']) {
-					return strcasecmp($a['name'], $b['name']);
-				} else {
-					$specialRolesOrder = array(
-						'inbox'   => 0,
-						'draft'   => 1,
-						'sent'    => 2,
-						'archive' => 3,
-						'junk'    => 4,
-						'trash'   => 5,
-					);
-					return $specialRolesOrder[$a['specialRole']] - $specialRolesOrder[$b['specialRole']];
-				}
-			} elseif ($a['specialRole'] === null && $b['specialRole'] === null) {
-				return strcasecmp($a['name'], $b['name']);
-			}
-		});
-
-		return array('id' => $this->getId(), 'email' => $this->getEMailAddress(), 'folders' => array_values($folders));
+		$folders = $this->sortFolders($folders);
+		return array(
+			'id'             => $this->getId(),
+			'email'          => $this->getEMailAddress(),
+			'folders'        => array_values($folders),
+			'specialFolders' => $this->getSpecialFoldersIds()
+		);
 	}
 
 
@@ -151,11 +144,78 @@ class Account {
 		return new \Horde_Mail_Transport_Smtphorde($params);
 	}
 
+	public function getSpecialFoldersIds() {
+		$folderRoles = array('inbox', 'sent', 'draft', 'trash', 'archive', 'junk');
+		$specialFoldersIds = array();
+		
+		foreach ($folderRoles as $role) {
+			$folder = $this->getSpecialFolder($role, true);
+			$specialFoldersIds[$role] = empty($folder) ? null : base64_encode($folder->getFolderId());
+		}
+		return $specialFoldersIds;
+	}
+
 	public function getSentFolder() {
-		//
-		// TODO: read settings/server special folders how the sent folder is named
-		//
-		$conn = $this->getImapConnection();
-		return new Mailbox($conn, 'Sent', array());
+		return $this->getSpecialFolder('sent', true);
+	}
+	
+	/*
+	 * @param string $role Special role of the folder we want to get ('sent', 'inbox', etc.)
+	 * @param bool $guessBest If set to true, return only the folder with the most messages in it
+	 *
+	 * @return Mailbox[] if $guessBest is false, or Mailbox if $guessBest is true
+	 */ 
+	protected function getSpecialFolder($role, $guessBest=true) {
+		
+		$specialFolders = array();
+		foreach ($this->getMailboxes() as $mailbox) {
+			if ($role === $mailbox->getSpecialRole()) {
+				$specialFolders[] = $mailbox;
+			}
+		}
+
+		if ($guessBest === true && count($specialFolders) > 0) {
+			$maxMessages = 0;
+			$maxFolder = reset($specialFolders);
+			foreach ($specialFolders as $folder) {
+				if ($folder->getTotalMessages() > $maxMessages) {
+					$maxMessages = $folder->getTotalMessages();
+					$maxFolder = $folder;
+				}
+			}
+			return $maxFolder;
+		} else {
+			return $specialFolders;
+		}
+	}
+
+	protected function sortFolders($folders) {
+		// sort mailboxes, with special folders at top
+		usort($folders, function($a, $b) { 
+			if ($a['specialRole'] === null && $b['specialRole'] !== null) {
+				return 1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] === null) {
+				return -1;
+			} elseif ($a['specialRole'] !== null && $b['specialRole'] !== null) {
+				if ($a['specialRole'] === $b['specialRole']) {
+					return strcasecmp($a['name'], $b['name']);
+				} else {
+					$specialRolesOrder = array(
+						'all'     => 0,
+						'inbox'   => 1,
+						'draft'   => 2,
+						'sent'    => 3,
+						'archive' => 4,
+						'junk'    => 5,
+						'trash'   => 6,
+					);
+					return $specialRolesOrder[$a['specialRole']] - $specialRolesOrder[$b['specialRole']];
+				}
+			} elseif ($a['specialRole'] === null && $b['specialRole'] === null) {
+				return strcasecmp($a['name'], $b['name']);
+			}
+		});
+		return $folders;
 	}
 }
+

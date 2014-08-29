@@ -28,3 +28,9 @@ Just clone this repo into your apps directory. Additionally you need Composer to
 curl -sS https://getcomposer.org/installer | php
 php composer.phar install
 ```
+
+Known issues
+------------
+
+- Does not autoconfig web.de email accounts (no workaround, yet)
+- Shows deleted mails (Workaround: compress folders in thunderbird)

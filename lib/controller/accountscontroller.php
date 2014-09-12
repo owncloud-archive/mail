@@ -197,10 +197,10 @@ class AccountsController extends Controller
 		$headers['From']= $from;
 		$headers['Subject'] = $subject;
 
-		if (!is_null($cc)) {
+		if (isset($cc) && trim($cc) !=='') {
 			$headers['Cc'] = $cc;
 		}
-		if (!is_null($bcc)) {
+		if (isset($bcc) && trim($bcc) !=='') {
 			$headers['Bcc'] = $bcc;
 		}
 

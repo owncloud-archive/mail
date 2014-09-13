@@ -427,14 +427,14 @@ class Message {
 		$p->setContents($data);
 		$data = $p->toString();
 
-		// decode quotes
-		$data = quoted_printable_decode($data);
-
 		//
 		// convert the data
 		//
 		$charset = $p->getCharset();
 		if (isset($charset) and $charset !== '') {
+			// decode quotes
+			$data = quoted_printable_decode($data);
+
 			$data = mb_convert_encoding($data, "UTF-8", $charset);
 			return $data;
 		}

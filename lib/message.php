@@ -431,6 +431,11 @@ class Message {
 		$p->setContents($data);
 		$data = $p->toString();
 
+		// This is not a MIME message, return as-is
+		if ($p->getType() === 'text/plain') {
+			return $data;
+		}
+
 		// decode quotes
 		$data = quoted_printable_decode($data);
 

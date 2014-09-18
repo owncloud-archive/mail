@@ -517,6 +517,19 @@ var Mail = {
 		setFolderInactive:function (accountId, folderId) {
 			$('.mail_folders[data-account_id="' + accountId + '"] li[data-folder_id="' + folderId + '"]')
 				.removeClass('active');
+		},
+
+		toggleManualSetup:function() {
+			$('#mail-setup-manual').slideToggle();
+			$('#mail-imap-host').focus();
+			if($('#mail-address').parent().prop('class') === 'groupmiddle') {
+				$('#mail-password').slideToggle(function() {
+					$('#mail-address').parent().removeClass('groupmiddle').addClass('groupbottom');
+				});
+			} else {
+				$('#mail-password').slideToggle();
+				$('#mail-address').parent().removeClass('groupbottom').addClass('groupmiddle');
+			}
 		}
 	}
 };
@@ -549,6 +562,7 @@ $(document).ready(function () {
 			autoDetect: true
 		};
 
+		// if manual setup is open, use manual values
 		if($('#mail-setup-manual').css('display') === 'block') {
 			dataArray = {
 				accountName: accountName,
@@ -574,6 +588,10 @@ $(document).ready(function () {
 			success:function (data) {
 				var newAccountId = data.data.id;
 				Mail.UI.loadFoldersForAccount(newAccountId);
+				// if manual setup is open, close it after successful connection
+				if($('#mail-setup-manual').css('display') === 'block') {
+					Mail.UI.toggleManualSetup();
+				}
 			},
 			error: function(jqXHR, textStatus, errorThrown){
 				var error = errorThrown || textStatus || t('mail', 'Unknown error');
@@ -590,23 +608,13 @@ $(document).ready(function () {
 					.prop('disabled', false)
 					.val(t('mail', 'Connect'));
 				$('#connect-loading').hide();
-				$('#mail-setup-manual').hide();
 			}
 		});
 	});
 
 	// toggle for advanced account configuration
 	$(document).on('click', '#mail-setup-manual-toggle', function () {
-		$('#mail-setup-manual').slideToggle();
-		$('#mail-imap-host').focus();
-		if($('#mail-address').parent().prop('class') === 'groupmiddle') {
-			$('#mail-password').slideToggle(function() {
-				$('#mail-address').parent().removeClass('groupmiddle').addClass('groupbottom');
-			});
-		} else {
-			$('#mail-password').slideToggle();
-			$('#mail-address').parent().removeClass('groupbottom').addClass('groupmiddle');
-		}
+		Mail.UI.toggleManualSetup();
 	});
 
 	// new mail message button handling

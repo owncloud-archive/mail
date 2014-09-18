@@ -61,6 +61,7 @@ class Message {
 	public $attachments = array();
 	private $loadHtmlMessage = false;
 	private $hasHtmlMessage = false;
+	private $isMimeMessage = true;
 
 	/**
 	 * @var \Horde_Imap_Client_Socket
@@ -235,6 +236,7 @@ class Message {
 			'list-post',
 			'x-priority'
 		));
+		$headers[] = 'mime-version';
 		$headers[] = 'content-type';
 
 		$fetch_query->headers('imp', $headers, array(
@@ -251,6 +253,12 @@ class Message {
 			throw new DoesNotExistException("This email ($this->messageId) can't be found. Probably it was deleted from the server recently. Please reload.");
 		}
 
+		// set $this->isMimeMessage to false when 'MIME-Version' not exists
+		$mimeHeader = $fetch->getHeaders('imp', 0);
+		if (trim($mimeHeader) === '' ) {
+			$this->isMimeMessage = false;
+		}
+		
 		// set $this->fetch to get to, from ...
 		$this->fetch = $fetch;
 
@@ -434,8 +442,10 @@ class Message {
 		$p->setContents($data);
 		$data = $p->toString();
 
-		// decode quotes
-		$data = quoted_printable_decode($data);
+		// decode quotes for Mime message
+		if ($this->isMimeMessage) {
+			$data = quoted_printable_decode($data);
+		}
 
 		//
 		// convert the data

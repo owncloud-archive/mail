@@ -442,11 +442,14 @@ class Message {
 		$p->setContents($data);
 		$data = $p->toString();
 
-		// decode quotes for Mime message
-		if ($this->isMimeMessage) {
-			$data = quoted_printable_decode($data);
+		// return non-MIME data as-is
+		if (!$this->isMimeMessage) {
+			return $data;
 		}
 
+		// decode quotes
+		$data = quoted_printable_decode($data);
+		
 		//
 		// convert the data
 		//

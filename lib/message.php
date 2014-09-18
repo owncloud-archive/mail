@@ -61,7 +61,7 @@ class Message {
 	public $attachments = array();
 	private $loadHtmlMessage = false;
 	private $hasHtmlMessage = false;
-	private $isMimeMessage = true;
+	private $notMimeMessage = false;
 
 	/**
 	 * @var \Horde_Imap_Client_Socket
@@ -256,7 +256,7 @@ class Message {
 		// set $this->isMimeMessage to false when 'MIME-Version' not exists
 		$mimeHeader = $fetch->getHeaders('imp', 0);
 		if (trim($mimeHeader) === '' ) {
-			$this->isMimeMessage = false;
+			$this->notMimeMessage = true;
 		}
 		
 		// set $this->fetch to get to, from ...
@@ -443,7 +443,7 @@ class Message {
 		$data = $p->toString();
 
 		// return non-MIME data as-is
-		if (!$this->isMimeMessage) {
+		if ($this->notMimeMessage) {
 			return $data;
 		}
 

@@ -61,6 +61,7 @@ class Message {
 	public $attachments = array();
 	private $loadHtmlMessage = false;
 	private $hasHtmlMessage = false;
+	private $xfrEncoding = '';
 
 	/**
 	 * @var \Horde_Imap_Client_Socket
@@ -235,6 +236,7 @@ class Message {
 			'list-post',
 			'x-priority'
 		));
+		$headers[] = 'content-transfer-encoding';
 		$headers[] = 'content-type';
 
 		$fetch_query->headers('imp', $headers, array(
@@ -251,6 +253,13 @@ class Message {
 			throw new DoesNotExistException("This email ($this->messageId) can't be found. Probably it was deleted from the server recently. Please reload.");
 		}
 
+		// get raw MIME header text
+		$mimeHeader = $fetch->getHeaders('imp', 0);
+		// if content-transfer-encoding is set, set $this->xfrEncoding
+                if (preg_match('/Content-Transfer-Encoding:\s?([^;\r]*)/i', $mimeHeader, $ret)) {
+                        $this->xfrEncoding = trim($ret[1]);
+                }
+		
 		// set $this->fetch to get to, from ...
 		$this->fetch = $fetch;
 
@@ -434,8 +443,16 @@ class Message {
 		$p->setContents($data);
 		$data = $p->toString();
 
-		// decode quotes
-		$data = quoted_printable_decode($data);
+                // non-MIME message return as-is
+                if ($this->notMimeMessage) {
+                        return $data;
+                }
+
+		// Only handle quoted-printable for now
+		if ($this->xfrEncoding == 'quoted-printable') {
+			// decode quotes
+			$data = quoted_printable_decode($data);
+		}
 
 		//
 		// convert the data

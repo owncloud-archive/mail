@@ -221,6 +221,11 @@ class Message {
 		return false;
 	}
 
+	public function isUnseen() {
+		$flags = $this->getFlags();
+		return $flags['unseen'];
+	}
+
 	private function loadMessageBodies() {
 		$headers = array();
 

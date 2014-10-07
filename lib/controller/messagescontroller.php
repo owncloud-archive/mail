@@ -85,9 +85,12 @@ class MessagesController extends Controller
 		$accountId = $this->params('accountId');
 		$folderId = $this->params('folderId');
 		$mailBox = $this->getFolder();
-
 		$account = $this->getAccount();
 		$m = $mailBox->getMessage($id);
+		
+		if ($m->isUnseen()) {
+			$mailBox->setMessageFlag($id, Horde_Imap_Client::FLAG_SEEN, true);
+		}
 		$json = $m->getFullMessage($account->getEmail());
 		$json['senderImage'] = $this->contactsIntegration->getPhoto($m->getFromEmail());
 		if (isset($json['hasHtmlBody'])){

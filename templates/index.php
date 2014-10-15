@@ -36,7 +36,7 @@
 	</ul>
 </script>
 <script id="mail-messages-template" type="text/x-handlebars-template">
-	<div id="mail-message-summary-{{id}}" class="mail_message_summary {{#if flags.unseen}}unseen{{/if}}" data-message-id="{{id}}">
+	<div class="mail_message_summary {{#if flags.unseen}}unseen{{/if}} {{#if active}}active{{/if}}" data-message-id="{{id}}">
 		<div class="mail-message-header">
 			<div class="sender-image">
 				{{#if senderImage}}
@@ -168,10 +168,9 @@
 		<!--<a href="#" class="reply-message-forward transparency"><?php p($l->t('Forward')) ?></a>-->
 		<!-- TODO: add attachment picker -->
 	</div>
-	</div>
 </script>
 <script id="mail-attachment-template" type="text/x-handlebars-template">
-	<span>{{displayName}}</span><div class="new-message-attachments-action svg icon-delete" data-attachment-id="{{id}}"></div>
+	<span>{{displayName}}</span><div class="new-message-attachments-action svg icon-delete"></div>
 </script>
 <script id="mail-settings-template" type="text/x-handlebars-template">
 <div id="mailsettings">
@@ -213,11 +212,13 @@
 			<input id="new-message-send" class="send primary" type="submit" value="<?php p($l->t('Send')) ?>">
 		</div>
 		<div id="new-message-attachments">
-			<ul></ul>
-			<input type="button" id="mail_new_attachment" value="<?php p($l->t('Add attachment from Files')); ?>">
 		</div>
 		<div><span id="new-message-msg" class="msg"></div>
 	</div>
+</script>
+<script id="mail-attachments-template" type="text/x-handlebars-template">
+	<ul></ul>
+	<input type="button" id="mail_new_attachment" value="<?php p($l->t('Add attachment from Files')); ?>">
 </script>
 <script id="message-list-template" type="text/x-handlebars-template">
 	<input type="button" id="load-new-mail-messages" value="<?php p($l->t('Check mail …')); ?>">
@@ -282,18 +283,16 @@
 					<label for="mail-imap-host" class="infield"><?php p($l->t('IMAP Host')); ?></label>
 				</p>
 				<p class="groupmiddle">
-						<label for="mail-imap-sslmode"><?php p($l->t('IMAP security')); ?></label>
-						<select name="mail-imap-sslmode" id="mail-imap-sslmode" title="<?php p($l->t('IMAP security')); ?>">
-							<option value="none"><?php p($l->t('none')); ?></option>
-							<option value="ssl"><?php p($l->t('ssl')); ?></option>
-							<option value="tls"><?php p($l->t('tls')); ?></option>
-						</select>
-				</p>
-				<p class="groupmiddle"> 
 					<input type="email" name="mail-imap-port" id="mail-imap-port"
-						placeholder="<?php p($l->t('IMAP Port (default 143, ssl/tls 993)')); ?>"
-						value="143" />
+						placeholder="<?php p($l->t('IMAP Port')); ?>"
+						value="" />
 					<label for="mail-imap-port" class="infield"><?php p($l->t('IMAP Port')); ?></label>
+				</p>
+				<p class="groupmiddle">
+					<input type="email" name="mail-imap-sslmode" id="mail-imap-sslmode"
+						placeholder="<?php p($l->t('IMAP SSL mode')); ?>"
+						value="" />
+					<label for="mail-imap-sslmode" class="infield"><?php p($l->t('IMAP SSL mode')); ?></label>
 				</p>
 				<p class="groupmiddle">
 					<input type="email" name="mail-imap-user" id="mail-imap-user"
@@ -315,18 +314,16 @@
 					<label for="mail-smtp-host" class="infield"><?php p($l->t('SMTP Host')); ?></label>
 				</p>
 				<p class="groupmiddle">
-					<label for="mail-smtp-sslmode"><?php p($l->t('SMTP security')); ?></label>
-					<select name="mail-smtp-sslmode" id="mail-smtp-sslmode" title="<?php p($l->t('SMTP security')); ?>">
-						<option value="none"><?php p($l->t('none')); ?></option>
-						<option value="ssl"><?php p($l->t('ssl')); ?></option>
-						<option value="tls"><?php p($l->t('tls')); ?></option>
-					</select>
+					<input type="email" name="mail-smtp-port" id="mail-smtp-port"
+						placeholder="<?php p($l->t('SMTP Port')); ?>"
+						value="" />
+					<label for="mail-smtp-port" class="infield"><?php p($l->t('SMTP Port')); ?></label>
 				</p>
 				<p class="groupmiddle">
-					<input type="email" name="mail-smtp-port" id="mail-smtp-port"
-						placeholder="<?php p($l->t('SMTP Port (default 25, ssl 465)')); ?>"
-						value="25" />
-					<label for="mail-smtp-port" class="infield"><?php p($l->t('SMTP Port (default 25, ssl 465)')); ?></label>
+					<input type="email" name="mail-smtp-sslmode" id="mail-smtp-sslmode"
+						placeholder="<?php p($l->t('SMTP SSL mode')); ?>"
+						value="" />
+					<label for="mail-smtp-sslmode" class="infield"><?php p($l->t('SMTP SSL mode')); ?></label>
 				</p>
 				<p class="groupmiddle">
 					<input type="email" name="mail-smtp-user" id="mail-smtp-user"

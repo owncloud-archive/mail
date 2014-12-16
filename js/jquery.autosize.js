@@ -4,12 +4,13 @@
 	(c) 2014 Jack Moore - http://www.jacklmoore.com/autosize
 	license: http://www.opensource.org/licenses/mit-license.php
 */
+/* append "/n/n" instead of default "/n" to keep space for the reply/send button */
 (function ($) {
 	var
 	defaults = {
 		className: 'autosizejs',
 		id: 'autosizejs',
-		append: '\n',
+		append: '\n\n',
 		callback: false,
 		resizeDelay: 10,
 		placeholder: true

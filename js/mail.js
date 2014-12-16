@@ -403,7 +403,6 @@ var Mail = {
 						});
 
 						$('textarea').autosize({append:'"\n\n"'});
-
 					},
 					error: function() {
 						Mail.UI.showError(t('mail', 'Error while loading the selected message.'));

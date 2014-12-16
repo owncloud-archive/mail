@@ -402,7 +402,7 @@ var Mail = {
 
 						});
 
-						$('textarea').autosize();
+						$('textarea').autosize({append:'"\n\n"'});
 				
 					},
 					error: function() {

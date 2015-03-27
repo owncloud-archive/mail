@@ -27,6 +27,22 @@ If you’d like to join, just go through the [issue list](https://github.com/own
 
 Developer setup info
 --------------------
+###Get stated:
+
+###From Scratch
+Use the [ocdev](https://github.com/owncloud/ocdev) tool to get a working ownCloud core installation:
+```bash
+sudo apt-get install python3 python3-pip
+sudo pip3 install ocdev
+cd <workdir>
+ocdev setup core
+cd core/apps/
+ocdev setup mail
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+```
+
+###Just the App
 Just clone this repo into your apps directory. Additionally you need Composer to install dependencies:
 ```bash
 curl -sS https://getcomposer.org/installer | php

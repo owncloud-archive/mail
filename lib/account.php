@@ -156,7 +156,7 @@ class Account {
 	 *
 	 * @return Mailbox[]
 	 */
-	protected function getMailboxes() {
+	public function getMailboxes() {
 		if ($this->mailboxes === null) {
 			$this->mailboxes = $this->listMailboxes();
 			$this->sortMailboxes();
@@ -206,6 +206,7 @@ class Account {
 	 * picked amongst the ones returned by the server, as well
 	 * as the one guessed by our code.
 	 *
+	 * @param bool $base64_encode
 	 * @return array In the form array(<special use>=><folder id>, ...)
 	 */
 	public function getSpecialFoldersIds($base64_encode=true) {
@@ -438,6 +439,43 @@ class Account {
 				break;
 		}
 		return $sslmode;
+	}
+
+	/**
+	 * @param $query
+	 * @return array
+	 */
+	public function getChangedMailboxes($query) {
+		$mailBoxNames = array_map(function($folderId) {
+			return Horde_Imap_Client_Mailbox::get($folderId, true);
+		}, array_keys($query));
+		$imp = $this->getImapConnection();
+		$status = $imp->status($mailBoxNames);
+
+		// filter for changed mailboxes
+		$changedBoxes = [];
+		foreach($status as $folderId => $s) {
+			$uidValidity = $query[$folderId]['uidvalidity'];
+			$uidNext = $query[$folderId]['uidnext'];
+
+			if ($uidNext === $s['uidnext'] &&
+				$uidValidity === $s['uidvalidity']) {
+				continue;
+			}
+			$changedBoxes[$folderId]= [
+				'lastStatus' => $query[$folderId],
+				'currentStatus' => $s
+			];
+		}
+
+		// get unread messages
+		foreach($changedBoxes as $folderId => $status) {
+			$m = new Mailbox($imp, Horde_Imap_Client_Mailbox::get($folderId), []);
+			$messages = $m->getMessagesSince($status['lastStatus']['uidnext']);
+			$changedBoxes[$folderId]['messages']= $messages;
+		}
+
+		return $changedBoxes;
 	}
 }
 

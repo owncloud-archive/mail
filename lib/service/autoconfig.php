@@ -359,7 +359,7 @@ class AutoConfig {
 	 * @param $name
 	 * @param $host
 	 * @param $port
-	 * @param $encryptionProtocol
+	 * @param string|null $encryptionProtocol
 	 * @param $user
 	 * @return MailAccount
 	 */
@@ -381,8 +381,8 @@ class AutoConfig {
 	}
 
 	/**
-	 * @param $url
-	 * @param $port
+	 * @param string $url
+	 * @param integer $port
 	 * @return bool
 	 */
 	private function canConnect($url, $port) {

@@ -4,14 +4,13 @@ script('mail', 'jquery-visibility');
 ?>
 <script id="mail-folder-template" type="text/x-handlebars-template">
 	<li data-folder_id="{{id}}" data-no_select="{{noSelect}}"
-		class="
-		{{#if unseen}}unread{{/if}}
-		{{#if specialRole}} special-{{specialRole}}{{/if}}
-		{{#if folders}} collapsible{{/if}}
-		{{#if open}} open{{/if}}
-		">
+		class="{{#if unseen}}unread{{/if}}
+			{{#if specialRole}} special-{{specialRole}}{{/if}}
+			{{#if folders}} collapsible{{/if}}
+			{{#if open}} open{{/if}}">
 		{{#if folders}}<button class="collapse"></button>{{/if}}
-		<a class="folder {{#if specialRole}} icon-{{specialRole}}{{/if}}">
+		<a class="folder {{#if specialRole}} icon-{{specialRole}}{{/if}}"
+			tabindex="0">
 			{{name}}
 			{{#if unseen}}
 			<span class="utils">{{unseen}}</span>
@@ -20,11 +19,11 @@ script('mail', 'jquery-visibility');
 		<ul>
 			{{#each folders}}
 			<li data-folder_id="{{id}}"
-				class="
-		{{#if unseen}}unread{{/if}}
-		{{#if specialRole}} special-{{specialRole}}{{/if}}
-		">
-				<a class="folder {{#if specialRole}} icon-{{specialRole}}{{/if}}">
+				class="{{#if unseen}}unread{{/if}}
+					{{#if specialRole}} special-{{specialRole}}{{/if}}">
+				<a class="folder
+					{{#if specialRole}} icon-{{specialRole}}{{/if}}"
+					tabindex="0">
 					{{name}}
 					{{#if unseen}}
 					<span class="utils">{{unseen}}</span>
@@ -40,7 +39,8 @@ script('mail', 'jquery-visibility');
 	</ul>
 </script>
 <script id="mail-messages-template" type="text/x-handlebars-template">
-	<div class="mail_message_summary {{#if flags.unseen}}unseen{{/if}} {{#if active}}active{{/if}}" data-message-id="{{id}}">
+	<div class="mail_message_summary {{#if flags.unseen}}unseen{{/if}} {{#if active}}active{{/if}}"
+		data-message-id="{{id}}" tabindex="0">
 		<div class="mail-message-header">
 			<div class="sender-image">
 				{{#if senderImage}}

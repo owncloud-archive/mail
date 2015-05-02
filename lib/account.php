@@ -293,8 +293,10 @@ class Account {
 		$hordeTrashMailBox = new Horde_Imap_Client_Mailbox($trashId);
 
 		if ($hordeSourceMailBox == $hordeTrashMailBox) {
-			$result = $this->getImapConnection()->expunge($hordeSourceMailBox, array('ids' => $hordeMessageIds, 'delete' => true));
-			\OC::$server->getLogger()->info("Message expunged: {result}", array('result' => $result));
+			$result = $this->getImapConnection()->expunge($hordeSourceMailBox,
+				array('ids' => $hordeMessageIds, 'delete' => true));
+
+			\OC::$server->getLogger()->info("Message expunged: {message}", array('message' => $messageId));
 		} else {
 			$result = $this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
 				array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));

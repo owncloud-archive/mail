@@ -292,11 +292,16 @@ class Account {
 		$hordeSourceMailBox = new Horde_Imap_Client_Mailbox($sourceFolderId);
 		$hordeTrashMailBox = new Horde_Imap_Client_Mailbox($trashId);
 
-		$result = $this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
-			array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));
+		if ($hordeSourceMailBox == $hordeTrashMailBox) {
+			$result = $this->getImapConnection()->expunge($hordeSourceMailBox, array('ids' => $hordeMessageIds, 'delete' => true));
+			\OC::$server->getLogger()->info("Message expunged: {result}", array('result' => $result));
+		} else {
+			$result = $this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
+				array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));
 
-		\OC::$server->getLogger()->info("Message moved to trash: {message} from mailbox {mailbox}",
-			array('message' => $messageId, 'mailbox' => $sourceFolderId));
+			\OC::$server->getLogger()->info("Message moved to trash: {message} from mailbox {mailbox}",
+				array('message' => $messageId, 'mailbox' => $sourceFolderId));
+		}
 	}
 
 	/**

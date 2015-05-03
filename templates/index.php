@@ -1,6 +1,10 @@
 <?php
 script('mail', 'jquery.storageapi');
 script('mail', 'jquery-visibility');
+script('mail', 'jquery.fileupload');
+script('mail', 'jquery.fileupload-process');
+//script('mail', 'jquery.fileupload-validate');
+script('mail', 'jquery.iframe-transport');
 ?>
 <script id="mail-folder-template" type="text/x-handlebars-template">
 	<li data-folder_id="{{id}}" data-no_select="{{noSelect}}"
@@ -206,7 +210,7 @@ script('mail', 'jquery-visibility');
 </div>
 </script>
 <script id="new-message-template" type="text/x-handlebars-template">
-	<div id="new-message">
+	<form id="new-message">
 		<select class="mail_account">
 			{{#each aliases}}
 			<option value="{{accountId}}"><?php p($l->t('from')); ?> {{name}} &lt;{{emailAddress}}&gt;</option>
@@ -231,11 +235,14 @@ script('mail', 'jquery-visibility');
 		</div>
 		<div id="new-message-attachments">
 		</div>
-	</div>
+		<input id="fileupload" type="file" name="files[]" multiple>
+		<div><span id="new-message-msg" class="msg"></div>
+	</form>
 </script>
 <script id="mail-attachments-template" type="text/x-handlebars-template">
 	<ul></ul>
 	<input type="button" id="mail_new_attachment" value="<?php p($l->t('Add attachment from Files')); ?>">
+	<input type="button" id="mail_new_attachment_local" value="<?php p($l->t('Add attachment from local')); ?>">
 </script>
 <script id="no-search-results-message-list-template" type="text/x-handlebars-template">
 	<div id="emptycontent" class="emptycontent-search">

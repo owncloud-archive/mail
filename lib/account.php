@@ -123,7 +123,6 @@ class Account {
 		$conn->createMailbox($mailBox);
 		$this->mailboxes = null;
 
-//		$mailBox = \Horde_Imap_Client_Mailbox::get($mailBox, false)->utf7imap;
 		return $this->getMailbox($mailBox);
 	}
 

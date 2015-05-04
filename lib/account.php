@@ -360,11 +360,11 @@ class Account {
 	 * @param string $role Special role of the folder we want to get ('sent', 'inbox', etc.)
 	 * @param bool $guessBest If set to true, return only the folder with the most messages in it
 	 *
-	 * @return Mailbox[] if $guessBest is false, or Mailbox if $guessBest is true. Empty array() if no match.
+	 * @return Mailbox[], only one will be kept if $guessBest is true.
 	 */
 	protected function getSpecialFolder($role, $guessBest=true) {
 
-		$specialFolders = array();
+		$specialFolders = [];
 		foreach ($this->getMailboxes() as $mailbox) {
 			if ($role === $mailbox->getSpecialRole()) {
 				$specialFolders[] = $mailbox;
@@ -372,7 +372,7 @@ class Account {
 		}
 
 		if ($guessBest === true && count($specialFolders) > 1) {
-			return array($this->guessBestMailBox($specialFolders));
+			return [$this->guessBestMailBox($specialFolders)];
 		} else {
 			return $specialFolders;
 		}

@@ -280,6 +280,8 @@ class Account {
 	 * @param int $messageId
 	 */
 	public function deleteMessage($sourceFolderId, $messageId) {
+		$mb = $this->getMailbox($sourceFolderId);
+		$hordeSourceMailBox = $mb->getHordeMailBox();
 		// by default we will create a 'Trash' folder if no trash is found
 		$trashId = "Trash";
 		$createTrash = true;
@@ -305,10 +307,9 @@ class Account {
 		}
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);
-		$hordeSourceMailBox = new Horde_Imap_Client_Mailbox($sourceFolderId);
 		$hordeTrashMailBox = new Horde_Imap_Client_Mailbox($trashId);
 
-		$result = $this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
+		$this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
 			array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));
 
 		\OC::$server->getLogger()->info("Message moved to trash: {message} from mailbox {mailbox}",

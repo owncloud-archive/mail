@@ -340,9 +340,9 @@ class Account {
 		$maxMessages = -1;
 		$bestGuess = null;
 		foreach ($folders as $folder) {
-			/** @var Mailbox $folder */
-			if ($folder->getTotalMessages() > $maxMessages) {
-				$maxMessages = $folder->getTotalMessages();
+			$totalMessages = $folder->getTotalMessages();
+			if ($totalMessages > $maxMessages) {
+				$maxMessages = $totalMessages;
 				$bestGuess = $folder;
 			}
 		}

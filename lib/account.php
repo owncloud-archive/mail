@@ -287,13 +287,16 @@ class Account {
 	}
 
 	/**
+	 * Delete a Message
+	 *
+	 * We will create a 'Trash' folder if no trash is found
+	 *
 	 * @param string $sourceFolderId
 	 * @param int $messageId
 	 */
 	public function deleteMessage($sourceFolderId, $messageId) {
 		$mb = $this->getMailbox($sourceFolderId);
 		$hordeSourceMailBox = $mb->getHordeMailBox();
-		// by default we will create a 'Trash' folder if no trash is found
 
 		$trashFolders = $this->getSpecialFolder('trash', true);
 

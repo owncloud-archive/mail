@@ -1,4 +1,4 @@
-/* global Handlebars, Marionette, Notification, relative_modified_date, formatDate, humanFileSize, views */
+/* global Handlebars, Marionette, relative_modified_date, formatDate, humanFileSize, views */
 var Mail = {
 	State: {
 		currentFolderId: null,
@@ -504,12 +504,71 @@ var Mail = {
 			// Set current Message as active
 			Mail.UI.setMessageActive(messageId);
 
+			var showMessage = function(data) {
+				// Render the message body
+				var source = $("#mail-message-template").html();
+				var template = Handlebars.compile(source);
+				var html = template(data);
+				mailBody
+					.html(html)
+					.removeClass('icon-loading');
+
+				Mail.State.messageView.setMessageFlag(messageId, 'unseen', false);
+
+				// HTML mail rendering
+				$('iframe').load(function () {
+					// Expand height to not have two scrollbars
+					$(this).height($(this).contents().find('html').height() + 20);
+					// Fix styling
+					$(this).contents().find('body').css({
+						'margin': '0',
+						'font-weight': 'normal',
+						'font-size': '.8em',
+						'line-height': '1.6em',
+						'font-family': "'Open Sans', Frutiger, Calibri, 'Myriad Pro', Myriad, sans-serif",
+						'color': '#000'
+					});
+					// Fix font when different font is forced
+					$(this).contents().find('font').prop({
+						'face': 'Open Sans',
+						'color': '#000'
+					});
+					$(this).contents().find('.moz-text-flowed').css({
+						'font-family': 'inherit',
+						'font-size': 'inherit'
+					});
+					// Expand height again after rendering to account for new size
+					$(this).height($(this).contents().find('html').height() + 20);
+					// Grey out previous replies
+					$(this).contents().find('blockquote').css({
+						'-ms-filter': '"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"',
+						'filter': 'alpha(opacity=50)',
+						'opacity': '.5'
+					});
+					// Remove spinner when loading finished
+					$('iframe').parent().removeClass('icon-loading');
+
+				});
+
+				$('textarea').autosize({append: '"\n\n"'});
+			};
+
+			// Try to load a cached version
+			var message = Mail.Storage.getMessage(Mail.State.currentAccountId,
+				Mail.State.currentFolderId,
+				messageId);
+			if (message) {
+				showMessage(message);
+				return;
+			}
+
+			mailBody.html('').addClass('icon-loading');
+
 			// Fade out the message composer
 			$('#mail_new_message').prop('disabled', false);
 			$('#new-message').hide();
-
-			$.ajax(
-				OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/messages/{messageId}',
+		
+			$.ajax(OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/messages/{messageId}',
 					{
 					accountId: Mail.State.currentAccountId,
 					folderId: Mail.State.currentFolderId,
@@ -518,53 +577,11 @@ var Mail = {
 					data: {},
 					type: 'GET',
 					success: function (data) {
-						// Render the message body
-						var source = $("#mail-message-template").html();
-						var template = Handlebars.compile(source);
-						var html = template(data);
-						mailBody
-							.html(html)
-							.removeClass('icon-loading');
-
-						Mail.State.messageView.setMessageFlag(messageId, 'unseen', false);
-
-						// HTML mail rendering
-						$('iframe').load(function () {
-							// Expand height to not have two scrollbars
-							$(this).height($(this).contents().find('html').height() + 20);
-							// Fix styling
-							$(this).contents().find('body').css({
-								'margin': '0',
-								'font-weight': 'normal',
-								'font-size': '.8em',
-								'line-height': '1.6em',
-								'font-family': "'Open Sans', Frutiger, Calibri, 'Myriad Pro', Myriad, sans-serif",
-								'color': '#000'
-							});
-							// Fix font when different font is forced
-							$(this).contents().find('font').prop({
-								'face': 'Open Sans',
-								'color': '#000'
-							});
-							$(this).contents().find('.moz-text-flowed').css({
-								'font-family': 'inherit',
-								'font-size': 'inherit'
-							});
-							// Expand height again after rendering to account for new size
-							$(this).height($(this).contents().find('html').height() + 20);
-							// Grey out previous replies
-							$(this).contents().find('blockquote').css({
-								'-ms-filter': '"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"',
-								'filter': 'alpha(opacity=50)',
-								'opacity': '.5'
-							});
-							// Remove spinner when loading finished
-							$('iframe').parent().removeClass('icon-loading');
-
-						});
-
-						$('textarea').autosize({append: '"\n\n"'});
-
+						// save it to local storage
+						Mail.Storage.saveMessage(Mail.State.currentAccountId,
+							Mail.State.currentFolderId,
+							data);
+						showMessage(data);
 					},
 					error: function () {
 						Mail.UI.showError(t('mail', 'Error while loading the selected message.'));
@@ -788,8 +805,7 @@ $(document).ready(function () {
 
 			Mail.State.composeView.sentCallback = function () {
 
-			};
-		}
+		};
 
 		Mail.State.composeView.attachments.reset();
 		Mail.State.composeView.render();

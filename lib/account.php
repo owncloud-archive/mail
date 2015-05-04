@@ -294,27 +294,15 @@ class Account {
 		$mb = $this->getMailbox($sourceFolderId);
 		$hordeSourceMailBox = $mb->getHordeMailBox();
 		// by default we will create a 'Trash' folder if no trash is found
-		$trashId = "Trash";
-		$createTrash = true;
 
 		$trashFolders = $this->getSpecialFolder('trash', true);
 
-		if (count($trashFolders) !== 0) {
+		if ($trashFolders) {
 			$trashId = $trashFolders[0]->getFolderId();
 			$createTrash = false;
 		} else {
-			// no trash -> guess
-			$trashes = array_filter($this->getMailboxes(), function($box) {
-				/**
-				 * @var Mailbox $box
-				 */
-				return (stripos($box->getDisplayName(), 'trash') !== FALSE);
-			});
-			if (!empty($trashes)) {
-				$trashId = array_values($trashes);
-				$trashId = $trashId[0]->getFolderId();
-				$createTrash = false;
-			}
+			$trashId = "Trash";
+			$createTrash = true;
 		}
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);

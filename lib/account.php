@@ -123,7 +123,6 @@ class Account {
 		$conn->createMailbox($mailBox);
 		$this->mailboxes = null;
 
-//		$mailBox = \Horde_Imap_Client_Mailbox::get($mailBox, false)->utf7imap;
 		return $this->getMailbox($mailBox);
 	}
 
@@ -266,7 +265,7 @@ class Account {
 		}
 		return $specialFoldersIds;
 	}
-	
+
 	/**
 	 * Get the "drafts" mailbox
 	 *
@@ -356,12 +355,12 @@ class Account {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param int $messageId
 	 */
 	public function deleteDraft($messageId) {
 		$draftsFolder = $this->getDraftsFolder();
-		
+
 		$IDs = new \Horde_Imap_Client_Ids($messageId);
 		$draftsMailBox = new \Horde_Imap_Client_Mailbox($draftsFolder->getFolderId(), true);
 		$this->getImapConnection()->expunge($draftsMailBox);
@@ -579,4 +578,3 @@ class Account {
 		$this->getImapConnection();
 	}
 }
-

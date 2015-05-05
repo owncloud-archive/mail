@@ -330,7 +330,7 @@ class Account {
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);
 
-		if ($sourceFolderId === $trashId) {
+		if ($trashFolders && $sourceFolderId === $trashFolders[0]->getFolderId()) {
 			$this->getImapConnection()->expunge($hordeSourceMailBox,
 				array('ids' => $hordeMessageIds, 'delete' => true));
 

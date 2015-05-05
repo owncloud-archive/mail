@@ -203,8 +203,19 @@ class Account {
 	public function getListArray() {
 
 		$folders = array();
-		foreach ($this->getMailboxes() as $mailbox) {
-			$folders[] = $mailbox->getListArray($this->getId());
+		$mailBoxes = $this->getMailboxes();
+		$mailBoxNames = array_map(function($mb) {
+			/** @var Mailbox $mb */
+			return $mb->getFolderId();
+		}, array_filter($mailBoxes, function($mb) {
+			/** @var Mailbox $mb */
+			return (!$mb instanceof SearchMailbox) && (!in_array('\noselect', $mb->attributes()));
+		}));
+
+		$status = $this->getImapConnection()->status($mailBoxNames);
+		foreach ($mailBoxes as $mailbox) {
+			$s = isset($status[$mailbox->getFolderId()]) ? $status[$mailbox->getFolderId()] : null;
+			$folders[] = $mailbox->getListArray($this->getId(), $s);
 		}
 		return array(
 			'id'             => $this->getId(),
@@ -276,38 +287,28 @@ class Account {
 	}
 
 	/**
+	 * Delete a Message
+	 *
+	 * We will create a 'Trash' folder if no trash is found
+	 *
 	 * @param string $sourceFolderId
 	 * @param int $messageId
 	 */
 	public function deleteMessage($sourceFolderId, $messageId) {
 		$mb = $this->getMailbox($sourceFolderId);
 		$hordeSourceMailBox = $mb->getHordeMailBox();
-		// by default we will create a 'Trash' folder if no trash is found
-		$trashId = "Trash";
-		$createTrash = true;
 
 		$trashFolders = $this->getSpecialFolder('trash', true);
 
-		if (count($trashFolders) !== 0) {
-			$trashId = $trashFolders[0]->getFolderId();
+		if ($trashFolders) {
+			$hordeTrashMailBox = $trashFolders[0]->getHordeMailBox();
 			$createTrash = false;
 		} else {
-			// no trash -> guess
-			$trashes = array_filter($this->getMailboxes(), function($box) {
-				/**
-				 * @var Mailbox $box
-				 */
-				return (stripos($box->getDisplayName(), 'trash') !== FALSE);
-			});
-			if (!empty($trashes)) {
-				$trashId = array_values($trashes);
-				$trashId = $trashId[0]->getFolderId();
-				$createTrash = false;
-			}
+			$hordeTrashMailBox = new Horde_Imap_Client_Mailbox('Trash');
+			$createTrash = true;
 		}
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);
-		$hordeTrashMailBox = new Horde_Imap_Client_Mailbox($trashId);
 
 		$this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
 			array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));
@@ -329,9 +330,9 @@ class Account {
 		$maxMessages = -1;
 		$bestGuess = null;
 		foreach ($folders as $folder) {
-			/** @var Mailbox $folder */
-			if ($folder->getTotalMessages() > $maxMessages) {
-				$maxMessages = $folder->getTotalMessages();
+			$totalMessages = $folder->getTotalMessages();
+			if ($totalMessages > $maxMessages) {
+				$maxMessages = $totalMessages;
 				$bestGuess = $folder;
 			}
 		}
@@ -349,11 +350,11 @@ class Account {
 	 * @param string $role Special role of the folder we want to get ('sent', 'inbox', etc.)
 	 * @param bool $guessBest If set to true, return only the folder with the most messages in it
 	 *
-	 * @return Mailbox[] if $guessBest is false, or Mailbox if $guessBest is true. Empty array() if no match.
+	 * @return Mailbox[], only one will be kept if $guessBest is true.
 	 */
 	protected function getSpecialFolder($role, $guessBest=true) {
 
-		$specialFolders = array();
+		$specialFolders = [];
 		foreach ($this->getMailboxes() as $mailbox) {
 			if ($role === $mailbox->getSpecialRole()) {
 				$specialFolders[] = $mailbox;
@@ -361,7 +362,7 @@ class Account {
 		}
 
 		if ($guessBest === true && count($specialFolders) > 1) {
-			return array($this->guessBestMailBox($specialFolders));
+			return [$this->guessBestMailBox($specialFolders)];
 		} else {
 			return $specialFolders;
 		}
@@ -517,6 +518,15 @@ class Account {
 		}
 
 		return $changedBoxes;
+	}
+
+	public function reconnect() {
+		$this->mailboxes = null;
+		if ($this->client) {
+			$this->client->close();
+			$this->client = null;
+		}
+		$this->getImapConnection();
 	}
 }
 

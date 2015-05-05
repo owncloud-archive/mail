@@ -319,10 +319,16 @@ class Account {
 		$hordeSourceMailBox = $mb->getHordeMailBox();
 
 		$trashFolders = $this->getSpecialFolder('trash', true);
+		$expungeMessage = false;
 
 		if ($trashFolders) {
 			$hordeTrashMailBox = $trashFolders[0]->getHordeMailBox();
 			$createTrash = false;
+
+			if ($sourceFolderId === $trashFolders[0]->getFolderId()) {
+				$expungeMessage = true;
+			}
+
 		} else {
 			$hordeTrashMailBox = new Horde_Imap_Client_Mailbox('Trash');
 			$createTrash = true;
@@ -330,7 +336,7 @@ class Account {
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);
 
-		if ($trashFolders && $sourceFolderId === $trashFolders[0]->getFolderId()) {
+		if ($expungeMessage) {
 			$this->getImapConnection()->expunge($hordeSourceMailBox,
 				array('ids' => $hordeMessageIds, 'delete' => true));
 

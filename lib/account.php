@@ -301,15 +301,14 @@ class Account {
 		$trashFolders = $this->getSpecialFolder('trash', true);
 
 		if ($trashFolders) {
-			$trashId = $trashFolders[0]->getFolderId();
+			$hordeTrashMailBox = $trashFolders[0]->getHordeMailBox();
 			$createTrash = false;
 		} else {
-			$trashId = "Trash";
+			$hordeTrashMailBox = new Horde_Imap_Client_Mailbox('Trash');
 			$createTrash = true;
 		}
 
 		$hordeMessageIds = new Horde_Imap_Client_Ids($messageId);
-		$hordeTrashMailBox = new Horde_Imap_Client_Mailbox($trashId);
 
 		$this->getImapConnection()->copy($hordeSourceMailBox, $hordeTrashMailBox,
 			array('create' => $createTrash, 'move' => true, 'ids' => $hordeMessageIds));

@@ -96,9 +96,13 @@ class Html {
 	 * @return string
 	 */
 	public function convertLinks($data) {
-		$regex = "/(ht|f)tp(s?)\:\/\/(([a-zA-Z0-9\-\._]+(\.[a-zA-Z0-9\-\._]+)+)|localhost)(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#!_]*)?([\d\w\.\/\%\+\-\=\&amp;\?\:\\\&quot;\'\,\|\~\;]*)/";
-		$data = preg_replace($regex, "<a href=\"\\0\" target=\"_blank\" rel=\"noreferrer\">\\0</a>", $data);
-		return $data;
+//		$text = preg_replace("/\b(https?:\/\/[\pL0-9\.&\-\/@#;`~=%?:_\+,\)\(]+)\b/ui", '{lt}a href={quot}$1{quot} target={quot}_blank{quot} class={quot}normal-link{quot}{gt}$1{lt}/a{gt}', $text."\n");
+//		$text = preg_replace("/\b([\pL0-9\._\-]+@[\pL0-9\.\-_]+\.[a-z]{2,4})(\s)/ui", "{lt}a class={quot}normal-link{quot} href={quot}mailto:$1{quot}{gt}$1{lt}/a{gt}$2", $text);
+
+//		$regex = "/(ht|f)tp(s?)\:\/\/(([a-zA-Z0-9\-\._]+(\.[a-zA-Z0-9\-\._]+)+)|localhost)(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#!_]*)?([\d\w\.\/\%\+\-\=\&amp;\?\:\\\&quot;\'\,\|\~\;]*)/";
+//		$data = preg_replace($regex, "<a href=\"\\0\" target=\"_blank\" rel=\"noreferrer\">\\0</a>", $data);
+		$text = preg_replace("/\b((ht|f)tps?:\/\/[\pL0-9\.&\-\/@#;`~=%?:_\+,\)\(]+)\b/ui", '<a href="$1" target="_blank" rel="noreferrer">$1</a>', $data);
+		return $text;
 	}
 
 	/**

@@ -13,16 +13,21 @@
 
 namespace OCA\Mail\Tests\Service;
 
-class HtmlTest extends \PHPUnit_Framework_TestCase {
+use OCA\mail\lib\service\SecurityToken;
+use Test\TestCase;
+
+class HtmlTest extends TestCase {
 
 	/**
 	 * @dataProvider linkDetectionProvider
 	 * @param $expected
 	 * @param $text
 	 */
-	public function testLinkDetection($expected, $text){
-
-		$html = new \OCA\Mail\Service\Html();
+	public function testLinkDetection($expected, $text) {
+		/** @var SecurityToken $securityToken */
+		$securityToken = $this->getMockBuilder('\OCA\mail\lib\service\SecurityToken')
+			->disableOriginalConstructor()->getMock();
+		$html = new \OCA\Mail\Service\Html($securityToken);
 		$withLinks = $html->convertLinks($text);
 		$this->assertSame($expected, $withLinks);
     }
@@ -46,13 +51,15 @@ class HtmlTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @dataProvider parseMailBodyProvider
-	 * @param $expected
+	 * @param string $expectedBody
+	 * @param string $expectedSignature
 	 * @param $text
-	 */
-	public function testParseMailBody($expectedBody, $expectedSignature, $text){
-
-		$html = new \OCA\Mail\Service\Html();
-		list($b, $s) = $html->parseMailBody($text);
+	 */public function testParseMailBody($expectedBody, $expectedSignature, $text){
+		/** @var SecurityToken $securityToken */
+		$securityToken = $this->getMockBuilder('\OCA\mail\lib\service\SecurityToken')
+			->disableOriginalConstructor()->getMock();
+		$html = new \OCA\Mail\Service\Html($securityToken);
+	list($b, $s) = $html->parseMailBody($text);
 		$this->assertSame($expectedBody, $b);
 		$this->assertSame($expectedSignature, $s);
 	}

@@ -16,12 +16,15 @@ use OCA\Mail\Controller\FoldersController;
 use OCA\Mail\Controller\MessagesController;
 use OCA\Mail\Controller\ProxyController;
 use OCA\Mail\Db\MailAccountMapper;
+use OCA\mail\lib\middleware\SignedRequestMiddleware;
+use OCA\mail\lib\service\SecurityToken;
 use OCA\Mail\Service\AutoConfig;
 use OCA\Mail\Service\ContactsIntegration;
 use OCA\Mail\Service\Logger;
 use \OCP\AppFramework\App;
 use \OCA\Mail\Controller\PageController;
 use OCP\AppFramework\IAppContainer;
+use OCP\IContainer;
 
 class Application extends App {
 
@@ -79,7 +82,8 @@ class Application extends App {
 				$c->getServer()->getUserFolder(),
 				$c->query('ContactsIntegration'),
 				$c->query('Logger'),
-				$c->getServer()->getL10N('mail')
+				$c->getServer()->getL10N('mail'),
+				$c->query('SecurityToken')
 			);
 		});
 
@@ -126,12 +130,35 @@ class Application extends App {
 			);
 		});
 
+		$container->registerService('SecurityToken', function(IContainer $c) {
+			return new SecurityToken(
+				$c->query('ServerContainer')->getSession(),
+				$c->query('ServerContainer')->getSecureRandom(),
+				$c->query('ServerContainer')->getCrypto()
+			);
+		});
+
 		/**
 		 * Core
 		 */
 		$container->registerService('UserId', function() {
 			return \OCP\User::getUser();
 		});
+
+		/**
+		 * Middleware
+		 */
+		$container->registerService('SignedRequestMiddleware', function(IContainer $c){
+			return new SignedRequestMiddleware(
+				$c->query('ControllerMethodReflector'),
+				$c->query('SecurityToken'),
+				$c->query('ServerContainer')->getRequest()
+			);
+		});
+
+		// Execute middlewares
+		$container->registerMiddleware('SignedRequestMiddleware');
+
 	}
 
 }

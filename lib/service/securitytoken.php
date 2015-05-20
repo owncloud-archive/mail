@@ -80,7 +80,7 @@ class SecurityToken {
 	 *
 	 * @return string
 	 */
-	private function getSecretKey() {
+	public function getSecretKey() {
 		$secret = $this->userSession->get($this->identifier);
 		if(is_null($secret)) {
 			$secret = $this->secureRandom->getMediumStrengthGenerator()->generate(32);

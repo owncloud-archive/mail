@@ -130,7 +130,6 @@ class MessagesController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * @UseSession
 	 *
 	 * @param int $id
 	 * @return JSONResponse

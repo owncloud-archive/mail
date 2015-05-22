@@ -6,7 +6,7 @@
     "requireParenthesesAroundIIFE": true,
     "maximumLineLength": 120,
     "validateLineBreaks": "LF",
-    "validateIndentation": 4,
+    "validateIndentation": "\t",
 
     "disallowKeywords": ["with"],
     "disallowSpacesInsideObjectBrackets": null,
@@ -15,7 +15,16 @@
     "safeContextKeyword": "_this",
 
     "excludeFiles": [
-        "test/data/**"
+        "node_modules/",
+        "vendor/",
+        ".git/",
+        "l10n/",
+        "js/backbone.js",
+        "js/handlebars-v1.3.0.js",
+        "js/backbone.marionette.js",
+        "js/jquery.autosize.js",
+        "js/jquery.storageapi.js",
+        "js/jquery.visibility.js"
     ],
 
     "jsDoc": {

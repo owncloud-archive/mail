@@ -89,23 +89,31 @@ class Mailbox implements IMailBox {
 	}
 
 	public function getMessages($from = 0, $count = 2, $filter = '') {
-		if ($filter instanceof Horde_Imap_Client_Search_Query) {
-			$query = $filter;
+
+		if (empty($filter)) {
+			$total = $this->getTotalMessages();
+			$from = $total - $from;
+			$to = max($from - $count + 1, 1);
+			$ids = new \Horde_Imap_Client_Ids("$from:$to", true);
 		} else {
-			$query = new Horde_Imap_Client_Search_Query();
-			if ($filter) {
-				$query->text($filter, false);
+			if ($filter instanceof Horde_Imap_Client_Search_Query) {
+				$query = $filter;
+			} else {
+				$query = new Horde_Imap_Client_Search_Query();
+				if ($filter) {
+					$query->text($filter, false);
+				}
 			}
+			if ($this->getSpecialRole() !== 'trash') {
+				$query->flag(Horde_Imap_Client::FLAG_DELETED, false);
+			}
+			$result = $this->conn->search($this->mailBox, $query, ['sort' => [Horde_Imap_Client::SORT_DATE]]);
+			$ids = array_reverse($result['match']->ids);
+			if ($from >= 0 && $count >= 0) {
+				$ids = array_slice($ids, $from, $count);
+			}
+			$ids = new \Horde_Imap_Client_Ids($ids, false);
 		}
-		if ($this->getSpecialRole() !== 'trash') {
-			$query->flag(Horde_Imap_Client::FLAG_DELETED, false);
-		}
-		$result = $this->conn->search($this->mailBox, $query, ['sort' => [Horde_Imap_Client::SORT_DATE]]);
-		$ids = array_reverse($result['match']->ids);
-		if ($from >= 0 && $count >= 0) {
-			$ids = array_slice($ids, $from, $count);
-		}
-		$ids = new \Horde_Imap_Client_Ids($ids, false);
 
 		$headers = [];
 

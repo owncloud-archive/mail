@@ -619,6 +619,9 @@ var Mail = {
 					OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/messages',
 						{'accountId': accountId, 'folderId': folderId}), {
 						success: function (jsondata) {
+							var messages = jsondata.messages;
+							var syncToken = jsondata.syncToken;
+							console.log('sync token: ' + syncToken);
 							Mail.State.currentlyLoading = null;
 							Mail.State.currentAccountId = accountId;
 							Mail.State.currentFolderId = folderId;
@@ -628,19 +631,19 @@ var Mail = {
 							// Fade out the message composer
 							$('#mail_new_message').prop('disabled', false);
 
-							if (jsondata.length > 0) {
-								Mail.UI.addMessages(jsondata);
+							if (messages.length > 0) {
+								Mail.UI.addMessages(messages);
 
 								// Fetch first 10 messages in background
-								_.each(jsondata.slice(0, 10), function (message) {
+								_.each(messages.slice(0, 10), function (message) {
 									Mail.BackGround.messageFetcher.push(message.id);
 								});
 
-								var messageId = jsondata[0].id;
+								var messageId = messages[0].id;
 								Mail.UI.loadMessage(messageId);
 								// Show 'Load More' button if there are
 								// more messages than the pagination limit
-								if (jsondata.length > 20) {
+								if (messages.length > 20) {
 									$('#load-more-mail-messages')
 										.fadeIn()
 										.css('display', 'block');

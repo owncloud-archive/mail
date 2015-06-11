@@ -13,6 +13,8 @@
 namespace OCA\Mail\Controller;
 
 use Horde_Imap_Client;
+use OCA\Mail\Account;
+use OCA\Mail\Mailbox;
 use OCA\Mail\Db\MailAccountMapper;
 use OCA\Mail\Http\AttachmentDownloadResponse;
 use OCA\Mail\Http\HtmlResponse;
@@ -67,13 +69,13 @@ class MessagesController extends Controller {
 	 * @param $l10n
 	 */
 	public function __construct($appName,
-								$request,
-								MailAccountMapper $mapper,
-								$currentUserId,
-								$userFolder,
-								$contactsIntegration,
-								$logger,
-								$l10n) {
+			$request,
+			MailAccountMapper $mapper,
+			$currentUserId,
+			$userFolder,
+			$contactsIntegration,
+			$logger,
+			$l10n) {
 		parent::__construct($appName, $request);
 		$this->mapper = $mapper;
 		$this->currentUserId = $currentUserId;
@@ -98,10 +100,10 @@ class MessagesController extends Controller {
 		$folderId = $mailBox->getFolderId();
 		$this->logger->debug("loading messages $from to $to of folder <$folderId>");
 
-		$json = $mailBox->getMessages($from, $to-$from+1, $filter);
+		$messages = $mailBox->getMessages($from, $to-$from+1, $filter);
 
 		$ci = $this->contactsIntegration;
-		$json = array_map(function($j) use ($ci, $mailBox) {
+		$messages = array_map(function($j) use ($ci, $mailBox) {
 			if ($mailBox->getSpecialRole() === 'trash') {
 				$j['delete'] = (string)$this->l10n->t('Delete permanently');
 			}
@@ -116,9 +118,14 @@ class MessagesController extends Controller {
 
 			$j['senderImage'] = $ci->getPhoto($j['fromEmail']);
 			return $j;
-		}, $json);
+		}, $messages);
 
-		return new JSONResponse($json);
+		$syncToken = $this->getSyncToken($mailBox);
+
+		return new JSONResponse([
+			'messages' => $messages,
+			'syncToken' => $syncToken,
+		]);
 	}
 
 	/**
@@ -330,6 +337,16 @@ class MessagesController extends Controller {
 			'requesttoken' => \OCP\Util::callRegister(),
 		]);
 		return \OC::$server->getURLGenerator()->getAbsoluteURL($htmlBodyUrl);
+	}
+
+	/**
+	 * 
+	 * @param \OCA\Mail\Mailbox $mailBox
+	 */
+	private function getSyncToken(Mailbox $mailBox) {
+		$m = new Account($this->getAccount());
+		$client = $m->getImapConnection();
+		return $client->getSyncToken($mailBox->getHordeMailBox());
 	}
 
 }

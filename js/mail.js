@@ -211,8 +211,7 @@ var Mail = {
 
 								// update folder status
 								var localFolder = folders.get(f.id);
-								localFolder.set('uidvalidity', f.uidvalidity);
-								localFolder.set('uidnext', f.uidnext);
+								localFolder.set('syncToken', f.syncToken);
 								localFolder.set('unseen', f.unseen);
 								localFolder.set('total', f.total);
 
@@ -620,8 +619,6 @@ var Mail = {
 						{'accountId': accountId, 'folderId': folderId}), {
 						success: function (jsondata) {
 							var messages = jsondata.messages;
-							var syncToken = jsondata.syncToken;
-							console.log('sync token: ' + syncToken);
 							Mail.State.currentlyLoading = null;
 							Mail.State.currentAccountId = accountId;
 							Mail.State.currentFolderId = folderId;

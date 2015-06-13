@@ -230,7 +230,7 @@ class Account {
 			'email'          => $this->getEMailAddress(),
 			'folders'        => array_values($folders),
 			'specialFolders' => $this->getSpecialFoldersIds(),
-			'delimiter' => $delimiter,
+			'delimiter'      => $delimiter,
 		];
 	}
 
@@ -555,8 +555,8 @@ class Account {
 		// filter for changed mailboxes
 		$changedBoxes = [];
 		foreach($status as $folderId => $s) {
-			$uidValidity = $query[$folderId]['uidvalidity'];
-			$uidNext = $query[$folderId]['uidnext'];
+			$syncToken = $query[$folderId]['syncToken'];
+			// TODO: detect changes based on the sync token
 
 			if ($uidNext === $s['uidnext'] &&
 				$uidValidity === $s['uidvalidity']) {
@@ -566,6 +566,10 @@ class Account {
 			if (isset($allBoxesMap[$folderId])) {
 				/** @var Mailbox $m */
 				$m = $allBoxesMap[$folderId];
+
+				// TODO: Fails because no IDs are specified:
+				// $newMessages = $m->getNewMessages($folder['syncToken']);
+
 				$role = $m->getSpecialRole();
 				if (is_null($role) || $role === 'inbox') {
 					$newMessages = $m->getMessagesSince($uidNext, $s['uidnext']);

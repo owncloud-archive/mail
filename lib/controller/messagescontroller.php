@@ -340,7 +340,6 @@ class MessagesController extends Controller {
 	}
 
 	/**
-	 * 
 	 * @param \OCA\Mail\Mailbox $mailBox
 	 */
 	private function getSyncToken(Mailbox $mailBox) {

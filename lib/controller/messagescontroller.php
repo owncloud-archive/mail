@@ -21,6 +21,7 @@ use OCA\Mail\Http\HtmlResponse;
 use OCA\Mail\Service\ContactsIntegration;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -269,6 +270,28 @@ class MessagesController extends Controller {
 		$mailBox->setMessageFlag($messageId, Horde_Imap_Client::FLAG_FLAGGED, !$starred);
 
 		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * 
+	 * @param string $token
+	 * @param int[] $knownMessageIDs
+	 */
+	public function detectChanges($token, $knownMessageIDs) {
+		$mailbox = $this->getFolder();
+
+		try {
+			$changes = [
+			    'newMessages' => $mailbox->getNewMessages($token),
+			    'changedFlags' => $mailbox->getChangedFlags($token, $knownMessageIDs),
+			    'deletedMessages' => $mailbox->getDeletedMessages($token, $knownMessageIDs),
+			];
+			return new JSONResponse($changes);
+		} catch (\Horde_Imap_Client_Exception_Sync $ex) {
+			return new JSONResponse(['error' => $ex->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**

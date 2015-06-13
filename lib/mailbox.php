@@ -321,6 +321,49 @@ class Mailbox {
 	}
 
 	/**
+	 * Get all message IDs of new messages
+	 * 
+	 * @param string $syncToken sync token
+	 * @return int[]
+	 */
+	public function getNewMessages($syncToken) {
+		$sync = $this->conn->sync($this->getHordeMailBox(), $syncToken, [
+		    'criteria' => Horde_Imap_Client::SYNC_NEWMSGSUIDS,
+		]);
+		return array_flip($sync->newmsgsuids->ids);
+	}
+
+	/**
+	 * Get all message IDS of messages with changed flags
+	 * 
+	 * @param string $syncToken sync token to compare changes
+	 * @param int[] $messageIDs message IDs known by the client
+	 * @return int[]
+	 */
+	public function getChangedFlags($syncToken, array $messageIDs=[]) {
+		$sync = $this->conn->sync($this->getHordeMailBox(), $syncToken, [
+		    'criteria' => Horde_Imap_Client::SYNC_FLAGSUIDS,
+		    'ids' => new Horde_Imap_Client_Ids($messageIDs),
+		]);
+		return array_flip($sync->flagsuids->ids);
+	}
+
+	/**
+	 * Get all vanished message IDs
+	 * 
+	 * @param string $syncToken sync token
+	 * @param int[] $messageIDs message IDs known by the client
+	 * @return int[]
+	 */
+	public function getDeletedMessages($syncToken, array $messageIDs=[]) {
+		$sync = $this->conn->sync($this->getHordeMailBox(), $syncToken, [
+		    'criteria' => Horde_Imap_Client::SYNC_VANISHEDUIDS,
+		    'ids' => new Horde_Imap_Client_Ids($messageIDs),
+		]);
+		return array_flip($sync->vanisheduids->ids);
+	}
+
+	/**
 	 * @param string $rawBody
 	 * @param array $flags
 	 */

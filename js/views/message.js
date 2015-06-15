@@ -305,7 +305,7 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 						self.collection.reset();
 					}
 					// Add messages
-					self.collection.add(jsondata);
+					self.collection.add(jsondata.messages);
 
 					$('#app-content').removeClass('icon-loading');
 

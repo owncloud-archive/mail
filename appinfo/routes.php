@@ -32,6 +32,10 @@ $app->registerRoutes($this,
 				'url' => '/accounts/{accountId}/folders/{folderId}/messages/{messageId}/toggleStar',
 				'verb' => 'POST'],
 			[
+				'name' => 'messages#detectChanges',
+				'url' => '/accounts/{accountId}/folders/{folderId}/detectChanges',
+				'verb' => 'GET'],
+			[
 				'name' => 'proxy#redirect',
 				'url' => '/redirect',
 				'verb' => 'GET'],

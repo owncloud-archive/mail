@@ -119,6 +119,57 @@ var Mail = {
 			});
 		}
 	},
+	Sync: (function() {
+		// Data structure for storing all sync tokens
+		// usage: syncTokens[accountId][folderId]
+		var syncTokens = {};
+		// Update every 10 seconds
+		var updateInterval = 10 * 1000;
+		var timer = null;
+
+		function detectChanges() {
+			var accountId = Mail.State.currentAccountId;
+			var folderId = Mail.State.currentFolderId;
+			// Only start if there ary any accounts/folders/tokens
+			if (accountId && folderId) {
+				var url = OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/detectChanges',
+					{
+						accountId: accountId,
+						folderId: folderId
+					});
+				var knownIDs = [];
+				Mail.State.messageView.collection.each(function(m) {
+					knownIDs.push(m.id);
+				});
+				$.ajax(url,
+					{
+						data: {
+							token: 'VTE5MyxWMTQyODU5OTExNSxNMTMy',
+							knownMessageIds: knownIDs
+						},
+						success: function(data) {
+							console.log(data);
+						},
+						error: function(error) {
+							console.log(error);
+						}
+					});
+			}
+		}
+
+		timer = setInterval(detectChanges, updateInterval);
+
+		return {
+			addSyncToken: function(accountId, folderId, token) {
+				if (!syncTokens[accountId]) {
+					syncTokens[accountId] = {};
+				}
+				syncTokens[accountId][folderId] = token;
+				console.log('new sync token: ' + token);
+			},
+			check: detectChanges
+		}
+	})(),
 	Search: {
 		timeoutID: null,
 		attach: function (search) {
@@ -635,6 +686,9 @@ var Mail = {
 					OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/messages',
 						{'accountId': accountId, 'folderId': folderId}), {
 						success: function (jsondata) {
+							var messages = jsondata.messages;
+							var syncToken = jsondata.syncToken;
+							Mail.Sync.addSyncToken(accountId, folderId, syncToken);
 							Mail.State.currentlyLoading = null;
 							Mail.State.currentAccountId = accountId;
 							Mail.State.currentFolderId = folderId;
@@ -644,19 +698,19 @@ var Mail = {
 							// Fade out the message composer
 							$('#mail_new_message').prop('disabled', false);
 
-							if (jsondata.length > 0) {
-								Mail.UI.addMessages(jsondata);
+							if (messages.length > 0) {
+								Mail.UI.addMessages(messages);
 
 								// Fetch first 10 messages in background
-								_.each(jsondata.slice(0, 10), function (message) {
+								_.each(messages.slice(0, 10), function (message) {
 									Mail.BackGround.messageFetcher.push(message.id);
 								});
 
-								var messageId = jsondata[0].id;
+								var messageId = messages[0].id;
 								Mail.UI.loadMessage(messageId);
 								// Show 'Load More' button if there are
 								// more messages than the pagination limit
-								if (jsondata.length > 20) {
+								if (messages.length > 20) {
 									$('#load-more-mail-messages')
 										.fadeIn()
 										.css('display', 'block');

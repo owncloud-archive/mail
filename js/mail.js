@@ -1120,6 +1120,22 @@ var Mail = {
 				Mail.BackGround.messageFetcher.restart();
 				// hide message detail view on mobile
 				$('#mail-message').addClass('hidden-mobile');
+			},
+
+			/**
+			 * On send composer body changed
+			 * 
+			 * Is triggered on user input change and programmatically changes
+			 * (e.g. mailvelope inserts encrypted message)
+			 * 
+			 * @returns undefined
+			 */
+			onSendComposerBodyChanged: function() {
+				// Update send button state
+				Mail.UI.toggleSendButton();
+
+				// Resize textarea
+				$('#new-message-body').trigger('autosize.resize');
 			}
 		};
 

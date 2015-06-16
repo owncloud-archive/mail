@@ -41,6 +41,20 @@ views.SendMail = Backbone.View.extend({
 		}
 		this.el = options.el;
 		this.currentAccountId = this.aliases[0].accountId;
+
+		// Poll for any changes in the composer message body
+		setInterval((function() {
+			var oldVal = '';
+
+			return function() {
+				var textarea = $('#new-message-body');
+				var newVal = textarea.val();
+				if (newVal !== oldVal) {
+					Mail.UI.Events.onSendComposerBodyChanged();
+					oldVal = newVal;
+				}
+			};
+		})(), 850);
 	},
 
 	changeAlias: function(event) {

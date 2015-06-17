@@ -35,7 +35,7 @@ class Message {
 	 * @var string[]
 	 */
 	private $attachmentsToIgnore = ['signature.asc', 'smime.p7s'];
-	/** @var SecurityToken  */
+	/** @var Html */
 	private $htmlService;
 
 	/**
@@ -45,14 +45,18 @@ class Message {
 	 * @param \Horde_Imap_Client_Data_Fetch|null $fetch
 	 * @param boolean $loadHtmlMessage
 	 */
-	public function __construct($conn, $mailBox, $messageId, $fetch=null,
-		$loadHtmlMessage=false) {
+	public function __construct($conn,
+								$mailBox,
+								$messageId,
+								$fetch = null,
+								$loadHtmlMessage = false) {
 		$this->conn = $conn;
 		$this->mailBox = $mailBox;
 		$this->messageId = $messageId;
 		$this->loadHtmlMessage = $loadHtmlMessage;
 
-		// FIXME: Inject
+		// FIXME: Should get injected - code requires really big refactoring for
+		//        that at the moment.
 		$securityToken = new SecurityToken(
 			\OC::$server->getSession(),
 			\OC::$server->getSecureRandom(),

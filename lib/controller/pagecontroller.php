@@ -22,34 +22,53 @@
 
 namespace OCA\Mail\Controller;
 
+use OCA\Mail\Db\MailAccountMapper;
+use OCA\mail\lib\service\SecurityToken;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IRequest;
 
+/**
+ * Class PageController
+ *
+ * @package OCA\Mail\Controller
+ */
 class PageController extends Controller {
-
-	/**
-	 * @var \OCA\Mail\Db\MailAccountMapper
-	 */
+	/** @var MailAccountMapper */
 	private $mailAccountMapper;
+	/** @var string */
+	private $currentUserId;
+	/** @var SecurityToken */
+	private $securityToken;
 
 	/**
-	 * @var string
+	 * @param string $appName
+	 * @param \OCP\IRequest $request
+	 * @param $mailAccountMapper
+	 * @param $currentUserId
+	 * @param SecurityToken $securityToken
 	 */
-	private $currentUserId;
-
-	public function __construct($appName, $request, $mailAccountMapper, $currentUserId){
+	public function __construct($appName,
+								IRequest $request,
+								$mailAccountMapper,
+								$currentUserId,
+								SecurityToken $securityToken) {
 		parent::__construct($appName, $request);
 		$this->mailAccountMapper = $mailAccountMapper;
 		$this->currentUserId = $currentUserId;
+		$this->securityToken = $securityToken;
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
+	 * @UseSession
 	 *
 	 * @return TemplateResponse renders the index page
 	 */
 	public function index() {
+		// Used to ensure that a secret key is initialized
+		$this->securityToken->getSecretKey();
 
 		\OCP\Util::addScript('mail','handlebars-v1.3.0');
 		\OCP\Util::addScript('mail','jquery.autosize');

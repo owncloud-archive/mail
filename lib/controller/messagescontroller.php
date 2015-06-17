@@ -16,6 +16,7 @@ use Horde_Imap_Client;
 use OCA\Mail\Db\MailAccountMapper;
 use OCA\Mail\Http\AttachmentDownloadResponse;
 use OCA\Mail\Http\HtmlResponse;
+use OCA\mail\lib\service\SecurityToken;
 use OCA\Mail\Service\ContactsIntegration;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -55,6 +56,8 @@ class MessagesController extends Controller {
 	 * @var IL10N
 	 */
 	private $l10n;
+	/** @var SecurityToken */
+	private $securityToken;
 
 	/**
 	 * @param string $appName
@@ -65,6 +68,7 @@ class MessagesController extends Controller {
 	 * @param $contactsIntegration
 	 * @param $logger
 	 * @param $l10n
+	 * @param SecurityToken $securityToken
 	 */
 	public function __construct($appName,
 								$request,
@@ -73,7 +77,8 @@ class MessagesController extends Controller {
 								$userFolder,
 								$contactsIntegration,
 								$logger,
-								$l10n) {
+								$l10n,
+								SecurityToken $securityToken) {
 		parent::__construct($appName, $request);
 		$this->mapper = $mapper;
 		$this->currentUserId = $currentUserId;
@@ -81,6 +86,7 @@ class MessagesController extends Controller {
 		$this->contactsIntegration = $contactsIntegration;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
+		$this->securityToken = $securityToken;
 	}
 
 	/**
@@ -159,6 +165,8 @@ class MessagesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @SignedRequestRequired
 	 *
 	 * @param int $messageId
 	 * @return JSONResponse
@@ -320,16 +328,20 @@ class MessagesController extends Controller {
 	}
 
 	/**
-	 * @param integer $id
+	 * @param $accountId
+	 * @param $folderId
+	 * @param int $id
+	 * @return string
 	 */
 	private function buildHtmlBodyUrl($accountId, $folderId, $id) {
 		$htmlBodyUrl = \OC::$server->getURLGenerator()->linkToRoute('mail.messages.getHtmlBody', [
 			'accountId' => $accountId,
 			'folderId' => $folderId,
 			'messageId' => $id,
-			'requesttoken' => \OCP\Util::callRegister(),
 		]);
-		return \OC::$server->getURLGenerator()->getAbsoluteURL($htmlBodyUrl);
+
+		$signedRequest = $this->securityToken->calculateToken(parse_url($htmlBodyUrl)['path']);
+		return $htmlBodyUrl . '?token=' . urlencode($signedRequest);
 	}
 
 }

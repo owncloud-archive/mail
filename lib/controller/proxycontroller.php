@@ -40,6 +40,12 @@ class ProxyController extends Controller {
 	 */
 	private $session;
 
+	/**
+	 * @param string $appName
+	 * @param \OCP\IRequest $request
+	 * @param IURLGenerator $urlGenerator
+	 * @param \OCP\ISession $session
+	 */
 	public function __construct($appName, $request, IURLGenerator $urlGenerator, \OCP\ISession $session){
 		parent::__construct($appName, $request);
 		$this->urlGenerator = $urlGenerator;
@@ -86,6 +92,9 @@ class ProxyController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
+	 * @SignedRequestRequired
+	 *
+	 * @param string $src
 	 *
 	 * TODO: Cache the proxied content to prevent unnecessary requests from the oC server
 	 *       The caching should also already happen in a cronjob so that the sender of the
@@ -93,12 +102,9 @@ class ProxyController extends Controller {
 	 *
 	 * @return ProxyDownloadResponse
 	 */
-	public function proxy() {
-		// close the session to allow parallel downloads
-		$this->session->close();
-
-		$resourceURL = $this->request->getParam('src');
-		$content =  \OC::$server->getHelper()->getUrlContent($resourceURL);
-		return new ProxyDownloadResponse($content, $resourceURL, 'application/octet-stream');
+	public function proxy($src) {
+		$src = urldecode($src);
+		$content = \OC::$server->getHelper()->getUrlContent($src);
+		return new ProxyDownloadResponse($content, $src, 'application/octet-stream');
 	}
 }

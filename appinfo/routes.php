@@ -37,7 +37,7 @@ $app->registerRoutes($this,
 				'verb' => 'GET'],
 			[
 				'name' => 'proxy#proxy',
-				'url' => '/proxy',
+				'url' => '/proxy/{src}',
 				'verb' => 'GET'],
 			[
 				'name' => 'folders#detectChanges',

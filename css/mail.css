@@ -266,6 +266,13 @@
 	margin-left: 37px;
 }
 
+.mail_message_summary_thread_count {
+	display: initial;
+	position: absolute;
+	right: 40px;
+	font-weight: bold;
+}
+
 .date {
 	position: absolute;
 	right: 0;

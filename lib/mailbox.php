@@ -76,6 +76,7 @@ class Mailbox {
 		if ($this->getSpecialRole() !== 'trash') {
 			$query->flag(Horde_Imap_Client::FLAG_DELETED, false);
 		}
+
 		$result = $this->conn->search($this->mailBox, $query, ['sort' => [Horde_Imap_Client::SORT_DATE]]);
 		$ids = array_reverse($result['match']->ids);
 		if ($from >= 0 && $count >= 0) {
@@ -105,16 +106,33 @@ class Mailbox {
 			'peek'  => true
 		]);
 
+		$thread = $this->getThreadForIds($ids);
+		$ids = array_filter($ids->ids, function($id) use ($thread) {
+			$messageThread = $thread->getThread($id);
+
+			if (count($messageThread) === 1) {
+				return true;
+			}
+
+			return $messageThread[$id]->base === $id;
+		});
+		$ids = new \Horde_Imap_Client_Ids($ids, false);
+
 		$options = ['ids' => $ids];
 		// $list is an array of Horde_Imap_Client_Data_Fetch objects.
 		$headers = $this->conn->fetch($this->mailBox, $fetch_query, $options);
 
 		ob_start(); // fix for Horde warnings
 		$messages = [];
-		foreach ($headers->ids() as $message_id) {
-			$header = $headers[$message_id];
-			$message = new Message($this->conn, $this->mailBox, $message_id, $header);
-			$messages[] = $message->getListArray();
+		foreach ($headers->ids() as $messageId) {
+			$header = $headers[$messageId];
+			$message = new Message($this->conn, $this->mailBox, $messageId, $header);
+			$m = $message->getListArray();
+			$messageThread = $thread->getThread($messageId);
+			$m['thread'] = $messageThread;
+			$m['threadCount'] = count($messageThread);
+			$m['isThread'] = count($messageThread) > 1;
+			$messages[] = $m;
 		}
 		ob_get_clean();
 
@@ -404,5 +422,15 @@ class Mailbox {
 	 */
 	public function getHordeMailBox() {
 		return $this->mailBox;
+	}
+
+	private function getThreadForIds(Horde_Imap_Client_Ids $ids) {
+		$caps = $this->conn->capability();
+		$query = new Horde_Imap_Client_Search_Query();
+		$query->ids($ids);
+		$thread = $this->conn->thread($this->mailBox, ['search' => $query]);
+		$messages = $thread->messageList();
+
+		return $thread;
 	}
 }

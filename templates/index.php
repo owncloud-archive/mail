@@ -70,6 +70,9 @@ script('mail', 'jquery-visibility');
 			<div class="mail_message_summary_subject" title="{{subject}}">
 				{{subject}}
 			</div>
+			{{#if isThread}}
+			<div class="mail_message_summary_thread_count">{{threadCount}}</div>
+			{{/if}}
 			<div class="date">
 					<span class="modified"
 						title="{{formatDate dateInt}}">

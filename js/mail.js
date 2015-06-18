@@ -1306,6 +1306,46 @@ $(document).ready(function() {
 	$(document).on('change input paste keyup', '.reply-message-fields #to', Mail.UI.toggleReplyButton);
 	$(document).on('change input paste keyup', '.reply-message-body', Mail.UI.toggleReplyButton);
 
+	/**
+	* Detects pasted text by browser plugins, and other software.
+	* Check for changes in message bodies every second.
+	*/
+	setInterval((function() {
+			// Begin the loop.
+			return function() {
+
+			// Define which elements hold the message body.
+			var textareaNewMessage = $('#new-message-body');
+			var textareaReplyMessage = $('.reply-message-body');
+
+			// Check if the message body is displayed,
+			// If displayed, prepare the message body content for processing.
+			if (textareaNewMessage.val()) {
+				this.textareaNewMessageNew = textareaNewMessage.val();
+			}
+			else if (textareaReplyMessage.val()) {
+				this.textareaReplyMessageNew = textareaReplyMessage.val();
+			}
+
+			/**
+			 * If there is new message body content to process..
+			 * Resize the text area.
+			 * Toggle the send button, based on whether the message is ready or not.
+			 * Prepare the new message body content for future processing.
+			 */
+			if (this.textareaNewMessageNew !== this.textareaNewMessageOld) {
+				textareaNewMessage.trigger('autosize.resize');
+				Mail.UI.toggleSendButton();
+				this.textareaNewMessageOld = this.textareaNewMessageNew;
+			}
+			else if (this.textareaReplyMessageNew !== this.textareaReplyMessageOld) {
+				textareaReplyMessage.trigger('autosize.resize');
+				Mail.UI.toggleReplyButton();
+				this.textareaReplyMessageOld = this.textareaReplyMessageNew;
+			}
+		};
+	})(), 1000);
+
 	$(document).on('click', '#mail-message .attachment-save-to-cloud', function(event) {
 		event.stopPropagation();
 		var messageId = $(this).parent().data('messageId');

@@ -36,18 +36,20 @@ class Message {
 	private $attachmentsToIgnore = ['signature.asc', 'smime.p7s'];
 
 	/**
+	 * @var Html
+	 */
+	private $htmlService;
+
+	/**
 	 * @param \Horde_Imap_Client_Socket|null $conn
 	 * @param \Horde_Imap_Client_Mailbox $mailBox
 	 * @param integer $messageId
 	 * @param \Horde_Imap_Client_Data_Fetch|null $fetch
-	 * @param boolean $loadHtmlMessage
 	 */
-	public function __construct($conn, $mailBox, $messageId, $fetch=null,
-		$loadHtmlMessage=false) {
+	public function __construct($conn, $mailBox, $messageId, $fetch=null) {
 		$this->conn = $conn;
 		$this->mailBox = $mailBox;
 		$this->messageId = $messageId;
-		$this->loadHtmlMessage = $loadHtmlMessage;
 
 		// TODO: inject ???
 //		$cacheDir = \OC::$server->getUserFolder() . '/mail/html-cache';
@@ -66,7 +68,6 @@ class Message {
 	public $htmlMessage = '';
 	public $plainMessage = '';
 	public $attachments = [];
-	private $loadHtmlMessage = false;
 	private $hasHtmlMessage = false;
 
 	/**
@@ -365,6 +366,7 @@ class Message {
 		$data = $this->getListArray();
 		if ($this->hasHtmlMessage) {
 			$data['hasHtmlBody'] = true;
+			$data['body'] = $this->getHtmlBody();
 		} else {
 			$mailBody = $this->htmlService->convertLinks($mailBody);
 			list($mailBody, $signature) = $this->htmlService->parseMailBody($mailBody);
@@ -450,10 +452,8 @@ class Message {
 	 */
 	private function handleHtmlMessage($p, $partNo) {
 		$this->hasHtmlMessage = true;
-		if ($this->loadHtmlMessage) {
-			$data = $this->loadBodyData($p, $partNo);
-			$this->htmlMessage .= $data . "<br><br>";
-		}
+		$data = $this->loadBodyData($p, $partNo);
+		$this->htmlMessage .= $data . "<br><br>";
 	}
 
 	/**

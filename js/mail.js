@@ -406,7 +406,13 @@ var Mail = {
 				}), {
 					data: {},
 					type: 'GET',
-					success: options.onSuccess,
+					success: function (message) {
+						if (message.hasHtmlBody) {
+							message.htmlBodyUrl = 'data:text/html;charset=utf-8,' +
+								encodeURI(message.body);
+						}
+						options.onSuccess(message);
+					},
 					error: options.onError
 				});
 			if (!options.backgroundMode) {

@@ -141,9 +141,6 @@ class MessagesController extends Controller {
 		}
 		$json = $m->getFullMessage($account->getEmail(), $mailBox->getSpecialRole());
 		$json['senderImage'] = $this->contactsIntegration->getPhoto($m->getFromEmail());
-		if (isset($json['hasHtmlBody'])){
-			$json['htmlBodyUrl'] = $this->buildHtmlBodyUrl($accountId, $folderId, $id);
-		}
 
 		if (isset($json['attachment'])) {
 			$json['attachment'] = $this->enrichDownloadUrl($accountId, $folderId, $id, $json['attachment']);
@@ -167,7 +164,7 @@ class MessagesController extends Controller {
 		try {
 			$mailBox = $this->getFolder();
 
-			$m = $mailBox->getMessage($messageId, true);
+			$m = $mailBox->getMessage($messageId);
 			$html = $m->getHtmlBody();
 
 			$htmlResponse = new HtmlResponse($html);
@@ -317,19 +314,6 @@ class MessagesController extends Controller {
 		$attachment['downloadUrl'] = $downloadUrl;
 		$attachment['mimeUrl'] = \OC_Helper::mimetypeIcon($attachment['mime']);
 		return $attachment;
-	}
-
-	/**
-	 * @param integer $id
-	 */
-	private function buildHtmlBodyUrl($accountId, $folderId, $id) {
-		$htmlBodyUrl = \OC::$server->getURLGenerator()->linkToRoute('mail.messages.getHtmlBody', [
-			'accountId' => $accountId,
-			'folderId' => $folderId,
-			'messageId' => $id,
-			'requesttoken' => \OCP\Util::callRegister(),
-		]);
-		return \OC::$server->getURLGenerator()->getAbsoluteURL($htmlBodyUrl);
 	}
 
 }

@@ -132,19 +132,27 @@ views.SendMail = Backbone.View.extend({
 
 		var message = this.getMessage();
 		var self = this;
+		var data = new FormData();
+		jQuery.each($('#fileupload')[0].files, function(i, file) {
+			data.append('file-'+i, file);
+		});
+
+		data.append('to', message.to);
+		data.append('cc', message.cc);
+		data.append('bcc', message.bcc);
+		data.append('subject', message.subject);
+		data.append('body', message.body);
+		data.append('attachments', message.attachments);
+		data.append('files', message.files);
+		data.append('draftUID', this.draftUID);
+
 		// send the mail
 		$.ajax({
 			url:OC.generateUrl('/apps/mail/accounts/{accountId}/send', {accountId: this.currentAccountId}),
 			type: 'POST',
-			data:{
-				'to': message.to,
-				'cc': message.cc,
-				'bcc': message.bcc,
-				'subject': message.subject,
-				'body': message.body,
-				'attachments': message.attachments,
-				'draftUID' : this.draftUID
-			},
+			contentType: false,
+			processData: false,
+			data: data,
 			success:function () {
 				OC.Notification.showTemporary(t('mail', 'Message sent!'));
 

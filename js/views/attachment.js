@@ -52,7 +52,7 @@ views.Attachments = Backbone.Marionette.CompositeView.extend({
 			});
 	},
 
-	addAttachmentLocal: function() {
+	addAttachmentLocal: function(event) {
 	}
 
 });

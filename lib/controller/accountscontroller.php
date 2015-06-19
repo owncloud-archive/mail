@@ -341,6 +341,15 @@ class AccountsController extends Controller {
 				}
 			}
 		}
+		foreach($_FILES as $file) {
+			$a = new \Horde_Mime_Part();
+			$a->setCharset('us-ascii');
+			$a->setDisposition('attachment');
+			$a->setName($file['name']);
+			$a->setContents(file_get_contents($file['tmp_name']));
+			$a->setType($file['type']);
+			$mail->addMimePart($a);
+		}
 
 		// create transport and send
 		try {

@@ -188,7 +188,7 @@ class AccountsController extends Controller {
 	 * @param string $smtpSslMode
 	 * @param string $smtpUser
 	 * @param string $smtpPassword
-	 * @param bool   $autoDetect
+	 * @param boolean $autoDetect
 	 * @return JSONResponse
 	 */
 	public function create($accountName, $emailAddress, $password,

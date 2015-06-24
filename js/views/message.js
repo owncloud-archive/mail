@@ -19,9 +19,17 @@ views.Message = Backbone.Marionette.ItemView.extend({
 	},
 
 	events: {
-		"click .action.delete" : "deleteMessage",
 		"click .mail-message-header" : "openMessage",
+		"click .action.delete" : "deleteMessage",
 		"click .star" : "toggleMessageStar"
+	},
+
+	initialize: function (){
+		//_.bindAll(this, 'setMessageFlag');
+		//this.listenTo(this.model, 'change', this.render, this);
+
+		// AFAIK, this changes nothing.
+		this.model.bind('change', this.render, this);
 	},
 
 	onRender: function () {
@@ -41,13 +49,14 @@ views.Message = Backbone.Marionette.ItemView.extend({
 	},
 
 	toggleMessageStar: function(event) {
+		// Stop any event handlers below this element from being fired.
 		event.stopPropagation();
 
-		var messageId = this.model.id;
-		var starred = this.model.get('flags').get('flagged');
 		var thisModel = this.model;
+		var messageId = this.model.id;
+		var starred = this.model.attributes.flags.flagged;
 
-		// directly change star state in the interface for quick feedback
+		// Change star state in the interface for quick feedback.
 		if(starred) {
 			this.ui.star
 				.removeClass('icon-starred')
@@ -70,10 +79,12 @@ views.Message = Backbone.Marionette.ItemView.extend({
 				},
 				type:'POST',
 				success: function () {
-					thisModel.get('flags').set('flagged', !starred);
+					// Retrieve the starred/flag status from the backend and display the results.
+					Mail.UI.messageView.loadMessages();
 				},
 				error: function() {
 					Mail.UI.showError(t('mail', 'Message could not be starred. Please try again.'));
+					// Change star state in the interface to it's previous state.
 					thisModel.get('flags').set('flagged', starred);
 				}
 			});
@@ -85,6 +96,66 @@ views.Message = Backbone.Marionette.ItemView.extend({
 		Mail.UI.loadMessage(this.model.id, {
 			force: true
 		});
+
+		var message = this.model;
+		this.setMessageFlag(message, 'unseen');
+	},
+
+	/**
+	 *
+	 * @todo Combine toggleMessageStar.
+	 * @todo Fully integrate object handlers.
+	 * @todo add flag handlers for: flagged, answered, deleted, draft, forwarded, hasAttachments
+	 * @param object $message Uses the object for obtaining the ID.
+	 * @param string $flag unseen
+	 * @param boolean $value Default is to toggle, otherwise use defined value.
+	 */
+	setMessageFlag: function(message, flag, value) {
+		var messageId = message.id;
+		var unseen;
+		message = this.$el;
+
+		// Reusable function that provides immediate feedback while AJAX is loading.
+		var setUnseenCss = function (unseen) {
+			if (unseen) {
+				message.removeClass('unseen');
+			} else {
+				message.addClass('unseen');
+			}
+		};
+
+		if (flag === 'unseen') {
+			// If there is no manual selection/value, then toggle.
+			if (_.isUndefined(value)) {
+				unseen = !message.is('.unseen');
+				setUnseenCss(unseen);
+			} else {
+				unseen = value;
+				setUnseenCss(unseen);
+			}
+			$.ajax(
+				OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/messages/{messageId}/toggleUnseen',
+				{	accountId: Mail.State.currentAccountId,
+					folderId: Mail.State.currentFolderId,
+					messageId: messageId
+				}), {
+					data: {
+						unseen: unseen
+					},
+					type:'POST',
+					success: function () {
+						// Refresh the message list to display the updates.
+						Mail.UI.messageView.loadMessages();
+					},
+					error: function() {
+						Mail.UI.showError(t('mail', 'Could not communicate with the mail server. Please try again.'));
+						// Change unseen state in the interface to it's previous state.
+						setUnseenCss(unseen);
+					}
+				});
+		} else {
+			// @todo Add new flag methods here.
+		}
 	},
 
 	deleteMessage: function(event) {
@@ -92,8 +163,6 @@ views.Message = Backbone.Marionette.ItemView.extend({
 		var thisModel = this.model;
 		this.ui.iconDelete.removeClass('icon-delete').addClass('icon-loading');
 		$('.tipsy').remove();
-
-		thisModel.get('flags').set('unseen', false);
 
 		this.$el.addClass('transparency').slideUp(function() {
 			$('.tipsy').remove();
@@ -140,8 +209,6 @@ views.Message = Backbone.Marionette.ItemView.extend({
 				}
 			});
 	}
-
-
 });
 
 views.NoSearchResultMessageListView = Marionette.ItemView.extend({
@@ -152,7 +219,6 @@ views.NoSearchResultMessageListView = Marionette.ItemView.extend({
 	template: "#no-search-results-message-list-template",
 
 	onRender: function() {
-		$('#load-more-mail-messages').hide();
 	}
 });
 
@@ -167,8 +233,6 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 	currentMessageId: null,
 
 	events: {
-		"click #load-new-mail-messages" : "loadNew",
-		"click #load-more-mail-messages" : "loadMore"
 	},
 
 	filterCriteria: null,
@@ -177,7 +241,6 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 
 	initialize: function() {
 		this.collection = new models.MessageList();
-		this.collection.on('change:flags', this.changeFlags, this);
 	},
 
 	getEmptyView: function() {
@@ -189,26 +252,6 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 
 	emptyViewOptions: function () {
 		return { filterCriteria: this.filterCriteria };
-	},
-
-	changeFlags: function(model) {
-		var unseen = model.get('flags').get('unseen');
-		var prevUnseen = model.get('flags')._previousAttributes.unseen;
-		//if(_.isUndefined(model._previousAttributes.flags.unseen)) {
-		//	prevUnseen = model._previousAttributes.flags.get('unseen');
-		//}
-		if (unseen !== prevUnseen) {
-			this.trigger('change:unseen', model, unseen);
-		}
-	},
-
-	setMessageFlag: function(messageId, flag, val) {
-		var message = this.collection.get(messageId);
-		if (message) {
-			message
-				.get('flags')
-				.set(flag, val);
-		}
 	},
 
 	setActiveMessage: function(messageId) {
@@ -233,31 +276,11 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 
 	},
 
-	loadNew: function() {
-		if (!Mail.State.currentAccountId) {
-			return;
-		}
-		if (!Mail.State.currentFolderId) {
-			return;
-		}
-		// Add loading feedback
-		$('#load-new-mail-messages')
-			.addClass('icon-loading-small')
-			.val(t('mail', 'Checking mail …'))
-			.prop('disabled', true);
-
-		this.loadMessages(true);
-	},
-
-	loadMore: function() {
-		this.loadMessages(false);
-	},
-
 	filterCurrentMailbox: function(query) {
 		this.filterCriteria = {
 			text: query
 		};
-		this.loadNew();
+		this.loadMessages();
 	},
 
 	clearFilter: function() {
@@ -265,17 +288,42 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 		this.filterCriteria = null;
 	},
 
-	loadMessages: function(reload) {
-		reload = reload || false;
-		var from = this.collection.size();
-		if (reload){
-			from = 0;
+	/**
+	 * Refreshes the message list of the current folder by default.
+	 * @param boolean|string $addMore Add 20 more messages to the message list.
+	 */
+	loadMessages: function(addMore) {
+		addMore = addMore || false;
+		var element = $('#load-more-mail-messages');
+		var outerHeight = element.outerHeight();
+		var offset = element.offset();
+		var scrollLength = $('#mail_messages').scrollTop();
+		var messageListHeight = scrollLength + offset.top + outerHeight;
+		var from = 0;
+		var to;
+
+		// If there are no more messages to load, stop here.
+		if (addMore && element.hasClass('noNewMessages')) {
+			return;
 		}
-		// Add loading feedback
-		$('#load-more-mail-messages')
-			.addClass('icon-loading-small')
-			.val(t('mail', 'Loading …'))
-			.prop('disabled', true);
+
+		// Prepare to retrieve the next 20 older messages.
+		if (addMore){
+			from = this.collection.size();
+			to = from + 20;
+			// Show the loading element to notify of the message retrieval.
+			if (!element.is(':visible')) {
+				element
+					.show(1, function() {
+						// Scroll to the notification.
+						$('#mail_messages').animate({ scrollTop: messageListHeight }, 1);
+					});
+			}
+		} else  {
+			// Refresh the message list to display any updates.
+			from = 0;
+			to = this.collection.size() - 1;
+		}
 
 		var url = OC.generateUrl(
 			'apps/mail/accounts/{accountId}/folders/{folderId}/messages?from={from}&to={to}',
@@ -283,7 +331,7 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 				'accountId': Mail.State.currentAccountId,
 				'folderId':Mail.State.currentFolderId,
 				'from': from,
-				'to': from + 20
+				'to': to
 			});
 		if (this.filterCriteria) {
 			url = OC.generateUrl(
@@ -293,39 +341,59 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 					'folderId':Mail.State.currentFolderId,
 					'query': this.filterCriteria.text,
 					'from': from,
-					'to': from + 20
+					'to': to
 				});
 		}
-		var self = this;
 		$.ajax(url, {
 				data: {},
 				type:'GET',
 				success: function (jsondata) {
-					if (reload){
-						self.collection.reset();
+					if (addMore){
+						// Add 20 more messages to the message list.
+						Mail.UI.messageView.collection.add(jsondata);
+						// Compare sizes to see if anything new is being retrieved.
+						var newSize = Mail.UI.messageView.collection.size();
+						var oldSize = from;
+						// If there are no older messages, this CSS class stops future processing.
+						if (newSize === oldSize) {
+							element.addClass('noNewMessages');
+						}
+					} else {
+						// Refresh the message list.
+						Mail.UI.messageView.collection.set(jsondata);
+						// Update the unseen counter for the current folder.
+						Mail.State.folderView.changeUnseenCount(this);
+						// Update the title.
+						Mail.State.folderView.updateTitle();
 					}
-					// Add messages
-					self.collection.add(jsondata);
 
 					$('#app-content').removeClass('icon-loading');
-
+					// Set the active message to the message currently open.
 					Mail.UI.setMessageActive(Mail.State.currentMessageId);
+					// Hide and reset our loading/error element.
+					if (element.is(':visible')) {
+						element
+							.hide()
+							.addClass('icon-loading')
+							.html('');
+					}
 				},
 				error: function() {
-					Mail.UI.showError(t('mail', 'Error while loading messages.'));
-					// Set the old folder as being active
+					// Prepare our loading/error element to display the error notification.
+					if (element.hasClass('icon-loading')) {
+						element
+							.removeClass('icon-loading')
+							.html("<span>" + t('mail', 'Cannot communicate with mail server.') + "</span>")
+							.show(1, function() {
+								// Scroll to the notification.
+								$('#mail_messages').animate({ scrollTop: messageListHeight }, 1);
+							});
+					}
+					// Set the current folder as being active.
 					Mail.UI.setFolderActive(Mail.State.currentAccountId, Mail.State.currentFolderId);
 				},
 				complete: function() {
-					// Remove loading feedback again
-					$('#load-more-mail-messages')
-						.removeClass('icon-loading-small')
-						.val(t('mail', 'Load more …'))
-						.prop('disabled', false);
-					$('#load-new-mail-messages')
-						.removeClass('icon-loading-small')
-						.val(t('mail', 'Check messages …'))
-						.prop('disabled', false);
+					//
 				}
 			});
 	}

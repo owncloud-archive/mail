@@ -1200,7 +1200,7 @@ $(document).ready(function() {
 		var messageListHeight = scrollLength + offset.top + outerHeight;
 
 		if ((scrollLength + screenHeight) >= messageListHeight) {
-				Mail.UI.messageView.loadMessages('addMore');
+			Mail.UI.messageView.loadMessages('addMore');
 		}
 
 	}, 1000);

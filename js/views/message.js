@@ -25,10 +25,8 @@ views.Message = Backbone.Marionette.ItemView.extend({
 	},
 
 	initialize: function (){
-		//_.bindAll(this, 'setMessageFlag');
-		//this.listenTo(this.model, 'change', this.render, this);
-
 		// AFAIK, this changes nothing.
+		// @todo look into the purpose, and need of this bind.
 		this.model.bind('change', this.render, this);
 	},
 

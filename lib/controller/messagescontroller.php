@@ -262,7 +262,40 @@ class MessagesController extends Controller {
 
 		$mailBox->setMessageFlag($messageId, Horde_Imap_Client::FLAG_FLAGGED, !$starred);
 
+		if ($starred) { $starred = 'true';} else { $starred = 'false'; }
+		error_log('toggleStar: '.$messageId.' and '.$starred);
+
 		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $messageId
+	 * @param boolean $unseen
+	 * @return JSONResponse
+	 */
+	public function toggleUnseen($messageId, $unseen) {
+		$mailBox = $this->getFolder();
+
+		$mailBox->setMessageFlag($messageId, Horde_Imap_Client::FLAG_SEEN, !$unseen);
+
+		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $accountId Defaults are POST parameters.
+	 * @param string $folderId Defaults are POST parameters.
+	 * @return JSONResponse
+	 */
+	public function getUnseenCount($accountId, $folderId) {
+
+		$mailBox = $this->getFolder();
+		$status = $mailBox->getStatus(\Horde_Imap_Client::STATUS_UNSEEN);
+
+		return new JSONResponse($status);
 	}
 
 	/**

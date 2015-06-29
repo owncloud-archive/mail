@@ -585,9 +585,6 @@ var Mail = {
 			});
 			Mail.State.folderView.render();
 
-			Mail.State.folderView.listenTo(Mail.UI.messageView, 'change:unseen',
-				Mail.State.folderView.changeUnseen);
-
 			// request permissions
 			if (typeof Notification !== 'undefined') {
 				Notification.requestPermission();
@@ -597,8 +594,16 @@ var Mail = {
 				OC.Plugins.register('OCA.Search', Mail.Search);
 			}
 
+			/**
+			* Checks and loads any new messages and changes to the current folder.
+			* @todo combine this with the checkForNotifications method.
+			* @todo leadMessages needs to update the unseen folder counter.
+			*/
 			setInterval(Mail.BackGround.checkForNotifications, 5*60*1000);
 			this.loadAccounts();
+
+
+
 		};
 
 		this.loadFoldersForAccount = function(accountId, firstAccountId) {
@@ -700,8 +705,6 @@ var Mail = {
 			$('#folders').removeClass('hidden');
 			$('#mail-setup').addClass('hidden');
 
-			$('#load-new-mail-messages').hide();
-			$('#load-more-mail-messages').hide();
 			$('#emptycontent').hide();
 
 			if (noSelect) {
@@ -729,29 +732,22 @@ var Mail = {
 							if (jsondata.length > 0) {
 								Mail.UI.addMessages(jsondata);
 
+								// Load once to initiate object accessability outside of Backbone.
+								Mail.UI.messageView.loadMessages();
+
 								// Fetch first 10 messages in background
 								var first10 = Mail.State.messageView.collection.first(10);
 								_.each(first10, function (message) {
 									Mail.BackGround.messageFetcher.push(message.id);
 								});
 
+								// Load the first message in the message list.
 								var messageId = Mail.State.messageView.collection.first().get('id');
 								Mail.UI.loadMessage(messageId);
-								// Show 'Load More' button if there are
-								// more messages than the pagination limit
-								if (jsondata.length > 20) {
-									$('#load-more-mail-messages')
-										.fadeIn()
-										.css('display', 'block');
-								}
 							} else {
 								$('#emptycontent').show();
 								$('#mail-message').removeClass('icon-loading');
 							}
-							$('#load-new-mail-messages')
-								.fadeIn()
-								.css('display', 'block')
-								.prop('disabled', false);
 
 						},
 						error: function(textStatus) {
@@ -963,8 +959,6 @@ var Mail = {
 				mailBody
 					.html(html)
 					.removeClass('icon-loading');
-
-				Mail.UI.messageView.setMessageFlag(messageId, 'unseen', false);
 
 				// HTML mail rendering
 				$('iframe').load(function() {
@@ -1195,6 +1189,34 @@ var Mail = {
 
 $(document).ready(function() {
 	Mail.UI.initializeInterface();
+
+	// Enables infinite scroll ability.
+	setInterval(function() {
+
+		// Element identifies the element we want to trigger our loading on.
+		var element = $('.mail_message_summary:nth-last-child(1)');
+		var outerHeight = element.outerHeight();
+		var offset = element.offset();
+		var scrollLength = $('#mail_messages').scrollTop();
+		var screenHeight = $(document).height();
+		var messageListHeight = scrollLength + offset.top + outerHeight;
+
+		if ((scrollLength + screenHeight) >= messageListHeight) {
+			Mail.UI.messageView.loadMessages('addMore');
+		}
+
+	}, 1000);
+
+	/**
+	* Checks and loads any new messages and changes to the current folder.
+	* @todo combine this with the checkForNotifications method.
+	*/
+	setInterval((function() {
+		// Begin the loop.
+		return function() {
+			Mail.UI.messageView.loadMessages();
+		};
+	})(), 10*1000);
 
 	// auto detect button handling
 	$('#auto_detect_account').click(function(event) {

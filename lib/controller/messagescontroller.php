@@ -279,10 +279,6 @@ class MessagesController extends Controller {
 
 		$mailBox->setMessageFlag($messageId, Horde_Imap_Client::FLAG_SEEN, !$unseen);
 
-		// @TODO Remove this once debugging.
-		if ($unseen) { $unseen = 'true';} else { $unseen = 'false'; }
-		error_log('toggleUnseen: '.$messageId.' and '.$unseen);
-
 		return new JSONResponse();
 	}
 

@@ -1368,11 +1368,6 @@ $(document).ready(function() {
 		Mail.UI.changeFavicon(OC.filePath('mail', 'img', 'favicon.png'));
 	});
 
-	// Message list scroll detection for  auto-loading more messages.
-
-
-
-
 	// Listens to key strokes, and executes a function based on the key combinations.
 	$(document).keyup(function(event){
 		// Define which objects to check for the event properties.

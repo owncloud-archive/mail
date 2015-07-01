@@ -97,14 +97,41 @@ views.Folders = Backbone.Marionette.CollectionView.extend({
 		return activeFolder;
 	},
 
-	changeUnseen: function(model, unseen) {
+	/**
+	 * Retrieve and/or adjust the unseen count for the current folder on display.
+	 * @todo Add the ability to adjust any folder.
+	 * @param object $model The model to reference for the active folder.
+	 * @param boolean|string $unseen True/false for manual unseen entries; check for updates retrieved from backend.
+	 */
+	changeUnseenCount: function(model, unseen) {
 		// TODO: currentFolderId and currentAccountId should be an attribute of this view
+		unseen = unseen || 'check';
 		var activeFolder = this.getFolderById();
-		if (unseen) {
-			activeFolder.set('unseen', activeFolder.get('unseen') + 1);
-		} else {
-			if (activeFolder.get('unseen') > 0) {
-				activeFolder.set('unseen', activeFolder.get('unseen') - 1);
+		// Ask the IMAP server what the unseen count is.
+		if (unseen === 'check') {
+			$.ajax(
+				OC.generateUrl('apps/mail/accounts/{accountId}/folders/{folderId}/getUnseenCount',
+				{ accountId: Mail.State.currentAccountId,
+					folderId: Mail.State.currentFolderId,
+				}), {
+					type:'POST',
+					success: function (jsondata) {
+						// Set the new unseen count.
+						activeFolder.set('unseen', jsondata.unseen);
+					},
+					error: function() {
+						Mail.UI.showError(t('mail', 'Could not get unread count for this folder. Please try again.'));
+					}
+				});
+		}
+		// Adjust the display of the unseen count manually.
+		if (typeof unseen === 'boolean') {
+			if (unseen) {
+				activeFolder.set('unseen', activeFolder.get('unseen') + 1);
+			} else {
+				if (activeFolder.get('unseen') > 0) {
+					activeFolder.set('unseen', activeFolder.get('unseen') - 1);
+				}
 			}
 		}
 		this.updateTitle();

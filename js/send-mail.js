@@ -122,7 +122,8 @@ $(function() {
 			},
 			type: 'POST',
 			success:function() {
-				Mail.UI.messageView.setMessageFlag(messageId, 'answered', true);
+				// Reload the message list to display the answered flag.
+				Mail.UI.messageView.loadMessages();
 				OC.Notification.showTemporary(t('mail', 'Message sent!'));
 
 				// close reply

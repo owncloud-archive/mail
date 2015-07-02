@@ -268,6 +268,36 @@ class MessagesController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
+	 * @param string $messageId
+	 * @param boolean $unseen
+	 * @return JSONResponse
+	 */
+	public function toggleUnseen($messageId, $unseen) {
+		$mailBox = $this->getFolder();
+
+		$mailBox->setMessageFlag($messageId, Horde_Imap_Client::FLAG_SEEN, !$unseen);
+
+		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $accountId Defaults are POST parameters.
+	 * @param string $folderId Defaults are POST parameters.
+	 * @return JSONResponse
+	 */
+	public function getUnseenCount($accountId, $folderId) {
+
+		$mailBox = $this->getFolder();
+		$status = $mailBox->getStatus(\Horde_Imap_Client::STATUS_UNSEEN);
+
+		return new JSONResponse($status);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
 	 * @param string $id
 	 * @return JSONResponse
 	 */

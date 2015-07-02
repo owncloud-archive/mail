@@ -32,6 +32,14 @@ $app->registerRoutes($this,
 				'url' => '/accounts/{accountId}/folders/{folderId}/messages/{messageId}/toggleStar',
 				'verb' => 'POST'],
 			[
+				'name' => 'messages#toggleUnseen',
+				'url' => '/accounts/{accountId}/folders/{folderId}/messages/{messageId}/toggleUnseen',
+				'verb' => 'POST'],
+			[
+				'name' => 'messages#getUnseenCount',
+				'url' => '/accounts/{accountId}/folders/{folderId}/getUnseenCount',
+				'verb' => 'POST'],
+			[
 				'name' => 'proxy#redirect',
 				'url' => '/redirect',
 				'verb' => 'GET'],

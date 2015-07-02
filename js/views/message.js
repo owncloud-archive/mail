@@ -300,15 +300,12 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 		if (settings === 'addMore' && element.is(':hidden')) {
 			return;
 		}
-		// Set the default class.
-		element.addClass('icon-download');
+		// Loading feedback
+		element.addClass('icon-loading');
 		if (settings === 'addMore'){
 			// Retrieve the next 20 older messages.
 			from = this.collection.size();
 			to = from + 20;
-			// Display feedback.
-			element.removeClass('icon-download');
-			element.addClass('icon-loading');
 		} else  {
 			// Refresh the message list to display any updates.
 			from = 0;
@@ -367,7 +364,7 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 					if (settings === 'addMore') {
 						// Display error message at the bottom message list.
 						element
-							.removeClass('icon-loading').removeClass('icon-download')
+							.removeClass('icon-loading')
 							.html(t('mail', 'Cannot communicate with mail server.'));
 					} else {
 						// Display it at the top of the ownCloud page.
@@ -378,8 +375,7 @@ views.Messages = Backbone.Marionette.CompositeView.extend({
 				},
 				complete: function() {
 					// Set the element back to it's normal state.
-					element.removeClass('icon-loading');
-					element.addClass('icon-download');
+					element.addClass('icon-loading');
 				}
 			});
 	}

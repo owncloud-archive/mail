@@ -125,25 +125,34 @@ views.SendMail = Backbone.View.extend({
 		subject.prop('disabled', true);
 		$('.new-message-attachments-action').css('display', 'none');
 		$('#mail_new_attachment').prop('disabled', true);
+		$('#mail_new_attachment_local').prop('disabled', true);
 		newMessageBody.prop('disabled', true);
 		newMessageSend.prop('disabled', true);
 		newMessageSend.val(t('mail', 'Sending …'));
 
 		var message = this.getMessage();
 		var self = this;
+		var data = new FormData();
+		jQuery.each($('#fileupload')[0].files, function(i, file) {
+			data.append('file-'+i, file);
+		});
+
+		data.append('to', message.to);
+		data.append('cc', message.cc);
+		data.append('bcc', message.bcc);
+		data.append('subject', message.subject);
+		data.append('body', message.body);
+		data.append('attachments', message.attachments);
+		data.append('files', message.files);
+		data.append('draftUID', this.draftUID);
+
 		// send the mail
 		$.ajax({
 			url:OC.generateUrl('/apps/mail/accounts/{accountId}/send', {accountId: this.currentAccountId}),
 			type: 'POST',
-			data:{
-				'to': message.to,
-				'cc': message.cc,
-				'bcc': message.bcc,
-				'subject': message.subject,
-				'body': message.body,
-				'attachments': message.attachments,
-				'draftUID' : this.draftUID
-			},
+			contentType: false,
+			processData: false,
+			data: data,
 			success:function () {
 				OC.Notification.showTemporary(t('mail', 'Message sent!'));
 
@@ -182,6 +191,7 @@ views.SendMail = Backbone.View.extend({
 				subject.prop('disabled', false);
 				$('.new-message-attachments-action').css('display', 'inline-block');
 				$('#mail_new_attachment').prop('disabled', false);
+				$('#mail_new_attachment_local').prop('disabled', false);
 				newMessageBody.prop('disabled', false);
 				newMessageSend.prop('disabled', false);
 				newMessageSend.val(t('mail', 'Send'));

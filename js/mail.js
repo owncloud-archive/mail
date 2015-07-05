@@ -1399,4 +1399,9 @@ $(document).ready(function() {
 		}
 	});
 
+	$(document).on('click', '#mail_new_attachment_local', function () {
+		$('#fileupload').trigger('click');
+		return false;
+	});
+
 });

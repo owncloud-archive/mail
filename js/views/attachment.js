@@ -31,7 +31,8 @@ views.Attachments = Backbone.Marionette.CompositeView.extend({
 	template: '#mail-attachments-template',
 
 	events: {
-		'click #mail_new_attachment' : 'addAttachment'
+		'click #mail_new_attachment' : 'addAttachment',
+		'click #mail_new_attachment_local' : 'addAttachmentLocal'
 	},
 
 	initialize: function(options) {
@@ -49,5 +50,9 @@ views.Attachments = Backbone.Marionette.CompositeView.extend({
 					}
 				]);
 			});
+	},
+
+	addAttachmentLocal: function() {
 	}
+
 });

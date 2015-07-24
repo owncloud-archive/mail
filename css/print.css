@@ -2,9 +2,21 @@
   display: none;
 }
 
+#app{
+}
+
 #mail-message{
+  position: relative;
   width: 95%;
   overflow-x: auto;
+  overflow-y: auto;
+}
+
+#content-wrapper{
+  position: relative;
+}
+
+#app-content{
 }
 
 #mail-message-header{

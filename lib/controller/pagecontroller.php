@@ -76,6 +76,7 @@ class PageController extends Controller {
 		\OCP\Util::addScript('mail','settings');
 		\OCP\Util::addStyle('mail','mail');
 		\OCP\Util::addStyle('mail','mobile');
+		\OCP\Util::addStyle('mail','print');
 
 		$response = new TemplateResponse($this->appName, 'index', []);
 		// set csp rules for ownCloud 8.1

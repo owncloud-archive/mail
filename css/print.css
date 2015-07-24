@@ -1,0 +1,18 @@
+#header, #app-navigation, #mail_messages, #mail-setup, div.reply-message-fields{
+  display: none;
+}
+
+#mail-message{
+  position: relative;
+  width: 95%;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+#content-wrapper{
+  position: relative;
+}
+
+#mail-message-header{
+  width: 100%;
+}

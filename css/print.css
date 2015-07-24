@@ -2,9 +2,6 @@
   display: none;
 }
 
-#app{
-}
-
 #mail-message{
   position: relative;
   width: 95%;
@@ -14,9 +11,6 @@
 
 #content-wrapper{
   position: relative;
-}
-
-#app-content{
 }
 
 #mail-message-header{

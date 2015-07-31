@@ -1,3 +1,5 @@
+/* global Backbone */
+
 /**
  * ownCloud - Mail
  *
@@ -9,14 +11,9 @@
  */
 
 define(function(require) {
-	var Mail = {};
+	var Attachment = require('models/attachment');
 
-	Mail.BackGround = require('background');
-	Mail.Cache = require('cache');
-	Mail.Communication = require('communication');
-	Mail.Search = require('search');
-	Mail.State = require('state');
-	Mail.UI = require('UI');
-
-	return Mail;
+	return Backbone.Collection.extend({
+		model: Attachment
+	});
 });

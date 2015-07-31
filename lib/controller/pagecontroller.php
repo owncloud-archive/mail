@@ -65,14 +65,7 @@ class PageController extends Controller {
 		\OCP\Util::addScript('mail','jquery.autosize');
 		\OCP\Util::addScript('mail','backbone');
 		\OCP\Util::addScript('mail','backbone.marionette');
-		\OCP\Util::addScript('mail','models/attachment');
-		\OCP\Util::addScript('mail','views/attachment');
-		\OCP\Util::addScript('mail','views/composer');
-		\OCP\Util::addScript('mail','views/message');
-		\OCP\Util::addScript('mail','views/folder');
-		\OCP\Util::addScript('mail','views/helper');
-		\OCP\Util::addScript('mail','mail');
-		\OCP\Util::addScript('mail','send-mail');
+		//\OCP\Util::addScript('mail','send-mail');
 		\OCP\Util::addScript('mail','settings');
 		\OCP\Util::addStyle('mail','mail');
 		\OCP\Util::addStyle('mail','mobile');

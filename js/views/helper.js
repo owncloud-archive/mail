@@ -10,7 +10,7 @@
  * @copyright Christoph Wurst 2015
  */
 
-$(document).ready(function() {
+define(function(require) {
 	Handlebars.registerHelper("relativeModifiedDate", function(dateInt) {
 		var lastModified = new Date(dateInt * 1000);
 		var lastModifiedTime = Math.round(lastModified.getTime() / 1000);
@@ -26,16 +26,16 @@ $(document).ready(function() {
 		return humanFileSize(size);
 	});
 
-	Handlebars.registerHelper('accountColor', function (account) {
+	Handlebars.registerHelper('accountColor', function(account) {
 		var hash = md5(account),
 			maxRange = parseInt('ffffffffffffffffffffffffffffffff', 16),
 			hue = parseInt(hash, 16) / maxRange * 256;
 		return new Handlebars.SafeString('hsl(' + hue + ', 90%, 65%)');
 	});
 
-	Handlebars.registerHelper("printAddressList", function (addressList) {
-		var currentAddress = _.find(Mail.State.accounts, function (item) {
-			return item.accountId === Mail.State.currentAccountId;
+	Handlebars.registerHelper("printAddressList", function(addressList) {
+		var currentAddress = _.find(require('Mail').State.accounts, function(item) {
+			return item.accountId === require('Mail').State.currentAccountId;
 		});
 
 		var str = _.reduce(addressList, function(memo, value, index) {
@@ -52,7 +52,7 @@ $(document).ready(function() {
 			}
 			var title = t('mail', 'Send message to {email}', {email: email});
 			memo += '<span class="tipsy-mailto" title="' + title + '">';
-			memo += '<a class="link-mailto" data-email="' +	email + '" data-label="' +	label + '">';
+			memo += '<a class="link-mailto" data-email="' + email + '" data-label="' + label + '">';
 			memo += label + '</a></span>';
 			return memo;
 		}, "");
@@ -78,7 +78,7 @@ $(document).ready(function() {
 		return str;
 	});
 
-	Handlebars.registerHelper("ifHasCC", function (cc, ccList, options) {
+	Handlebars.registerHelper("ifHasCC", function(cc, ccList, options) {
 		if (!_.isUndefined(cc) || (!_.isUndefined(ccList) && ccList.length > 0)) {
 			return options.fn(this);
 		} else {
@@ -86,7 +86,7 @@ $(document).ready(function() {
 		}
 	});
 
-	Handlebars.registerHelper("unlessHasCC", function (cc, ccList, options) {
+	Handlebars.registerHelper("unlessHasCC", function(cc, ccList, options) {
 		if (_.isUndefined(cc) && (_.isUndefined(ccList) || ccList.length === 0)) {
 			return options.fn(this);
 		} else {
@@ -96,9 +96,9 @@ $(document).ready(function() {
 
 	// adjust controls/header bar width
 	window.adjustControlsWidth = function() {
-		if($('#mail-message-header').length) {
+		if ($('#mail-message-header').length) {
 			var controlsWidth;
-			if($(window).width() > 768) {
+			if ($(window).width() > 768) {
 				controlsWidth =
 					$('#content').width() -
 					$('#app-navigation').width() -
@@ -111,5 +111,4 @@ $(document).ready(function() {
 	};
 
 	$(window).resize(_.debounce(window.adjustControlsWidth, 250));
-
 });

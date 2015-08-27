@@ -105,7 +105,7 @@ script('mail', 'jquery-visibility');
 		<div id="mail-content">
 			{{#if hasHtmlBody}}
 			<div class="icon-loading">
-				<iframe src="{{htmlBodyUrl}}" seamless>
+				<iframe scrolling="no" src="{{htmlBodyUrl}}" seamless>
 				</iframe>
 			</div>
 			{{else}}

@@ -1285,6 +1285,20 @@ var Mail = {
 					// Remove spinner when loading finished
 					$('iframe').parent().removeClass('icon-loading');
 
+					// Does the html mail have blocked images?
+					var hasBlockedImages = false;
+					if ($(this).contents().find('[data-original-src]').length) {
+						hasBlockedImages = true;
+					}
+
+					// Show/hide button to load images
+					if (hasBlockedImages) {
+						$('#show-images-text').show();
+					} else {
+						$('#show-images-text').hide();
+					}
+
+
 					// Add body content to inline reply (html mails)
 					var text = $(this).contents().find('body').html();
 					text = Mail.UI.htmlToText(text);
@@ -1634,6 +1648,14 @@ $(document).ready(function() {
 				break;
 			}
 		}
+	});
+
+	// Show the images if wanted
+	$(document).on('click', '#show-images-button', function(){
+		$('#show-images-text').hide();
+		$('iframe').contents().find('img[data-original-src]').each(function(){
+			$(this).attr('src',$(this).attr('data-original-src'));
+		});
 	});
 
 });

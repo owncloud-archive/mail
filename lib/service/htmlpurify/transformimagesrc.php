@@ -9,17 +9,15 @@ use OCP\Util;
 /**
  * Adds copies src to data-src on all img tags.
  */
-class TransformImageSrc extends HTMLPurifier_AttrTransform
-{
+class TransformImageSrc extends HTMLPurifier_AttrTransform {
 	/**
 	 * @param array $attr
 	 * @param HTMLPurifier_Config $config
 	 * @param HTMLPurifier_Context $context
 	 * @return array
 	 */
-	public function transform($attr, $config, $context)
-	{
-		if ( //$context->get('CurrentToken')->name !== 'img' ||
+	public function transform($attr, $config, $context) {
+		if ( $context->get('CurrentToken')->name !== 'img' ||
 			!isset($attr['src'])) {
 			return $attr;
 		}

@@ -45,18 +45,20 @@ class Message {
 	 * @param integer $messageId
 	 * @param \Horde_Imap_Client_Data_Fetch|null $fetch
 	 * @param boolean $loadHtmlMessage
+	 * @param Html|null $htmlService
 	 */
 	public function __construct($conn, $mailBox, $messageId, $fetch=null,
-		$loadHtmlMessage=false) {
+		$loadHtmlMessage=false, $htmlService = null) {
 		$this->conn = $conn;
 		$this->mailBox = $mailBox;
 		$this->messageId = $messageId;
 		$this->loadHtmlMessage = $loadHtmlMessage;
 
-		// TODO: inject ???
-//		$cacheDir = \OC::$server->getUserFolder() . '/mail/html-cache';
-//		$this->htmlService = new Html($cacheDir);
-		$this->htmlService = new Html();
+		$this->htmlService = $htmlService;
+		if (is_null($htmlService)) {
+			$urlGenerator = \OC::$server->getURLGenerator();
+			$this->htmlService = new Html($urlGenerator);
+		}
 
 		if ($fetch === null) {
 			$this->loadMessageBodies();
@@ -281,7 +283,8 @@ class Message {
 		$headers[] = 'content-type';
 
 		$fetch_query->headers('imp', $headers, [
-			'cache' => true
+			'cache' => true,
+			'peek'  => true
 		]);
 
 		// $list is an array of Horde_Imap_Client_Data_Fetch objects.
@@ -492,9 +495,13 @@ class Message {
 		$fetch_query = new \Horde_Imap_Client_Fetch_Query();
 		$ids = new \Horde_Imap_Client_Ids($this->messageId);
 
-		$fetch_query->bodyPart($partNo);
+		$fetch_query->bodyPart($partNo, [
+		    'peek' => true
+		]);
 		$fetch_query->bodyPartSize($partNo);
-		$fetch_query->mimeHeader($partNo);
+		$fetch_query->mimeHeader($partNo, [
+		    'peek' => true
+		]);
 
 		$headers = $this->conn->fetch($this->mailBox, $fetch_query, ['ids' => $ids]);
 		/** @var $fetch \Horde_Imap_Client_Data_Fetch */

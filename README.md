@@ -18,14 +18,13 @@
 * :lock: **Send & receive encrypted emails!** Using the great [Mailvelope](https://mailvelope.com) browser extension.
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [Horde](http://horde.org) libraries.
 * :inbox_tray: **All your Mailboxes at one place!** - Unified inbox
-* :iphone: **On your Smartphone!** [Support for small mobile screens](https://github.com/owncloud/mail/issues/457)
 
 And in the works for the [coming versions](https://github.com/owncloud/mail/milestones/):
-* :books: [Proper grouping of message threads](https://github.com/owncloud/mail/issues/21) -0.4
-* :zap: [Caching to make everything faster](https://github.com/owncloud/mail/issues/480) -0.3
-* :paperclip: [Even better attachment support](https://github.com/owncloud/mail/issues/462) -0.3
-* :date: [Calendar integration](https://github.com/owncloud/mail/issues/79) -0.4
-* :package: [Folder management & moving mails](https://github.com/owncloud/mail/issues/411) -0.3
+* :books: [Proper grouping of message threads](https://github.com/owncloud/mail/issues/21) 
+* :zap: [Caching to make everything faster](https://github.com/owncloud/mail/issues/480)
+* :paperclip: [Even better attachment support](https://github.com/owncloud/mail/issues/462) 
+* :date: [Calendar integration](https://github.com/owncloud/mail/issues/79) 
+* :package: [Folder management & moving mails](https://github.com/owncloud/mail/issues/411) 
 
 ## Installation
 

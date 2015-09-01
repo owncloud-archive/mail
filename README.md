@@ -14,10 +14,9 @@
 ## Why is this so awesome?
 
 * :rocket: **Integration with other ownCloud apps!** Currently Contacts & Files – more to come.
-* :+1: **You can use multiple mail accounts!** Personal and company account? No problem.
+* :inbox_tray: **Multiple mail accounts!** Personal and company account? No problem, and a nice unified inbox.
 * :lock: **Send & receive encrypted emails!** Using the great [Mailvelope](https://mailvelope.com) browser extension.
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [Horde](http://horde.org) libraries.
-* :inbox_tray: **All your Mailboxes at one place!** - Unified inbox
 
 And in the works for the [coming versions](https://github.com/owncloud/mail/milestones/):
 * :books: [Proper grouping of message threads](https://github.com/owncloud/mail/issues/21) 

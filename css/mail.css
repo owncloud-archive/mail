@@ -601,7 +601,13 @@ input.submit-message {
 	vertical-align: middle;
 }
 
+#fileupload {
+	display: none;
+}
 
+#mail_new_attachment_local {
+	display: inline;
+}
 
 /* compose (handling mailto links) */
 

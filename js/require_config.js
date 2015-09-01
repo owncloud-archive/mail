@@ -26,9 +26,6 @@
 			backbone: 'vendor/backbone/backbone',
 			domready: 'vendor/domready/ready.min',
 			handlebars: 'vendor/handlebars/handlebars',
-			jasmine: 'vendor/jasmine/jasmine-core',
-			'jasmine-html': '../tests/lib/jasmine-html',
-			spec: '../tests/jasmine/spec/',
 			marionette: 'vendor/backbone.marionette/lib/backbone.marionette',
 			underscore: '../../../core/vendor/underscore/underscore'
 		},

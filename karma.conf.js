@@ -11,10 +11,10 @@ module.exports = function(config) {
 		files: [
 			'../../core/vendor/underscore/underscore.js',
 			'../../core/vendor/jquery/jquery.min.js',
-			'../../core/vendor/handlebars/handlebars.js',
 			{pattern: 'js/*/*.js', included: false},
 			{pattern: 'js/templates/*.html', included: false},
 			{pattern: 'js/vendor/backbone/backbone.js', included: false},
+			{pattern: 'js/vendor/handlebars/handlebars.js', included: false},
 			{pattern: 'js/vendor/backbone.marionette/lib/backbone.marionette.js', included: false},
 			{pattern: 'js/vendor/text/text.js', included: false},
 			{pattern: 'js/tests/mocks/*.js', included: false},

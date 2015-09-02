@@ -14,12 +14,13 @@ define(function(require) {
 	var Backbone = require('backbone');
 	var OC = require('OC');
 	var AttachmentView = require('views/attachment');
+	var AttachmentsTemplate = require('text!templates/part.mail-attachments.html');
 
 	return Backbone.Marionette.CompositeView.extend({
 		collection: null,
 		childView: AttachmentView,
 		childViewContainer: 'ul',
-		template: '#mail-attachments-template',
+		template: AttachmentsTemplate,
 		events: {
 			'click #mail_new_attachment': 'addAttachment'
 		},

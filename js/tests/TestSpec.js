@@ -8,12 +8,36 @@
  * @copyright Christoph Wurst 2015
  */
 
-define(['models/account'], function(Account) {
-	describe("test tests", function() {
-		it("should pass", function() {
+define(['views/attachments'], function(AttachmentView) {
+
+	describe('View test', function() {
+
+		beforeEach(function() {
+			$('body').append('<div id="#mail-attachments-template"></div>');
+			this.AttachmentView = new AttachmentView({});
+		});
+
+		afterEach(function() {
+			this.AttachmentView.remove();
+			$('#mail-attachments-template').remove();
+		});
+
+		it('should pass', function() {
 			expect(1).toEqual(1);
 		});
-		it("should also pass", function() {
+
+		it('should also pass', function() {
+			expect(2).toEqual(2);
+		});
+	});
+});
+
+define(['models/account'], function(Account) {
+	describe('test tests', function() {
+		it('should pass', function() {
+			expect(1).toEqual(1);
+		});
+		it('should also pass', function() {
 			expect(2).toEqual(2);
 		});
 	});

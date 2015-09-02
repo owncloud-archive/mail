@@ -18,14 +18,14 @@ define(function(require) {
 		template: '#mail-attachment-template',
 		events: {
 			'click .icon-delete': 'removeAttachment',
-			'click #mail_new_attachment_local': 'addAttachmentLocal'
+			'click #mail-new-attachment-local': 'addAttachmentLocal'
 		},
 		removeAttachment: function() {
 			this.model.collection.remove(this.model);
 		},
 
 		addAttachmentLocal: function() {
-			console.log("test");
+			console.log('test');
 		}
 
 	});

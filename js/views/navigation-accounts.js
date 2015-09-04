@@ -55,9 +55,37 @@ define(function(require) {
 			var activeFolder = this.getFolderById();
 			if (unseen) {
 				activeFolder.set('unseen', activeFolder.get('unseen') + 1);
+				// Handle unified inbox
+				if (activeFolder.get('accountId') === -1) {
+					// get currently active message, to receive real accountId
+					var message = require('app').Cache.getMessage(require('app').State.currentAccountId, require('app').State.currentFolderId, require('app').State.currentMessageId);
+					// get inbox folder of that accountId
+					var folder = this.getFolderById(message.accountId, message.folderId);
+					folder.set('unseen', folder.get('unseen') - 1);
+				} else {
+					var folder = this.collection.get(-1).get('folders').models[0];
+						folder.set('unseen', folder.get('unseen') + 1);
+				}
+				// end
 			} else {
 				if (activeFolder.get('unseen') > 0) {
 					activeFolder.set('unseen', activeFolder.get('unseen') - 1);
+					// Handle unified inbox
+					if (activeFolder.get('accountId') === -1) {
+						// get currently active message, to receive real accountId
+						var message = require('app').Cache.getMessage(require('app').State.currentAccountId, require('app').State.currentFolderId, require('app').State.currentMessageId);
+						// get inbox folder of that accountId
+						var folder = this.getFolderById(message.accountId, message.folderId);
+						if (folder.get('unseen') > 0) {
+							folder.set('unseen', folder.get('unseen') - 1);
+						}
+					} else {
+						var folder = this.collection.get(-1).get('folders').models[0];
+							if (folder.get('unseen') > 0) {
+								folder.set('unseen', folder.get('unseen') - 1);
+							}
+					}
+					// end
 				}
 			}
 			this.updateTitle();

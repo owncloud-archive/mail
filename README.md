@@ -6,7 +6,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/owncloud/mail/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/owncloud/mail/?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/54e50fadd1ec5734f400078a/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54e50fadd1ec5734f400078a)
 
-**An email app for [ownCloud](https://owncloud.org) (minimum version 7.0.4 & PHP 5.4). At the moment it is a basic IMAP client and in heavy development.** (A possibility for the future would be to also have it be a dedicated email server. But that would always be optional, require additional dependencies and is out of scope for now.)
+**An email app for [ownCloud](https://owncloud.org) (minimum version 7.0.4 & PHP 5.4). It is a basic IMAP client and in heavy development.** 
 
 ![](https://raw.githubusercontent.com/owncloud/screenshots/master/mail/mail.png)
 
@@ -35,9 +35,9 @@ If you experience any issues or have enhancement suggestions you can report them
 
 ## Maintainers
 
-Active: [Thomas Müller](https://github.com/DeepDiver1975), [Jan-Christoph Borchardt](https://github.com/jancborchardt), [Christoph Wurst](https://github.com/ChristophWurst), [Lukas Reschke](https://github.com/LukasReschke), [Thomas Imbreckx](https://github.com/zinks-), [Steffen Lindner](https://github.com/Gomez), [Robin McCorkell](https://github.com/Xenopathic), [Clement Wong](https://github.com/clementhk), [Colm O’Neill](https://github.com/colmoneill), [Alexander Weidinger](https://github.com/irgendwie), [Hendrik Leppelsack](https://github.com/Henni) & [Plato Leung](https://github.com/PoPoutdoor)
+Active: [Thomas Müller](https://github.com/DeepDiver1975), [Jan-Christoph Borchardt](https://github.com/jancborchardt), [Christoph Wurst](https://github.com/ChristophWurst), [Lukas Reschke](https://github.com/LukasReschke), [Thomas Imbreckx](https://github.com/zinks-), [Steffen Lindner](https://github.com/Gomez), [Robin McCorkell](https://github.com/Xenopathic), [Clement Wong](https://github.com/clementhk), [Colm O’Neill](https://github.com/colmoneill), [Alexander Weidinger](https://github.com/irgendwie), [Hendrik Leppelsack](https://github.com/Henni) & [Plato Leung](https://github.com/PoPoutdoor), [Jakob Sack](https://github.com/jakobsack)
 
-Past contributors: [Jakob Sack](https://github.com/jakobsack), [Bart Visscher](https://github.com/bartv2), [Sebastian Schmid](https://github.com/sebastian-schmid)
+Past contributors: [Bart Visscher](https://github.com/bartv2), [Sebastian Schmid](https://github.com/sebastian-schmid)
 
 If you’d like to join, just go through the [issue list](https://github.com/owncloud/mail/issues) and fix some. :) We’re also in [#owncloud-mail on freenode IRC](https://webchat.freenode.net/?channels=owncloud-mail).
 

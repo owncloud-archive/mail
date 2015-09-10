@@ -85,7 +85,7 @@ Debian/Ubuntu people, just execute `install_ubuntu.sh`
 
 ## Nightly Builds
 
-Instead of setting everything up manually, you can just [download the nighly builds](https://en0ch.se/index.php/s/3v5J3XXeQCCp73p) instead. These builds are updated every 12 hours - 00:00 (12:00 AM) and 12:00 (12:00 PM), and are pre-configured with all the needed dependencies.
+Instead of setting everything up manually, you can just [download the nighly builds](https://en0ch.se/index.php/s/3v5J3XXeQCCp73p) instead. These builds are updated every 12 hours - 00:00 CEST (12:00 AM) and 12:00 CEST (12:00 PM), and are pre-configured with all the needed dependencies.
 
 1. Download
 2. Exctract the zip archive to 'path-to-owncloud/apps'

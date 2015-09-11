@@ -13,7 +13,11 @@ clean:
 	rm -rf $(build_dir)
 	rm -rf node_modules
 
-dist: install-npm-deps install-bower-deps optimize-js
+dist: install-composer-deps install-npm-deps install-bower-deps optimize-js
+
+install-composer-deps: composer.json
+	curl -sS https://getcomposer.org/installer | php
+	php composer.phar install
 
 install-npm-deps: package.json
 	npm install --production

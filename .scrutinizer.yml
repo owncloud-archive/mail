@@ -5,6 +5,7 @@ filter:
         - 'js/handlebars*'
         - 'js/backbone*'
         - 'l10n/*'
+        - 'tests'
 
 imports:
     - javascript

@@ -72,7 +72,9 @@ define(function(require) {
 			}
 			var label = value.label
 				.replace(/(^"|"$)/g, '')
-				.replace(/(^"|"$)/g, '');
+				.replace(/(^"|"$)/g, '')
+				.replace(/(^'|'$)/g, '')
+				.replace(/(^'|'$)/g, '');
 			label = Handlebars.Utils.escapeExpression(label);
 			var email = Handlebars.Utils.escapeExpression(value.email);
 			if (label === email) {

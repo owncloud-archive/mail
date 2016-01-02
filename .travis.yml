@@ -71,6 +71,9 @@ script:
   # Test lint
   - find . -name \*.php -not -path './vendor/*' -exec php -l "{}" \;
 
+  # Run app code checker
+  - php ../../occ app:check mail
+
   # Run js unit tests
   - sh -c "if [ '$TEST_JS' = 'TRUE' ]; then grunt; fi"
 

@@ -20,7 +20,7 @@ composer.phar:
 install-deps: install-composer-deps install-npm-deps install-bower-deps
 
 install-composer-deps: composer.phar
-	php composer.phar install
+	php composer.phar install --ignore-platform-reqs
 
 install-npm-deps:
 	npm install --production

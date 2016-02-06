@@ -127,7 +127,7 @@ define(function(require) {
 					app.Cache.removeMessage(app.State.currentAccountId, app.State.currentFolderId, thisModel.id);
 				},
 				error: function() {
-					require('ui').showError(t('mail', 'Error while deleting message.'));
+					Radio.ui.trigger('error:show', t('mail', 'Error while deleting message.'));
 				}
 			});
 		}

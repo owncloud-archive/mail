@@ -14,6 +14,7 @@ define(function(require) {
 	'use strict';
 
 	var OC = require('OC');
+	var Radio = require('radio');
 
 	/*jshint maxparams: 6 */
 	function showNotification(title, body, tag, icon, accountId, folderId) {
@@ -35,7 +36,7 @@ define(function(require) {
 			}
 		);
 		notification.onclick = function() {
-			require('app').trigger('folder:load', accountId, folderId, false);
+			Radio.ui.trigger('folder:load', accountId, folderId, false);
 			window.focus();
 		};
 		setTimeout(function() {
@@ -98,7 +99,7 @@ define(function(require) {
 					_.each(jsondata, function(f) {
 						// send notification
 						if (f.newUnReadCounter > 0) {
-							require('ui').changeFavicon(OC.filePath('mail', 'img', 'favicon-notification.png'));
+							Radio.notification.trigger('favicon:change', OC.filePath('mail', 'img', 'favicon-notification.png'));
 							// only show one notification
 							if (require('state').accounts.length === 1 || account.get('accountId') === -1) {
 								showMailNotification(localAccount.get('email'), f);

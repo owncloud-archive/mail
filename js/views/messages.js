@@ -13,6 +13,7 @@ define(function(require) {
 
 	var Backbone = require('backbone');
 	var Handlebars = require('handlebars');
+	var Radio = require('radio');
 	var MessageCollection = require('models/messagecollection');
 	var MessageView = require('views/message');
 	var MessageListTemplate = require('text!templates/message-list.html');
@@ -32,6 +33,13 @@ define(function(require) {
 		initialize: function() {
 			this.collection = new MessageCollection();
 			this.collection.on('change:flags', this.changeFlags, this);
+
+			this.listenTo(Radio.ui, 'messagesview:messages:update', this.loadNew);
+			this.listenTo(Radio.ui, 'messagesview:messages:reset', this.reset);
+			this.listenTo(Radio.ui, 'messagesview:messages:add', this.addMessage);
+			this.listenTo(Radio.ui, 'messagesview:messageflag:set', this.setMessageFlag);
+			this.listenTo(Radio.ui, 'messagesview:filter:clear', this.clearFilter);
+			this.listenTo(Radio.ui, 'messagesview:message:setactive', this.setActiveMessage);
 		},
 		getEmptyView: function() {
 			if (this.filterCriteria) {
@@ -141,7 +149,7 @@ define(function(require) {
 						require('ui').setMessageActive(require('state').currentMessageId);
 					},
 					onError: function() {
-						require('ui').showError(t('mail', 'Error while loading messages.'));
+						Radio.ui.trigger('error:show', t('mail', 'Error while loading messages.'));
 						// Set the old folder as being active
 						require('ui').setFolderActive(require('state').currentAccountId,
 							require('state').currentFolderId);
@@ -158,6 +166,12 @@ define(function(require) {
 							.prop('disabled', false);
 					}
 				});
+		},
+		addMessage: function(data) {
+			this.collection.add(data);
+		},
+		reset: function() {
+			this.collection.reset();
 		}
 	});
 });

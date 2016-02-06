@@ -123,8 +123,8 @@ define(function(require) {
 				data: {},
 				type: 'DELETE',
 				success: function() {
-					var app = require('app');
-					app.Cache.removeMessage(app.State.currentAccountId, app.State.currentFolderId, thisModel.id);
+					var cache = require('cache');
+					cache.removeMessage(cache.State.currentAccountId, cache.State.currentFolderId, thisModel.id);
 				},
 				error: function() {
 					Radio.ui.trigger('error:show', t('mail', 'Error while deleting message.'));

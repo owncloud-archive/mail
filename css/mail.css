@@ -151,6 +151,10 @@
 	position: absolute;
 }
 
+.mail-account-container {
+	position: relative;
+}
+
 .mail-account-email {
 	display: inline-block;
 	opacity: .5;
@@ -164,6 +168,14 @@
 }
 .mail-account-email:first-child {
 	padding-top: 50px;
+}
+.mail-account-email + .app-navigation-entry-utils-menu-button {
+	position: absolute;
+	display: block !important;
+	right: 0;
+	top: 15px;
+	padding-bottom: 6px;
+	padding-right: 8px;
 }
 
 .mail-account-color {

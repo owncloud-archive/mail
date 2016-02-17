@@ -20,6 +20,7 @@ define(function(require) {
 		collection: null,
 		model: null,
 		template: Handlebars.compile(AccountTemplate),
+		className: 'mail-account-container',
 		childView: FolderView,
 		childViewContainer: '#mail_folders',
 		initialize: function(options) {

@@ -49,11 +49,32 @@ define(function(require) {
 		changeUnseen: function(model, unseen) {
 			// TODO: currentFolderId and currentAccount should be an attribute of this view
 			var activeFolder = this.getFolderById();
+
+			var accountId = require('app').State.currentAccountId;
+			var folderId = require('app').State.currentFolderId;
+			var messageId = require('app').State.currentMessageId;
+
 			if (unseen) {
 				activeFolder.set('unseen', activeFolder.get('unseen') + 1);
+				// unified inbox?
+				if (activeFolder.get('accountId') === -1) {
+					var message = require('app').Cache.getMessage(accountId, folderId, messageId);
+					var originalFolder = this.getFolderById(message.accountId, message.folderId);
+					originalFolder.set('unseen', originalFolder.get('unseen') + 1);
+				} else {
+					var folder = this.collection.get(-1).get('folders').models[0]; // unified inbox
+					folder.set('unseen', folder.get('unseen') + 1);
+				}
 			} else {
-				if (activeFolder.get('unseen') > 0) {
-					activeFolder.set('unseen', activeFolder.get('unseen') - 1);
+				activeFolder.set('unseen', activeFolder.get('unseen') - 1);
+				// unified inbox?
+				if (activeFolder.get('accountId') === -1) {
+					var message = require('app').Cache.getMessage(accountId, folderId, messageId);
+					var originalFolder = this.getFolderById(message.accountId, message.folderId);
+					originalFolder.set('unseen', originalFolder.get('unseen') - 1);
+				} else {
+					var folder = this.collection.get(-1).get('folders').models[0]; //unified inbox
+					folder.set('unseen', folder.get('unseen') - 1);
 				}
 			}
 			this.updateTitle();

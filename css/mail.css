@@ -415,7 +415,7 @@ textarea.message-body {
 	border-top: none;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	height: 300px;
+	min-height: 300px;
 	resize: none;
 }
 textarea.reply {

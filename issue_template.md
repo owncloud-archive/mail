@@ -76,9 +76,14 @@ Insert your webserver log here
 Insert your ownCloud log here
 ```
 
-##### Horde log (data/horde.log)
+##### Horde imap log (data/horde_imap.log)
 ```
-Insert your horde log here, see https://github.com/owncloud/mail#debug-mode
+Insert your horde imap log here, see https://github.com/owncloud/mail#debug-mode
+```
+
+##### Horde smtp log (data/horde_smtp.log)
+```
+Insert your horde smtp log here, see https://github.com/owncloud/mail#debug-mode
 ```
 
 ##### Browser log

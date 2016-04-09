@@ -26,10 +26,14 @@ define(function(require) {
 	var Mail = new Marionette.Application();
 
 	Mail.on('start', function() {
+		Radio.ui.trigger('navigation:loading');
+		Radio.ui.trigger('content:loading');
 		Radio.account.trigger('load');
 	});
 
-	Mail.view = new AppView();
+	Mail.view = new AppView({
+		el: '#app'
+	});
 
 	return Mail;
 });

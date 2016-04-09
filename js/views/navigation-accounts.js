@@ -17,7 +17,6 @@ define(function(require) {
 	var $ = require('jquery');
 	var Marionette = require('marionette');
 	var AccountView = require('views/account');
-	var AccountCollection = require('models/accountcollection');
 	var Radio = require('radio');
 
 	/**
@@ -30,9 +29,8 @@ define(function(require) {
 		 * @returns {undefined}
 		 */
 		initialize: function() {
-			this.collection = new AccountCollection();
-
 			this.listenTo(Radio.ui, 'folder:changed', this.onFolderChanged);
+			this.listenTo(Radio.ui, 'title:update', this.updateTitle);
 			this.listenTo(Radio.folder, 'setactive', this.setFolderActive);
 		},
 		/**
@@ -84,14 +82,14 @@ define(function(require) {
 		setFolderActive: function(account, folder) {
 			Radio.ui.trigger('messagesview:filter:clear');
 
+			if (_.isUndefined(account)) {
+				return;
+			}
+
 			// disable all other folders for all accounts
 			require('state').accounts.each(function(acnt) {
-				var localAccount = require('state').folderView.collection.get(acnt.get('accountId'));
-				if (_.isUndefined(localAccount)) {
-					return;
-				}
-				var folders = localAccount.get('folders');
-				_.each(folders.models, function(folder) {
+				var folders = acnt.get('folders');
+				folders.each(function(folder) {
 					folders.get(folder).set('active', false);
 				});
 			});

@@ -92,8 +92,7 @@ define(function(require) {
 			}
 
 			require('state').currentMessageId = messageId;
-			require('state').folderView.updateTitle();
-
+			Radio.ui.trigger('title:update');
 		},
 		loadNew: function() {
 			if (!require('state').currentAccount) {

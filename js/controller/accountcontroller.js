@@ -39,7 +39,7 @@ define(function(require) {
 			} else {
 				var firstAccount = accounts.at(0);
 				accounts.each(function(account) {
-					Radio.folder.trigger('init', account, firstAccount);
+					Radio.folder.trigger('load', account, firstAccount);
 				});
 			}
 
@@ -49,8 +49,4 @@ define(function(require) {
 			Radio.ui.trigger('error:show', t('mail', 'Error while loading the accounts.'));
 		});
 	}
-
-	return {
-		loadAccounts: loadAccounts
-	};
 });

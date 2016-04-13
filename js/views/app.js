@@ -16,18 +16,17 @@ define(function(require) {
 	var OC = require('OC');
 	var Radio = require('radio');
 	var MessageContentView = require('views/messagecontent');
-	var NavigationAccountsView = require('views/navigation-accounts');
-	var SettingsView = require('views/settings');
+	var LoadingView = require('views/loadingview');
 	var NavigationView = require('views/navigation');
 	var SetupView = require('views/setup');
 
 	var ContentType = Object.freeze({
+		LOADING: -1,
 		MESSAGE_CONTENT: 0,
 		SETUP: 1
 	});
 
 	var AppView = Marionette.LayoutView.extend({
-		el: $('#app'),
 		accountsView: null,
 		activeContent: null,
 		regions: {
@@ -44,6 +43,9 @@ define(function(require) {
 			this.listenTo(Radio.ui, 'error:show', this.showError);
 			this.listenTo(Radio.ui, 'setup:show', this.showSetup);
 			this.listenTo(Radio.ui, 'messagecontent:show', this.showMessageContent);
+			this.listenTo(Radio.ui, 'navigation:loading', this.showNavigationLoading);
+			this.listenTo(Radio.ui, 'navigation:show', this.showNavigation);
+			this.listenTo(Radio.ui, 'content:loading', this.showContentLoading);
 
 			// Hide notification favicon when switching back from
 			// another browser tab
@@ -54,21 +56,6 @@ define(function(require) {
 			$(document).keyup(this.onKeyUp);
 
 			window.addEventListener('resize', this.onWindowResize);
-
-			// Render settings menu
-			this.navigation = new NavigationView({
-				accounts: require('state').accounts
-			});
-			this.navigation.settings.show(new SettingsView({
-				accounts: require('state').accounts
-			}));
-
-			// setup folder view
-			this.accountsView = new NavigationAccountsView();
-			require('state').folderView = this.accountsView;
-			this.navigation.accounts.show(this.accountsView);
-
-			this.showMessageContent();
 		},
 		onDocumentShow: function(e) {
 			e.preventDefault();
@@ -118,7 +105,6 @@ define(function(require) {
 			OC.Notification.showTemporary(message);
 			$('#app-navigation').removeClass('icon-loading');
 			$('#app-content').removeClass('icon-loading');
-			$('#mail-message').removeClass('icon-loading');
 			$('#mail_message').removeClass('icon-loading');
 		},
 		showSetup: function() {
@@ -136,10 +122,22 @@ define(function(require) {
 				this.activeContent = ContentType.MESSAGE_CONTENT;
 
 				var messageContentView = new MessageContentView();
-				var accountsView = this.accountsView;
-				this.accountsView.listenTo(messageContentView.messages, 'change:unseen',
+				var accountsView = this.navigation.currentView.accounts;
+				accountsView.listenTo(messageContentView.messages, 'change:unseen',
 					accountsView.changeUnseen);
 				this.content.show(messageContentView);
+			}
+		},
+		showNavigation: function() {
+			this.navigation.show(new NavigationView());
+		},
+		showNavigationLoading: function() {
+			this.navigation.show(new LoadingView());
+		},
+		showContentLoading: function() {
+			if (this.activeContent !== ContentType.LOADING) {
+				this.activeContent = ContentType.LOADING;
+				this.content.show(new LoadingView());
 			}
 		}
 	});

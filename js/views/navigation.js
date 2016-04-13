@@ -13,32 +13,44 @@ define(function(require) {
 
 	var $ = require('jquery');
 	var Marionette = require('marionette');
+	var Handlebars = require('handlebars');
 	var Radio = require('radio');
 	var NewMessageView = require('views/newmessage');
+	var NavigationAccountsView = require('views/navigation-accounts');
+	var SettingsView = require('views/settings');
+	var NavigationTemplate = require('text!templates/navigation.html');
 
 	return Marionette.LayoutView.extend({
-		el: $('#app-navigation'),
+		template: Handlebars.compile(NavigationTemplate),
 		regions: {
 			newMessage: '#mail-new-message-fixed',
 			accounts: '#app-navigation-accounts',
 			settings: '#app-settings-content'
 		},
 		initialize: function(options) {
-			this.bindUIElements();
-
-			this.newMessage.show(new NewMessageView({
-				accounts: options.accounts
-			}));
-
 			this.listenTo(Radio.ui, 'navigation:show', this.show);
 			this.listenTo(Radio.ui, 'navigation:hide', this.hide);
-		},
-		render: function() {
-			// This view doesn't need rendering
 		},
 		show: function() {
 			this.$el.show();
 			$('#app-navigation-toggle').css('background-image', '');
+		},
+		onShow: function() {
+			var accounts = require('state').accounts;
+			// setup new message view
+			this.newMessage.show(new NewMessageView({
+				accounts: accounts
+			}));
+
+			// setup folder view
+			this.accounts.show(new NavigationAccountsView({
+				collection: accounts
+			}));
+
+			// setup settings view
+			this.settings.show(new SettingsView({
+				accounts: accounts
+			}));
 		},
 		hide: function() {
 			// TODO: move if or rename function

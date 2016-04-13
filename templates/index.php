@@ -48,18 +48,6 @@ if ($debug) {
 <div id="user-email"
      style="display: none"><?php p(\OCP\Config::getUserValue(\OCP\User::getUser(), 'settings', 'email', '')); ?></div>
 <div id="app">
-	<div id="app-navigation" class="icon-loading">
-		<ul>
-			<li id="mail-new-message-fixed"></li>
-			<li id="app-navigation-accounts"></li>
-		</ul>
-		<div id="app-settings">
-			<div id="app-settings-header">
-				<button class="settings-button"
-					data-apps-slide-toggle="#app-settings-content"></button>
-			</div>
-			<div id="app-settings-content"></div>
-		</div>
-	</div>
+	<div id="app-navigation"></div>
 	<div id="app-content"></div>
 </div>

@@ -38,7 +38,7 @@ define(function(require) {
 				}
 			}
 
-			require('state').folderView.collection.add(account);
+			require('state').accounts.add(account);
 			defer.resolve(account.get('folders'));
 		});
 

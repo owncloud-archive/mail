@@ -134,6 +134,7 @@ define(function(require) {
 			// Resize iframe
 			var iframe = $('#mail-content iframe');
 			iframe.height(iframe.contents().find('html').height() + 20);
+			Radio.ui.trigger('window:resize');
 		},
 		render: function() {
 			// This view doesn't need rendering

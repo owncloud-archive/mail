@@ -13,13 +13,14 @@ define(function(require) {
 
 	var Backbone = require('backbone');
 	var Handlebars = require('handlebars');
+	var Radio = require('radio');
 	var FolderView = require('views/folder');
 	var AccountTemplate = require('text!templates/account.html');
 
 	var SHOW_COLLAPSED = Object.seal([
 		'inbox',
 		'flagged',
-		'drafts',
+		'drafts'
 	]);
 
 	return Backbone.Marionette.CompositeView.extend({
@@ -42,6 +43,9 @@ define(function(require) {
 		initialize: function(options) {
 			this.model = options.model;
 			this.collection = this.model.get('folders');
+			this.listenTo(this.collection, 'change', function() {
+				Radio.ui.trigger('navigation:resize');
+			});
 		},
 		filter: function(child) {
 			if (!this.collapsed) {
@@ -53,6 +57,7 @@ define(function(require) {
 		toggleCollapse: function() {
 			this.collapsed = !this.collapsed;
 			this.render();
+			Radio.ui.trigger('navigation:resize');
 		}
 	});
 });

@@ -5,7 +5,7 @@
  * later. See the COPYING file.
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @copyright Christoph Wurst 2015
+ * @copyright Christoph Wurst 2015, 2016
  */
 
 define(function(require) {
@@ -32,9 +32,14 @@ define(function(require) {
 
 			this.listenTo(Radio.ui, 'navigation:show', this.show);
 			this.listenTo(Radio.ui, 'navigation:hide', this.hide);
+			this.listenTo(Radio.ui, 'navigation:resize', this._adjustButtonWidth);
+			this.listenTo(Radio.ui, 'window:resize', this._adjustButtonWidth);
 		},
 		render: function() {
 			// This view doesn't need rendering
+		},
+		onShow: function() {
+			this._adjustButtonWidth();
 		},
 		show: function() {
 			this.$el.show();
@@ -46,6 +51,11 @@ define(function(require) {
 				this.$el.hide();
 				$('#app-navigation-toggle').css('background-image', 'none');
 			}
+		},
+		_adjustButtonWidth: function() {
+			var newMailButtonContainer = $('#mail-new-message-fixed');
+			var innerWidth = $('#app-navigation-accounts').width();
+			newMailButtonContainer.attr('style', 'width: ' + innerWidth + 'px !important');
 		}
 	});
 });

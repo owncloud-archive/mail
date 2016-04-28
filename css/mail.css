@@ -341,7 +341,7 @@
 /* editor */
 #mail-new-message-fixed {
 	position: fixed !important;
-	width: 241px !important;
+	width: 230px !important; //beware of frames, avoid overlap !
 	z-index: 1;
 	padding-bottom: 12px;
 	background-color: rgba(255, 255, 255, .75);

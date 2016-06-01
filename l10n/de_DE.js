@@ -58,6 +58,14 @@ OC.L10N.register(
     "Redirect warning" : "Umleitungswarnung",
     "The previous page is sending you to %s" : "Die vorangegangene Seite leitet Sie zu %s weiter",
     "If you do not want to visit that page, you can return to <a href=\"%s\">the mail app</a>." : "Wenn Sie diese Seite nicht besuchen möchten, können Sie <a href=\"%s\">zur Mail-App</a> zurück kehren.",
-    "Continue to %s" : "Fortsetzen auf %s"
+    "Continue to %s" : "Fortsetzen auf %s",
+    "New message" : "Neue Nachricht",
+    "to" : "An",
+    "Subject" : "Betreff",
+    "Message …" : "Nachricht ...",
+    "Forward" : "Weiterleiten",
+    "No messages in this folder!" : "Keine Nachrichten in diesem Ordner",
+    "from" : "Von",
+    "Add attachment from Files" : "Anhänge hinzufügen"
 },
 "nplurals=2; plural=(n != 1);");

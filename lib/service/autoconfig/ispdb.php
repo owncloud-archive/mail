@@ -48,15 +48,18 @@ class IspDb {
 
 	private function queryUrl($url) {
 		try {
+			set_error_handler(function() { /* ignore all errors */ });
 			$content = @file_get_contents($url, false, stream_context_create([
 				'http' => [
 					'timeout' => 7
 				]
 			]));
+			restore_error_handler();
+
 			if ($content !== false) {
 				$xml = @simplexml_load_string($content);
 			} else {
-				$this->logger->debug("IsbDb: <$url> request timed out");
+				$this->logger->debug("IsbDb: <$url> does not exist or request timed out");
 				return [];
 			}
 

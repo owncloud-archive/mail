@@ -41,7 +41,7 @@
 		{{#unless isReply}}
 		<input type="text" name="subject" value="{{subject}}" class="subject"
 			placeholder="{{ t 'Subject' }}" />
-		{{/unless}}
+		{{/unless}}<input type="checkbox" class="toggle-editor" name="toggle" />Switch to Text only mode
 		<textarea name="body" class="message-body
 					{{#if isReply}} reply{{/if}}"
 			placeholder="{{ t 'Message …' }}">{{message}}</textarea>

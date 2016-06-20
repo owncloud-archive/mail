@@ -22,7 +22,7 @@ define(function(require) {
 	var ComposerTemplate = require('text!templates/composer.html');
 
 	require('trumbowyg');
-	require('tr-hyperlink')
+	require('tr-hyperlink');
 
 	return Marionette.LayoutView.extend({
 
@@ -71,6 +71,7 @@ define(function(require) {
 		        'click .submit-message': 'submitMessage',
 			'click .submit-message-wrapper-inside': 'submitMessageWrapperInside',
 			'keypress .message-body': 'handleKeyPress',
+			'click .toggle-editor': 'toggleEditor',
 			'input  .to': 'onInputChanged',
 			'paste  .to': 'onInputChanged',
 			'keyup  .to': 'onInputChanged',
@@ -105,7 +106,14 @@ define(function(require) {
 				}
 			};
 			_.defaults(options, defaultOptions);
-
+			this.trumbowygOpt = function(){
+				this.$('.message-body').trumbowyg({
+					btns: [['bold', 'italic', 'underline'],['hyperlink'],['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],['fullscreen']],
+					autogrow: true,
+					resetCss: true,
+					semantic:false
+				});
+			};
 			/**
 			 * Composer type (new, reply)
 			 */
@@ -140,12 +148,8 @@ define(function(require) {
 
 		},
 		onRender: function() {
-			this.$('.message-body').trumbowyg({
-				btns: [['bold', 'italic', 'underline'],['hyperlink'],['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],['fullscreen']],
-				autogrow: true,
-				resetCss: true,
-				semantic:false
-      });
+
+			this.trumbowygOpt();
 			this.attachmentsRegion.show(new AttachmentsView({
 				collection: this.attachments
 			}));
@@ -185,7 +189,11 @@ define(function(require) {
 			// Submit button state
 			var to = this.$('.to').val();
 			var subject = this.$('.subject').val();
-			var body = this.$('.message-body').trumbowyg('html');
+			if($('.toggle-editor').prop('checked')) {
+				var body = this.$('.message-body').val();
+			}else{
+				var body = this.$('.message-body').trumbowyg('html');
+			}
 			if (to !== '' || subject !== '' || body !== '') {
 				this.$('.submit-message').removeAttr('disabled');
 			} else {
@@ -199,6 +207,22 @@ define(function(require) {
 			this.draftTimer = setTimeout(function() {
 				_this.saveDraft();
 			}, this.draftInterval);
+		},
+		toggleEditor: function()
+		{
+			if($('.toggle-editor').prop('checked')) {
+				this.$('.message-body').trumbowyg('destroy');
+				if(this.isReply()){
+					this.$('.message-body').first().val(this.replyText);
+				}
+			} else {
+				this.trumbowygOpt();
+				if(this.isReply()){
+
+					this.$('.message-body').first().trumbowyg('html',this.replyHtml);
+
+				}
+			}
 		},
 		handleKeyPress: function(event) {
 			// Define which objects to check for the event properties.
@@ -231,13 +255,18 @@ define(function(require) {
 			var bcc = this.$('.bcc');
 			var subject = this.$('.subject');
 
-			message.body = newMessageBody.trumbowyg('html').replace('<br>&gt;','\n>');
 			message.to = to.val();
 			message.cc = cc.val();
 			message.bcc = bcc.val();
 			message.subject = subject.val();
 			message.attachments = this.attachments.toJSON();
-			message.type = 'text/html';
+			if($('.toggle-editor').prop('checked')) {
+				message.type = 'text/plain';
+				message.body = newMessageBody.val();
+			}else{
+				message.type = "text/html"
+				message.body = newMessageBody.trumbowyg('html').replace('<br>&gt;','\n>');
+				}
 			return message;
 		},
 		submitMessageWrapperInside: function() {
@@ -331,7 +360,11 @@ define(function(require) {
 				cc.val('');
 				bcc.val('');
 				subject.val('');
-				newMessageBody.trumbowyg('html','');
+				if($('.toggle-editor').prop('checked')) {
+					newMessageBody.val('');
+				}else{
+					newMessageBody.trumbowyg('html','');
+				}
 				newMessageBody.trigger('autosize.resize');
 				_this.attachments.reset();
 				if (_this.draftUID !== null) {
@@ -406,14 +439,17 @@ define(function(require) {
 		},
 		setReplyBody: function(from, date, text) {
 			var minutes = date.getMinutes();
-
-			this.$('.message-body').first().trumbowyg('html',
-				'<br/><br/><br/>' +
+			this.replyHtml = '<br/><br/><br/>' +
 				from + ' – ' +
 				$.datepicker.formatDate('D, d. MM yy ', date) +
 				date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '<br>&gt; ' +
-				text.replace(/\n/g, '<br>&gt;')
-				);
+				text.replace(/\n/g, '<br>&gt;');
+			this.replyText = 	'\n\n\n' +
+				from + ' – ' +
+				$.datepicker.formatDate('D, d. MM yy ', date) +
+				date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '\n> ' +
+				text.replace(/\n/g, '\n> ');
+			this.$('.message-body').first().trumbowyg('html',this.replyHtml);
 
 			this.setAutoSize(false);
 			// Expand reply message body on click

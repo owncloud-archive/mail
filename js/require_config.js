@@ -28,7 +28,9 @@
 			ical: 'vendor/ical.js/build/ical.min',
 			marionette: 'vendor/backbone.marionette/lib/backbone.marionette',
 			underscore: 'vendor/underscore/underscore',
-			text: 'vendor/text/text'
+			text: 'vendor/text/text',
+			trumbowyg: 'vendor/trumbowyg/dist/trumbowyg.min',
+			'tr-hyperlink': 'util/trumbowyg/hyperlink'
 		},
 		shim: {
 			davclient: {
@@ -36,6 +38,14 @@
 			},
 			ical: {
 				exports: 'ICAL'
+			},
+			trumbowyg: {
+				export:'$' ,
+				deps: ['jquery']
+				},
+			'tr-hyperlink': {
+				export: '$',
+				deps: ['jquery']
 			}
 		}
 	});

@@ -28,6 +28,7 @@
     "underscore": "~1.8.3",
     "davclient.js": "https://github.com/evert/davclient.js.git",
     "es6-promise": "^3.2.1",
-    "ical.js": "^1.2.1"
+    "ical.js": "^1.2.1",
+    "trumbowyg": "^2.1.0"
   }
 }

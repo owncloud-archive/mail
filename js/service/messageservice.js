@@ -217,6 +217,7 @@ define(function(require) {
 				bcc: message.bcc,
 				subject: message.subject,
 				body: message.body,
+				type: message.type,
 				attachments: message.attachments,
 				folderId: options.folder ? options.folder.get('id') : null,
 				messageId: options.messageId,

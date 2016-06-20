@@ -25,6 +25,7 @@
  */
 style('mail', 'mail');
 style('mail', 'mobile');
+style('mail','../js/vendor/trumbowyg/dist/ui/trumbowyg.min');
 script('mail', 'vendor/autosize/jquery.autosize');
 script('mail', 'vendor/jquery-storage-api/jquery.storageapi');
 script('mail', 'vendor/jquery-visibility/jquery-visibility');

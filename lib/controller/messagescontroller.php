@@ -156,8 +156,11 @@ class MessagesController extends Controller {
 	private function loadMessage($accountId, $folderId, $id) {
 		$account = $this->getAccount($accountId);
 		$mailBox = $account->getMailbox(base64_decode($folderId));
-		$m = $mailBox->getMessage($id);
-
+		if($mailBox->getSpecialRole() === 'drafts'){
+			$m = $mailBox->getMessage($id,true);
+		}else{
+			$m = $mailBox->getMessage($id);
+		}
 		$json = $this->enhanceMessage($accountId, $folderId, $id, $m, $account, $mailBox);
 
 		// Unified inbox hack

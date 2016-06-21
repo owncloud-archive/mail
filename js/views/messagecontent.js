@@ -94,9 +94,12 @@ define(function(require) {
 			this.detailView = DetailView.COMPOSER;
 			this.composer = this.message.currentView;
 
+			/*
 			if (data && data.hasHtmlBody) {
 				Radio.ui.trigger('error:show', t('mail', 'Opening HTML drafts is not supported yet.'));
 			}
+			*/
+			console.log(data);
 
 			// set 'from' dropdown to current account
 			// TODO: fix selector conflicts

@@ -233,14 +233,15 @@ class Account implements IAccount {
 		$mail = new Horde_Mime_Mail();
 		$mail->addHeaders($headers);
 		$body = new Horde_Mime_Part();
-		if($message->getType() !== 'text/html'){
-			$body->setType('text/plain');
-		}else{
+		if($message->getType() === 'text/html'){
 			$body->setType('text/html');
+			$mail->addHeader('Content-type','text/html; charset=iso-8859-1');
+		}else{
+			$body->setType('text/plain');
 		}
 		$body->setContents($message->getContent());
 		$mail->setBasePart($body);
-
+		//echo $mail->getBasePart()->getHtmlBody();
 		// create transport and save message
 		// save the message in the drafts folder
 		$draftsFolder = $this->getDraftsFolder();

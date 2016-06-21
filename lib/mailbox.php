@@ -412,7 +412,6 @@ class Mailbox implements IMailBox {
 	 * @return int UID of the saved draft
 	 */
 	public function saveDraft($rawBody) {
-
 		$uids = $this->conn->append($this->mailBox, [
 			[
 				'data' => $rawBody,

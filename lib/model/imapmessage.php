@@ -479,6 +479,9 @@ class IMAPMessage implements IMessage {
 		$data = $this->getListArray();
 		if ($this->hasHtmlMessage) {
 			$data['hasHtmlBody'] = true;
+			if($specialRole === 'drafts'){
+				$data['body'] = rtrim($this->htmlMessage,"<br><br>");
+			}
 		} else {
 			$mailBody = $this->htmlService->convertLinks($mailBody);
 			list($mailBody, $signature) = $this->htmlService->parseMailBody($mailBody);
@@ -571,6 +574,7 @@ class IMAPMessage implements IMessage {
 			$data = $this->loadBodyData($p, $partNo);
 			$this->htmlMessage .= $data . "<br><br>";
 		}
+
 	}
 
 	/**

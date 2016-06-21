@@ -455,9 +455,6 @@ input.bcc {
 }
 textarea.message-body {
 	margin: 0;
-	border-top: none;
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
 	min-height: 300px;
 	resize: none;
 }
@@ -808,4 +805,11 @@ input.submit-message,
 	margin: 0 auto 15px;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
 	opacity: .4;
+}
+.trumbowyg-box{
+	margin:3px auto;
+}
+.toggle-editor-wrapper{
+	margin:3px;
+	padding:2px;
 }

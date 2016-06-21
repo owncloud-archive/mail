@@ -23,9 +23,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
+style('mail','../js/vendor/trumbowyg/dist/ui/trumbowyg.min');
 style('mail', 'mail');
 style('mail', 'mobile');
-style('mail','../js/vendor/trumbowyg/dist/ui/trumbowyg.min');
 script('mail', 'vendor/autosize/jquery.autosize');
 script('mail', 'vendor/jquery-storage-api/jquery.storageapi');
 script('mail', 'vendor/jquery-visibility/jquery-visibility');

@@ -266,7 +266,7 @@ define(function(require) {
 			}else{
 				message.type = "text/html"
 				message.body = newMessageBody.trumbowyg('html').replace('<br>&gt;','\n>');
-				}
+			}
 			return message;
 		},
 		submitMessageWrapperInside: function() {
@@ -443,12 +443,12 @@ define(function(require) {
 				from + ' – ' +
 				$.datepicker.formatDate('D, d. MM yy ', date) +
 				date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '<br>&gt; ' +
-				text.replace(/\n/g, '<br>&gt;');
+				text.replace(/(?:\r\n|\r|\n)/g, '<br>&gt;');
 			this.replyText = 	'\n\n\n' +
 				from + ' – ' +
 				$.datepicker.formatDate('D, d. MM yy ', date) +
 				date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '\n> ' +
-				text.replace(/\n/g, '\n> ');
+				text.replace(/(?:\r\n|\r|\n)/g, '\n> ');
 			this.$('.message-body').first().trumbowyg('html',this.replyHtml);
 
 			this.setAutoSize(false);

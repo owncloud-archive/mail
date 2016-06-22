@@ -23,6 +23,7 @@ define(function(require) {
 
 	require('trumbowyg');
 	require('trhyperlink');
+	require('toggleeditor');
 
 	return Marionette.LayoutView.extend({
 
@@ -71,7 +72,7 @@ define(function(require) {
 		        'click .submit-message': 'submitMessage',
 			'click .submit-message-wrapper-inside': 'submitMessageWrapperInside',
 			'keypress .message-body': 'handleKeyPress',
-			'click .toggle-editor': 'toggleEditor',
+			'octoggle .message-body': 'toggleEditor',
 			'input  .to': 'onInputChanged',
 			'paste  .to': 'onInputChanged',
 			'keyup  .to': 'onInputChanged',
@@ -108,17 +109,22 @@ define(function(require) {
 			_.defaults(options, defaultOptions);
 			this.trumbowygOpt = function(){
 				this.$('.message-body').trumbowyg({
-					btns: [['bold', 'italic', 'underline'],['hyperlink'],['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull']],
+					btns: [
+						['bold', 'italic', 'underline'],
+						['hyperlink'],
+						['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+						['toggleeditor','fullscreen']
+					],
 					autogrow: true,
 					resetCss: true,
 					semantic:false
-				});
+				}).on('octoggle', function(){this.toggleEditor});
 			};
 			/**
 			 * Composer type (new, reply)
 			 */
 			this.type = options.type;
-
+			this.isToggled = false;
 			/**
 			 * Containing element
 			 */
@@ -189,11 +195,7 @@ define(function(require) {
 			// Submit button state
 			var to = this.$('.to').val();
 			var subject = this.$('.subject').val();
-			if($('.toggle-editor').prop('checked')) {
-				var body = this.$('.message-body').val();
-			}else{
-				var body = this.$('.message-body').trumbowyg('html');
-			}
+			var body = this.$('.message-body').trumbowyg('html');
 			if (to !== '' || subject !== '' || body !== '') {
 				this.$('.submit-message').removeAttr('disabled');
 			} else {
@@ -210,19 +212,14 @@ define(function(require) {
 		},
 		toggleEditor: function()
 		{
-			if($('.toggle-editor').prop('checked')) {
-				this.$('.message-body').trumbowyg('destroy');
-				if(this.isReply()){
-					this.$('.message-body').first().val(this.replyText);
-				}
-			} else {
-				this.trumbowygOpt();
-				if(this.isReply()){
-
+			if(this.isReply()){
+				if(this.isToggled){
 					this.$('.message-body').first().trumbowyg('html',this.replyHtml);
-
+				} else {
+					this.$('.message-body').first().trumbowyg('html',this.replyText);
 				}
 			}
+			this.isToggled = !(this.isToggled);
 		},
 		handleKeyPress: function(event) {
 			// Define which objects to check for the event properties.
@@ -260,9 +257,9 @@ define(function(require) {
 			message.bcc = bcc.val();
 			message.subject = subject.val();
 			message.attachments = this.attachments.toJSON();
-			if($('.toggle-editor').prop('checked')) {
+			if(this.isToggled) {
 				message.type = 'text/plain';
-				message.body = newMessageBody.val();
+				message.body = newMessageBody.trumbowyg('html');
 			}else{
 				message.type = "text/html"
 				message.body = newMessageBody.trumbowyg('html').replace('<br>&gt;','\n>');
@@ -360,11 +357,7 @@ define(function(require) {
 				cc.val('');
 				bcc.val('');
 				subject.val('');
-				if($('.toggle-editor').prop('checked')) {
-					newMessageBody.val('');
-				}else{
-					newMessageBody.trumbowyg('html','');
-				}
+				newMessageBody.trumbowyg('html','');
 				newMessageBody.trigger('autosize.resize');
 				_this.attachments.reset();
 				if (_this.draftUID !== null) {

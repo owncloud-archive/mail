@@ -807,9 +807,5 @@ input.submit-message,
 	opacity: .4;
 }
 .trumbowyg-box{
-	margin:3px auto;
-}
-.toggle-editor-wrapper{
-	margin:3px 0;
-	padding:2px 0;
+	margin:0px auto;
 }

@@ -47,11 +47,9 @@ define(function(require) {
 			// Add body content to inline reply (text mails)
 			if (!this.message.get('hasHtmlBody')) {
 
-				this.reply = {
-					date : new Date(this.message.get('dateIso')),
-					text : HtmlHelper.htmlToText(this.message.get('body')),
-					from : this.message.get('from')
-				};
+				this.reply.date = new Date(this.message.get('dateIso'));
+				this.reply.text = HtmlHelper.htmlToText(this.message.get('body'));
+				this.reply.from = this.message.get('from');
 			}
 
 			// Save current messages's content for later use (forward)
@@ -144,11 +142,13 @@ define(function(require) {
 				messageId: this.message.get('messageId'),
 				data: this.reply
 			}));
-			this.replyComposer.currentView.setReplyBody(
-				this.reply.from,
-				this.reply.date,
-				this.reply.text
-			)
+			if(this.reply.hasOwnProperty('text')){
+				this.replyComposer.currentView.setReplyBody(
+					this.reply.from,
+					this.reply.date,
+					this.reply.text
+				);
+			}
 		}
 	});
 });

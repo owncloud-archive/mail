@@ -46,15 +46,12 @@ define(function(require) {
 
 			// Add body content to inline reply (text mails)
 			if (!this.message.get('hasHtmlBody')) {
-				var date = new Date(this.message.get('dateIso'));
-				var minutes = date.getMinutes();
-				var text = HtmlHelper.htmlToText(this.message.get('body'));
 
-				this.reply.body = '\n\n\n\n' +
-					this.message.get('from') + ' – ' +
-					$.datepicker.formatDate('D, d. MM yy ', date) +
-					date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '\n> ' +
-					text.replace(/\n/g, '\n> ');
+				this.reply = {
+					date : new Date(this.message.get('dateIso')),
+					text : HtmlHelper.htmlToText(this.message.get('body')),
+					from : this.message.get('from')
+				};
 			}
 
 			// Save current messages's content for later use (forward)
@@ -138,7 +135,6 @@ define(function(require) {
 				collection: new Attachments(this.message.get('attachments')),
 				message: this.model
 			}));
-
 			// setup reply composer view
 			this.replyComposer.show(new ComposerView({
 				//el: this.$('#reply-composer'),
@@ -148,6 +144,11 @@ define(function(require) {
 				messageId: this.message.get('messageId'),
 				data: this.reply
 			}));
+			this.replyComposer.currentView.setReplyBody(
+				this.reply.from,
+				this.reply.date,
+				this.reply.text
+			)
 		}
 	});
 });

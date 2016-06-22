@@ -22,7 +22,7 @@ define(function(require) {
 	var ComposerTemplate = require('text!templates/composer.html');
 
 	require('trumbowyg');
-	require('tr-hyperlink');
+	require('trhyperlink');
 
 	return Marionette.LayoutView.extend({
 
@@ -108,7 +108,7 @@ define(function(require) {
 			_.defaults(options, defaultOptions);
 			this.trumbowygOpt = function(){
 				this.$('.message-body').trumbowyg({
-					btns: [['bold', 'italic', 'underline'],['hyperlink'],['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],['fullscreen']],
+					btns: [['bold', 'italic', 'underline'],['hyperlink'],['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull']],
 					autogrow: true,
 					resetCss: true,
 					semantic:false

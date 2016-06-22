@@ -24,6 +24,7 @@
  *
  */
 style('mail','../js/vendor/trumbowyg/dist/ui/trumbowyg.min');
+style('mail','../js/vendor/trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.min');
 style('mail', 'mail');
 style('mail', 'mobile');
 script('mail', 'vendor/autosize/jquery.autosize');
@@ -69,3 +70,4 @@ if ($_['debug']) {
 		</div>
 	</div>
 </div>
+

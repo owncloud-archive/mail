@@ -24,6 +24,7 @@ define(function(require) {
 	require('trumbowyg');
 	require('trhyperlink');
 	require('toggleeditor');
+	require('addcolors');
 
 	return Marionette.LayoutView.extend({
 
@@ -113,6 +114,8 @@ define(function(require) {
 						['bold', 'italic', 'underline'],
 						['hyperlink'],
 						['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+						['foreColor', 'backColor'],
+						['removeformat'],
 						['toggleeditor','fullscreen']
 					],
 					autogrow: true,
@@ -513,3 +516,4 @@ define(function(require) {
 	});
 
 });
+

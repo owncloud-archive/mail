@@ -807,5 +807,67 @@ input.submit-message,
 	opacity: .4;
 }
 .trumbowyg-box{
-	margin:0px auto;
+	margin:3px auto;
 }
+.toggle-editor-wrapper{
+	line-height: 17px;
+	padding: 1.5px;
+}
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+/* Hide default HTML checkbox */
+.toggle-switch input {display:none;}
+
+/* The slider */
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .toggle-slider {
+  background-color: #1D2D44;
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px #1D2D44;
+}
+
+input:checked + .toggle-slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.toggle-slider.round {
+  border-radius: 17px;
+}
+
+.toggle-slider.round:before {
+  border-radius: 50%;
+}
+

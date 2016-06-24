@@ -30,9 +30,7 @@
 			underscore: 'vendor/underscore/underscore',
 			text: 'vendor/text/text',
 			trumbowyg: 'vendor/trumbowyg/dist/trumbowyg.min',
-			addcolors: 'vendor/trumbowyg/dist/plugins/colors/trumbowyg.colors.min',
-			trhyperlink: 'util/trumbowyg/hyperlink',
-			toggleeditor: 'util/trumbowyg/toggleeditor'
+			trhyperlink: 'util/trumbowyg/hyperlink'
 		},
 		shim: {
 			davclient: {
@@ -46,14 +44,6 @@
 				deps: ['jquery']
 				},
 			trhyperlink: {
-				export: '$',
-				deps: ['jquery']
-			},
-			toggleeditor: {
-				export: '$',
-				deps: ['jquery']
-			},
-			addcolors: {
 				export: '$',
 				deps: ['jquery']
 			}

@@ -23,8 +23,6 @@ define(function(require) {
 
 	require('trumbowyg');
 	require('trhyperlink');
-	require('toggleeditor');
-	require('addcolors');
 
 	return Marionette.LayoutView.extend({
 
@@ -73,7 +71,7 @@ define(function(require) {
 		        'click .submit-message': 'submitMessage',
 			'click .submit-message-wrapper-inside': 'submitMessageWrapperInside',
 			'keypress .message-body': 'handleKeyPress',
-			'octoggle .message-body': 'toggleEditor',
+			'click .toggle-editor': 'toggleEditor',
 			'input  .to': 'onInputChanged',
 			'paste  .to': 'onInputChanged',
 			'keyup  .to': 'onInputChanged',
@@ -110,24 +108,19 @@ define(function(require) {
 			_.defaults(options, defaultOptions);
 			this.trumbowygOpt = function(){
 				this.$('.message-body').trumbowyg({
-					btns: [
-						['bold', 'italic', 'underline'],
+					btns: [['bold', 'italic', 'underline'],
 						['hyperlink'],
-						['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
-						['foreColor', 'backColor'],
-						['removeformat'],
-						['toggleeditor','fullscreen']
+						['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull']
 					],
-					autogrow: true,
 					resetCss: true,
 					semantic:false
-				}).on('octoggle', function(){this.toggleEditor});
+				});
 			};
 			/**
 			 * Composer type (new, reply)
 			 */
 			this.type = options.type;
-			this.isToggled = false;
+
 			/**
 			 * Containing element
 			 */
@@ -158,7 +151,7 @@ define(function(require) {
 		},
 		onRender: function() {
 
-			this.trumbowygOpt();
+			//this.trumbowygOpt();
 			this.attachmentsRegion.show(new AttachmentsView({
 				collection: this.attachments
 			}));
@@ -198,7 +191,11 @@ define(function(require) {
 			// Submit button state
 			var to = this.$('.to').val();
 			var subject = this.$('.subject').val();
-			var body = this.$('.message-body').trumbowyg('html');
+			if(!$('.toggle-editor').prop('checked')) {
+				var body = this.$('.message-body').val();
+			}else{
+				var body = this.$('.message-body').trumbowyg('html');
+			}
 			if (to !== '' || subject !== '' || body !== '') {
 				this.$('.submit-message').removeAttr('disabled');
 			} else {
@@ -215,14 +212,19 @@ define(function(require) {
 		},
 		toggleEditor: function()
 		{
-			if(this.isReply()){
-				if(this.isToggled){
+			if(!$('.toggle-editor').prop('checked')) {
+				this.$('.message-body').trumbowyg('destroy');
+				if(this.isReply()){
+					this.$('.message-body').first().val(this.replyText);
+				}
+			} else {
+				this.trumbowygOpt();
+				if(this.isReply()){
+
 					this.$('.message-body').first().trumbowyg('html',this.replyHtml);
-				} else {
-					this.$('.message-body').first().trumbowyg('html',this.replyText);
+
 				}
 			}
-			this.isToggled = !(this.isToggled);
 		},
 		handleKeyPress: function(event) {
 			// Define which objects to check for the event properties.
@@ -260,9 +262,9 @@ define(function(require) {
 			message.bcc = bcc.val();
 			message.subject = subject.val();
 			message.attachments = this.attachments.toJSON();
-			if(this.isToggled) {
+			if(!$('.toggle-editor').prop('checked')) {
 				message.type = 'text/plain';
-				message.body = newMessageBody.trumbowyg('html');
+				message.body = newMessageBody.val();
 			}else{
 				message.type = "text/html"
 				message.body = newMessageBody.trumbowyg('html').replace('<br>&gt;','\n>');
@@ -360,7 +362,11 @@ define(function(require) {
 				cc.val('');
 				bcc.val('');
 				subject.val('');
-				newMessageBody.trumbowyg('html','');
+				if(!$('.toggle-editor').prop('checked')) {
+					newMessageBody.val('');
+				}else{
+					newMessageBody.trumbowyg('html','');
+				}
 				newMessageBody.trigger('autosize.resize');
 				_this.attachments.reset();
 				if (_this.draftUID !== null) {
@@ -445,7 +451,8 @@ define(function(require) {
 				$.datepicker.formatDate('D, d. MM yy ', date) +
 				date.getHours() + ':' + (minutes < 10 ? '0' : '') + minutes + '\n> ' +
 				text.replace(/(?:\r\n|\r|\n)/g, '\n> ');
-			this.$('.message-body').first().trumbowyg('html',this.replyHtml);
+				this.$('.message-body').val(this.replyText);
+			//this.$('.message-body').first().trumbowyg('html',this.replyHtml);
 
 			this.setAutoSize(false);
 			// Expand reply message body on click

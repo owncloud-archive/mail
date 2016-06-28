@@ -19,6 +19,7 @@
     "backbone.marionette": "^2.4.4",
     "backbone.radio": "^1.0.4",
     "domReady": "^2.0.1",
+    "hammerjs": "hammer.js#^2.0.4",
     "handlebars": "^4.0.5",
     "jquery": "2.2.3",
     "jquery-storage-api": "julien-maurel/jQuery-Storage-API#~1.7.4",
@@ -28,6 +29,7 @@
     "underscore": "~1.8.3",
     "davclient.js": "https://github.com/evert/davclient.js.git",
     "es6-promise": "^3.2.1",
-    "ical.js": "^1.2.1"
+    "ical.js": "^1.2.1",
+    "web-pull-to-refresh": "git@github.com:ChristophWurst/web-pull-to-refresh.git#^1.1.0"
   }
 }

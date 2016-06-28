@@ -23,6 +23,7 @@ define(function(require) {
 	var $ = require('jquery');
 	var Backbone = require('backbone');
 	var Handlebars = require('handlebars');
+	var WebPullToRefresh = require('wptr');
 	var Radio = require('radio');
 	var MessagesItemView = require('views/messagesitem');
 	var MessageListTemplate = require('text!templates/message-list.html');
@@ -54,6 +55,25 @@ define(function(require) {
 		onShow: function() {
 			this.$scrollContainer = this.$el.parent();
 			this.$scrollContainer.scroll(_.bind(this.onScroll, this));
+
+			var _this = this;
+			WebPullToRefresh.init({
+				contentEl: document.getElementById('mail-message-list'),
+				ptrEl: document.getElementById('ptr'),
+				loadingFunction: function() {
+					return new Promise(function(resolve, reject) {
+						// Run some async loading code here
+
+						var refreshing = _this.refresh();
+						$.when(refreshing).done(function() {
+							resolve();
+						});
+						$.when(refreshing).fail(function() {
+							reject();
+						});
+					});
+				}
+			});
 		},
 		getEmptyView: function() {
 			if (this.filterCriteria) {
@@ -153,7 +173,7 @@ define(function(require) {
 				return;
 			}
 
-			this.loadMessages(true);
+			return this.loadMessages(true);
 		},
 		onScroll: function() {
 			if (this.loadingMore === true) {
@@ -176,6 +196,7 @@ define(function(require) {
 			this.filterCriteria = null;
 		},
 		loadMessages: function(reload) {
+			console.log('loading messages');
 			reload = reload || false;
 			var from = this.collection.size();
 			if (reload) {
@@ -214,6 +235,8 @@ define(function(require) {
 				$('#load-more-mail-messages').removeClass('icon-loading');
 				_this.loadingMore = false;
 			});
+
+			return loadingMessages;
 		},
 		addMessages: function(message) {
 			var _this = this;

@@ -40,7 +40,8 @@ define(function(require) {
 		events: {
 			'click .account-toggle-collapse': 'toggleCollapse',
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click @ui.deleteButton': 'onDelete'
+			'click @ui.deleteButton': 'onDelete',
+			'contextmenu': 'onRightClick'
 		},
 		ui: {
 			'menu': 'div.app-navigation-entry-menu',
@@ -73,6 +74,11 @@ define(function(require) {
 		},
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
+		},
+		onRightClick: function(e) {
+			e.preventDefault();
+			this.menuShown = true;
+			this.toggleMenuClass();
 		},
 		onDelete: function(e) {
 			e.stopPropagation();

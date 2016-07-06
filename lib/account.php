@@ -181,7 +181,11 @@ class Account implements IAccount {
 
 		$mail = new Horde_Mime_Mail();
 		$mail->addHeaders($headers);
-		$mail->setBody($message->getContent());
+		if($message->getType() === 'text/html'){
+			$mail->setHtmlBody($message->getContent());
+		}else{
+			$mail->setBody($message->getContent());
+		}
 
 		// Append attachments
 		foreach ($message->getAttachments() as $attachment) {
@@ -229,10 +233,15 @@ class Account implements IAccount {
 		$mail = new Horde_Mime_Mail();
 		$mail->addHeaders($headers);
 		$body = new Horde_Mime_Part();
-		$body->setType('text/plain');
+		if($message->getType() === 'text/html'){
+			$body->setType('text/html');
+			$mail->addHeader('Content-type','text/html; charset=iso-8859-1');
+		}else{
+			$body->setType('text/plain');
+		}
 		$body->setContents($message->getContent());
 		$mail->setBasePart($body);
-
+		//echo $mail->getBasePart()->getHtmlBody();
 		// create transport and save message
 		// save the message in the drafts folder
 		$draftsFolder = $this->getDraftsFolder();
@@ -504,12 +513,12 @@ class Account implements IAccount {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param int $messageId
 	 */
 	public function deleteDraft($messageId) {
 		$draftsFolder = $this->getDraftsFolder();
-		
+
 		$draftsMailBox = new \Horde_Imap_Client_Mailbox($draftsFolder->getFolderId(), false);
 		$this->getImapConnection()->expunge($draftsMailBox);
 	}

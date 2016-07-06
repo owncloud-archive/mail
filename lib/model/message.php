@@ -83,6 +83,11 @@ class Message implements IMessage {
 	private $attachments = [];
 
 	/**
+	 * @var string
+	 */
+	private $type;
+
+	/**
 	 * @param string $list
 	 * @return Horde_Mail_Rfc822_List
 	 */
@@ -107,7 +112,7 @@ class Message implements IMessage {
 
 	/**
 	 * Get all flags set on this message
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getFlags() {
@@ -262,6 +267,20 @@ class Message implements IMessage {
 		$part->setContents($file->getContent());
 		$part->setType($file->getMimeType());
 		$this->attachments[] = $part;
+	}
+
+	/**
+	 * @param string $type
+	 */
+	public function setType($type) {
+		$this->type = $type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getType() {
+		return $this->type;
 	}
 
 }

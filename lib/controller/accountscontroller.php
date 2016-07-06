@@ -258,10 +258,11 @@ class AccountsController extends Controller {
 	 * @param int $draftUID
 	 * @param string $messageId
 	 * @param mixed $attachments
+	 * @param string $type
 	 * @return JSONResponse
 	 */
 	public function send($accountId, $folderId, $subject, $body, $to, $cc,
-		$bcc, $draftUID, $messageId, $attachments) {
+		$bcc, $draftUID, $messageId, $attachments,$type) {
 		$account = $this->accountService->find($this->currentUserId, $accountId);
 		if ($account instanceof UnifiedAccount) {
 			list($account, $folderId, $messageId) = $account->resolve($messageId);
@@ -306,6 +307,7 @@ class AccountsController extends Controller {
 		$message->setCC(Message::parseAddressList($cc));
 		$message->setBcc(Message::parseAddressList($bcc));
 		$message->setContent($body);
+		$message->setType($type);
 
 		if (is_array($attachments)) {
 			foreach($attachments as $attachment) {
@@ -347,7 +349,7 @@ class AccountsController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * 
+	 *
 	 * @param int $accountId
 	 * @param string $subject
 	 * @param string $body
@@ -358,7 +360,7 @@ class AccountsController extends Controller {
 	 * @param string $messageId
 	 * @return JSONResponse
 	 */
-	public function draft($accountId, $subject, $body, $to, $cc, $bcc, $uid, $messageId) {
+	public function draft($accountId, $subject, $body, $to, $cc, $bcc, $uid, $messageId,$type) {
 		if (is_null($uid)) {
 			$this->logger->info("Saving a new draft in account <$accountId>");
 		} else {
@@ -383,6 +385,7 @@ class AccountsController extends Controller {
 		$message->setCC(Message::parseAddressList($cc));
 		$message->setBcc(Message::parseAddressList($bcc));
 		$message->setContent($body);
+		$message->setType($type);
 
 		// create transport and save message
 		try {

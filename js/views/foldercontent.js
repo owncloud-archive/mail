@@ -28,7 +28,7 @@ define(function(require) {
 	var Radio = require('radio');
 	var ComposerView = require('views/composer');
 	var MessageView = require('views/message');
-	var MessagesView = require('views/messages');
+	var MessagesView = require('views/messagesview');
 	var LoadingView = require('views/loadingview');
 	var MessageContentTemplate = require('text!templates/foldercontent.html');
 

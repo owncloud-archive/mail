@@ -24,11 +24,14 @@
 			davclient: 'vendor/davclient.js/lib/client',
 			domready: 'vendor/domReady/domReady',
 			'es6-promise': 'vendor/es6-promise/es6-promise.min',
+			hammerjs: 'vendor/hammerjs/hammer',
 			handlebars: 'vendor/handlebars/handlebars',
 			ical: 'vendor/ical.js/build/ical.min',
+			'jquery.hammerjs': 'vendor/jquery-hammerjs/jquery.hammer',
 			marionette: 'vendor/backbone.marionette/lib/backbone.marionette',
 			underscore: 'vendor/underscore/underscore',
-			text: 'vendor/text/text'
+			text: 'vendor/text/text',
+			wptr: 'vendor/web-pull-to-refresh/lib/wptr.1.1'
 		},
 		shim: {
 			davclient: {
@@ -36,6 +39,12 @@
 			},
 			ical: {
 				exports: 'ICAL'
+			},
+			wptr: {
+				exports: 'WebPullToRefresh',
+				deps: [
+					'hammerjs'
+				]
 			}
 		}
 	});

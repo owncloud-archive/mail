@@ -58,7 +58,7 @@ define(function(require) {
 
 			var _this = this;
 			WebPullToRefresh.init({
-				contentEl: document.getElementById('mail-message-list'),
+				contentEl: document.getElementById('mail-messages'),
 				loadingFunction: function() {
 					return new Promise(function(resolve, reject) {
 						// Run some async loading code here

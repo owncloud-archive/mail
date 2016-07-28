@@ -59,7 +59,6 @@ define(function(require) {
 			var _this = this;
 			WebPullToRefresh.init({
 				contentEl: document.getElementById('mail-message-list'),
-				ptrEl: document.getElementById('ptr'),
 				loadingFunction: function() {
 					return new Promise(function(resolve, reject) {
 						// Run some async loading code here
@@ -165,7 +164,7 @@ define(function(require) {
 				});
 			}
 		},
-		loadNew: function() {
+		refresh: function() {
 			if (!require('state').currentAccount) {
 				return;
 			}

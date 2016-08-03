@@ -106,6 +106,12 @@
 				<notnull>false</notnull>
 				<length>255</length>
 			</field>
+			<field>
+				<name>signature</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
+			</field>
 
 			<index>
 				<name>mail_userid_index</name>
@@ -183,6 +189,12 @@
 			</field>
 			<field>
 				<name>alias</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
+			</field>
+			<field>
+				<name>signature</name>
 				<type>text</type>
 				<notnull>true</notnull>
 				<length>255</length>

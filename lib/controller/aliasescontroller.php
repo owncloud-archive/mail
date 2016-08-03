@@ -100,4 +100,17 @@ class AliasesController extends Controller {
 	public function create($accountId, $alias, $aliasName) {
 		return $this->aliasService->create($accountId, $alias, $aliasName);
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param int $aliasId
+	 * @param string $signature
+	 * @return Alias[]
+	 */
+	public function updateSignature($aliasId, $signature) {
+		return $this->aliasService->updateSignature($aliasId, $this->currentUser->getUID(), $signature);
+	}
+
+
 }

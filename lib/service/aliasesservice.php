@@ -100,4 +100,20 @@ class AliasesService {
 			$this->handleException($e);
 		}
 	}
+
+	/**
+	 * @param int $aliasId
+	 * @param String $currentUserId
+	 * @param String $signature
+	 * @return \OCA\Mail\Db\Alias
+	 */
+	public function updateSignature($aliasId, $currentUserId, $signature) {
+		try {
+			$alias = $this->mapper->find($aliasId, $currentUserId);
+			$alias->setSignature($signature);
+			return $this->mapper->update($alias);
+		} catch(Exception $e) {
+			$this->handleException($e);
+		}
+	}
 }

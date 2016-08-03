@@ -21,11 +21,13 @@ use OCP\AppFramework\Db\Entity;
  * @method string getName()
  * @method void setAlias(string $alias)
  * @method string getAlias()
+ * @method void setSignature(string $signature)
+ * @method string getSignature()
  */
 class Alias extends Entity {
 	
 	public $accountId;
 	public $name;
 	public $alias;
-
+	public $signature;
 }

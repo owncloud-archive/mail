@@ -57,6 +57,14 @@ $app->registerRoutes($this,
 				'name' => 'folders#detectChanges',
 				'url' => '/accounts/{accountId}/folders/detectChanges',
 				'verb' => 'POST'],
+			[
+				'name' => 'aliases#updateSignature',
+				'url' => '/aliases/{aliasId}/signature',
+				'verb' => 'POST'],
+			[
+				'name' => 'accounts#updateSignature',
+				'url' => '/accounts/{accountId}/signature',
+				'verb' => 'POST'],
 		],
 		'resources' => [
 			'autoComplete' => ['url' => '/autoComplete'],

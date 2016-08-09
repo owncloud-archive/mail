@@ -112,4 +112,20 @@ class AccountService {
 	private function buildUnifiedAccount($userId) {
 		return new UnifiedAccount($this, $userId, $this->l10n);
 	}
+
+	/**
+	 * @param int $accountId
+	 * @param String $currentUserId
+	 * @param String $signature
+	 * @return \OCA\Mail\Db\Alias
+	 */
+	public function updateSignature($accountId, $currentUserId, $signature) {
+		try {
+			$account = $this->mapper->find($currentUserId, $accountId);
+			$account->setSignature($signature);
+			return $this->mapper->update($account);
+		} catch(Exception $e) {
+			$this->handleException($e);
+		}
+	}
 }

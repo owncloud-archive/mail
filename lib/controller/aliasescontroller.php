@@ -112,5 +112,4 @@ class AliasesController extends Controller {
 		return $this->aliasService->updateSignature($aliasId, $this->currentUser->getUID(), $signature);
 	}
 
-
 }

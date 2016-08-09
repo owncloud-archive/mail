@@ -57,6 +57,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setOutboundUser(string $outboundUser)
  * @method string getOutboundPassword()
  * @method void setOutboundPassword(string $outboundPassword)
+ * @method void setSignature(string $signature)
+ * @method string getSignature()
  */
 class MailAccount extends Entity {
 
@@ -73,6 +75,7 @@ class MailAccount extends Entity {
 	public $outboundSslMode;
 	public $outboundUser;
 	public $outboundPassword;
+	public $signature;
 
 	/**
 	 * @param array $params
@@ -134,6 +137,7 @@ class MailAccount extends Entity {
 			'imapPort' => $this->getInboundPort(),
 			'imapUser' => $this->getInboundUser(),
 			'imapSslMode' => $this->getInboundSslMode(),
+			'signature' => $this->getSignature()
 		];
 
 		if (!is_null($this->getOutboundHost())) {

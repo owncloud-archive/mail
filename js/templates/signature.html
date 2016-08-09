@@ -1,11 +1,13 @@
 <div class="signature">
 	<select class="mail-account">
+		{{#each aliases}}
 		<option value="{{id}}">{{name}} &lt;{{emailAddress}}&gt;</option>
+		{{/each}}
 	</select>
-	<div class="signature-field">
-		<textarea name="signature">{{signature}}</textarea>
-	</div>
-	<div class="save-signature">
-		<button value="{{ t'Save' }}"></button>
-	</div>
+	<form name="signatureForm" method="post">
+		<textarea name="signature-body" class="signature-body" placeholder="{{ t 'Signature' }}">
+			{{signature}}
+		</textarea>
+		<input type="submit" value="{{ t 'Save' }}" class="update-signature-button">
+	</form>
 </div>

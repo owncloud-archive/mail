@@ -412,4 +412,15 @@ class AccountsController extends Controller {
 		]);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param int $accountId
+	 * @param string $signature
+	 * @return Account[]
+	 */
+	public function updateSignature($accountId, $signature) {
+		return $this->accountService->updateSignature($accountId, $this->currentUserId, $signature);
+	}
+
 }

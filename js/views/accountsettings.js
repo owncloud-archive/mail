@@ -16,6 +16,7 @@ define(function(require) {
 	var Handlebars = require('handlebars');
 	var AccountSettingsTemplate = require('text!templates/accountsettings.html');
 	var AliasesView = require('views/aliases');
+	var SignatureView = require('views/signature');
 	var Radio = require('radio');
 
 	return Marionette.LayoutView.extend({
@@ -40,7 +41,8 @@ define(function(require) {
 			'submit @ui.form': 'onSubmit'
 		},
 		regions: {
-			aliasesRegion : '#aliases-list'
+			aliasesRegion : '#aliases-list',
+			signatureRegion: '#signature-list'
 		},
 		initialize: function(options) {
 			this.currentAccount = options.account;
@@ -74,9 +76,15 @@ define(function(require) {
 		},
 		onShow: function() {
 			this.showAliases();
+			this.showSignature();
 		},
 		showAliases: function() {
 			this.aliasesRegion.show(new AliasesView({
+				currentAccount: this.currentAccount
+			}));
+		},
+		showSignature: function() {
+			this.signatureRegion.show(new SignatureView({
 				currentAccount: this.currentAccount
 			}));
 		}

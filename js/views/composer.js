@@ -483,7 +483,8 @@ define(function(require) {
 					accountId: json.accountId,
 					aliasId: null,
 					emailAddress: json.emailAddress,
-					name: json.name
+					name: json.name,
+					signature: json.signature
 				});
 				// add Aliases email adresses
 				for (var x in json.aliases) {
@@ -492,7 +493,8 @@ define(function(require) {
 						accountId: json.aliases[x].accountId,
 						aliasId: json.aliases[x].id,
 						emailAddress: json.aliases[x].alias,
-						name: json.aliases[x].name
+						name: json.aliases[x].name,
+						signature: json.aliases[x].signature
 					});
 				}
 			});

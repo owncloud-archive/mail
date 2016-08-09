@@ -8,6 +8,17 @@
 	<form name="aliasForm" method="post">
 		<input type="text" name="alias" id="alias" placeholder="{{ t 'Alias' }}">
 		<input type="text" name="alias-name" id="alias-name" placeholder="{{ t 'Display Name' }}">
-		<input type="submit" value="{{ t 'Save' }}">
+		<input type="submit" value="{{ t 'Save' }}" name="aliasSubmitButton">
 	</form>
+</div>
+
+<div class="section" id="signature">
+	<h2>{{ t 'Signature' }}</h2>
+	<div id="signature-list"></div>
+	<!--<div class="signature-field">-->
+		<!--<textarea name="signature"></textarea>-->
+	<!--</div>-->
+	<!--<div class="save-signature">-->
+		<!--<button type="submit" value="{{ t 'Save' }}" class="update-signature-button">Save</button>-->
+	<!--</div>-->
 </div>

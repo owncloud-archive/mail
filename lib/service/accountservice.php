@@ -117,7 +117,7 @@ class AccountService {
 	 * @param int $accountId
 	 * @param String $currentUserId
 	 * @param String $signature
-	 * @return \OCA\Mail\Db\Alias
+	 * @return Account[]
 	 */
 	public function updateSignature($accountId, $currentUserId, $signature) {
 		try {

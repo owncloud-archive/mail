@@ -16,7 +16,6 @@ define(function(require) {
 	var Marionette = require('marionette');
 	var Handlebars = require('handlebars');
 	var SignatureTemplate = require('text!templates/signature.html');
-	var OC = require('OC');
 	var Radio = require('radio');
 
 	return Marionette.LayoutView.extend({
@@ -108,54 +107,6 @@ define(function(require) {
 				_this.ui.signatureBody.prop('disabled', false);
 				_this.ui.updateButton.val('Save');
 			});
-		},
-		saveAliasSignature: function(alias, signature) {
-			var defer = $.Deferred();
-
-			var url = OC.generateUrl('/apps/mail/aliases/{id}/signature', {
-				id: alias.aliasId
-			});
-			var data = {
-				type: 'POST',
-				data: {
-					signature: signature
-				}
-			};
-			var promise =  $.ajax(url, data);
-
-			promise.done(function(data) {
-				defer.resolve(data);
-			});
-
-			promise.fail(function() {
-				defer.reject();
-			});
-
-			return defer.promise();
-		},
-		saveAccountSignature: function(alias, signature) {
-			var defer = $.Deferred();
-
-			var url = OC.generateUrl('/apps/mail/accounts/{id}/signature', {
-				id: alias.accountId
-			});
-			var data = {
-				type: 'POST',
-				data: {
-					signature: signature
-				}
-			};
-			var promise =  $.ajax(url, data);
-
-			promise.done(function(data) {
-				defer.resolve(data);
-			});
-
-			promise.fail(function() {
-				defer.reject();
-			});
-
-			return defer.promise();
 		}
 	});
 });

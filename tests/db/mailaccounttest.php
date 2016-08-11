@@ -40,6 +40,7 @@ class TestMailAccount extends \PHPUnit_Framework_TestCase {
 		$a->setOutboundUser('spiderman');
 		$a->setOutboundPassword('xxxx');
 		$a->setOutboundSslMode('ssl');
+		$a->setSignature('Thanks You');
 
 		$this->assertEquals(array(
 			'accountId' => 12345,
@@ -52,7 +53,8 @@ class TestMailAccount extends \PHPUnit_Framework_TestCase {
 			'smtpHost' => 'smtp.marvel.com',
 			'smtpPort' => 458,
 			'smtpUser' => 'spiderman',
-			'smtpSslMode' => 'ssl'
+			'smtpSslMode' => 'ssl',
+			'signature' => 'Thanks You'
 		), $a->toJson());
 	}
 
@@ -68,7 +70,8 @@ class TestMailAccount extends \PHPUnit_Framework_TestCase {
 			'smtpHost' => 'smtp.marvel.com',
 			'smtpPort' => 458,
 			'smtpUser' => 'spiderman',
-			'smtpSslMode' => 'ssl'
+			'smtpSslMode' => 'ssl',
+			'signature' => null
 		];
 		$a = new MailAccount($expected);
 		// TODO: fix inconsistency

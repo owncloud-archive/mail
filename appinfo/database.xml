@@ -108,9 +108,8 @@
 			</field>
 			<field>
 				<name>signature</name>
-				<type>text</type>
+				<type>clob</type>
 				<notnull>true</notnull>
-				<length>255</length>
 			</field>
 
 			<index>
@@ -195,9 +194,8 @@
 			</field>
 			<field>
 				<name>signature</name>
-				<type>text</type>
+				<type>clob</type>
 				<notnull>true</notnull>
-				<length>255</length>
 			</field>
 		</declaration>
 	</table>

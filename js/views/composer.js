@@ -83,7 +83,8 @@ define(function(require) {
 			'keyup  .message-body': 'onInputChanged',
 			'focus  .recipient-autocomplete': 'onAutoComplete',
 			// CC/BCC toggle
-			'click .composer-cc-bcc-toggle': 'ccBccToggle'
+			'click .composer-cc-bcc-toggle': 'ccBccToggle',
+			'click .mail-account': 'showSignature'
 		},
 		initialize: function(options) {
 			var defaultOptions = {
@@ -529,6 +530,16 @@ define(function(require) {
 		},
 		onShow: function() {
 			this.defaultMailSelect();
+			this.showSignature();
+		},
+		showSignature: function() {
+			var alias = this.findAliasById(this.$('.mail-account').
+			find(':selected').val());
+			if (!this.isReply()) {
+				$('textarea[name="body"]').val('\n\n' + alias.signature);
+			}else {
+				$('textarea[name="body"]').val('\n\n' + alias.signature + '\n\n' + this.data.body);
+			}
 		}
 	});
 

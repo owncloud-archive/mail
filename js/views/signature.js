@@ -16,8 +16,8 @@ define(function(require) {
 	var Marionette = require('marionette');
 	var Handlebars = require('handlebars');
 	var SignatureTemplate = require('text!templates/signature.html');
-	var Radio = require('radio');
 	var OC = require('OC');
+	var Radio = require('radio');
 
 	return Marionette.LayoutView.extend({
 		currentAccount: null,
@@ -25,7 +25,6 @@ define(function(require) {
 		aliases: null,
 		signature: null,
 		templateHelpers: function() {
-			var aliases = this.buildAliases();
 			this.signature = this.aliases[0].signature;
 			return {
 				aliases: this.aliases,
@@ -43,6 +42,7 @@ define(function(require) {
 		},
 		initialize: function(options) {
 			this.currentAccount = options.currentAccount;
+			this.buildAliases();
 		},
 		buildAliases: function() {
 			var aliases = [];
@@ -72,8 +72,8 @@ define(function(require) {
 			this.aliases = aliases;
 		},
 		findAliasById: function(id) {
-		return _.find(this.aliases, function(alias) { return parseInt(alias.id)  === parseInt(id); });
-	    },
+			return _.find(this.aliases, function(alias) { return parseInt(alias.id)  === parseInt(id); });
+		},
 		showSignature: function() {
 			var alias = this.findAliasById(this.$('.mail-account').
 			find(':selected').val());
@@ -85,43 +85,31 @@ define(function(require) {
 			find(':selected').val());
 			var signature = this.ui.signatureBody.val();
 			var _this = this;
+			var updatingSignature = null;
 
-			if(alias.aliasId){
-				var updateSignature = this.saveAliasSignature(alias, signature);
-				this.ui.updateButton.prop('disabled', true);
-				this.ui.signatureBody.prop('disabled', true);
-				this.ui.updateButton.val('Saving');
+			if (alias.aliasId) {
+				updatingSignature = Radio.signature.request('update:aliasSignature', alias.aliasId, signature);
 
-				$.when(updateSignature).done(function() {
-					// set signature to alias in aliases
-					_this.aliases[alias.id].signature = signature;
-				});
-
-				$.when(updateSignature).always(function() {
-					_this.ui.updateButton.prop('disabled', false);
-					_this.ui.signatureBody.prop('disabled', false);
-					_this.ui.updateButton.val('Save');
-				});
 			} else {
-				var updateSignature = this.saveAccountSignature(alias, signature);
-				this.ui.updateButton.prop('disabled', true);
-				this.ui.signatureBody.prop('disabled', true);
-				this.ui.updateButton.val('Saving');
-
-				$.when(updateSignature).done(function() {
-					// set signature to alias in aliases
-					_this.aliases[alias.id].signature = signature;
-				});
-
-				$.when(updateSignature).always(function() {
-					_this.ui.updateButton.prop('disabled', false);
-					_this.ui.signatureBody.prop('disabled', false);
-					_this.ui.updateButton.val('Save');
-				});
+				updatingSignature = Radio.signature.request('update:accountSignature', alias.accountId, signature);
 			}
+
+			this.ui.updateButton.prop('disabled', true);
+			this.ui.signatureBody.prop('disabled', true);
+			this.ui.updateButton.val('Saving');
+
+			$.when(updatingSignature).done(function() {
+				// set signature to alias in aliases
+				_this.aliases[alias.id].signature = signature;
+			});
+
+			$.when(updatingSignature).always(function() {
+				_this.ui.updateButton.prop('disabled', false);
+				_this.ui.signatureBody.prop('disabled', false);
+				_this.ui.updateButton.val('Save');
+			});
 		},
 		saveAliasSignature: function(alias, signature) {
-			console.log(signature);
 			var defer = $.Deferred();
 
 			var url = OC.generateUrl('/apps/mail/aliases/{id}/signature', {

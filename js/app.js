@@ -41,12 +41,14 @@ define(function(require) {
 	require('controller/foldercontroller');
 	require('controller/messagecontroller');
 	require('controller/aliasescontroller');
+	require('controller/signaturecontroller');
 	require('service/accountservice');
 	require('service/attachmentservice');
 	require('service/davservice');
 	require('service/folderservice');
 	require('service/messageservice');
 	require('service/aliasesservice');
+	require('service/signatureservice');
 	require('notification');
 
 	// Set marionette defaults

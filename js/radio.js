@@ -24,7 +24,8 @@ define(function(require) {
 		'state',
 		'ui',
 		'keyboard',
-		'aliases'
+		'aliases',
+		'signature'
 	];
 
 	var channels = {};

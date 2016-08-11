@@ -5,9 +5,7 @@
 		{{/each}}
 	</select>
 	<form name="signatureForm" method="post">
-		<textarea name="signature-body" class="signature-body" placeholder="{{ t 'Signature' }}">
-			{{signature}}
-		</textarea>
+		<textarea name="signature-body" class="signature-body" placeholder="{{ t 'Signature' }}">{{signature}}</textarea>
 		<input type="submit" value="{{ t 'Save' }}" class="update-signature-button">
 	</form>
 </div>

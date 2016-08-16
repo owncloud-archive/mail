@@ -120,12 +120,8 @@ class AccountService {
 	 * @return Account[]
 	 */
 	public function updateSignature($accountId, $currentUserId, $signature) {
-		try {
-			$account = $this->mapper->find($currentUserId, $accountId);
-			$account->setSignature($signature);
-			return $this->mapper->update($account);
-		} catch(Exception $e) {
-			$this->handleException($e);
-		}
+		$account = $this->mapper->find($currentUserId, $accountId);
+		$account->setSignature($signature);
+		return $this->mapper->update($account);
 	}
 }

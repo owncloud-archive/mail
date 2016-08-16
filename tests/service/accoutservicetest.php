@@ -144,4 +144,25 @@ class AccountServiceTest extends TestCase {
 		$this->assertEquals($expected, $actual);
 	}
 
+	public function testUpdateSignature() {
+		$accountId = 123;
+		$signature = "Thank You";
+
+		$this->mapper->expects($this->once())
+			->method('find')
+			->with($this->user, $accountId)
+			->will($this->returnValue($this->account1));
+
+		$this->account1->setSignature($signature);
+
+		$this->mapper->expects($this->once())
+			->method('update')
+			->with($this->account1);
+
+		$expected = new Account($this->account1);
+		$actual = $this->service->updateSignature($this->user, $accountId, $signature);
+
+		$this->assertEquals($expected, $actual);
+	}
+
 }

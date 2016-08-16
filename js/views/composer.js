@@ -533,12 +533,13 @@ define(function(require) {
 			this.showSignature();
 		},
 		showSignature: function() {
-			var alias = this.findAliasById(this.$('.mail-account').
-			find(':selected').val());
-			if (!this.isReply()) {
-				$('textarea[name="body"]').val('\n\n' + alias.signature);
-			}else {
-				$('textarea[name="body"]').val('\n\n' + alias.signature + '\n\n' + this.data.body);
+			var alias = this.findAliasById(this.$('.mail-account').find(':selected').val());
+			if(alias.signature){
+				if (!this.isReply()) {
+					this.$('textarea[name="body"]').val('\n\n' + alias.signature);
+				}else {
+					this.$('textarea[name="body"]').val('\n\n' + alias.signature + '\n\n' + this.data.body);
+				}
 			}
 		}
 	});

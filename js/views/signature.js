@@ -47,7 +47,6 @@ define(function(require) {
 			var aliases = [];
 			var id = 0;
 			var json = this.currentAccount.toJSON();
-			console.log(json);
 			// add Primary email address
 			aliases.push({
 				id: id++,
@@ -87,10 +86,10 @@ define(function(require) {
 			var updatingSignature = null;
 
 			if (alias.aliasId) {
-				updatingSignature = Radio.signature.request('update:aliasSignature', alias.aliasId, signature);
+				updatingSignature = Radio.signature.request('update:aliasSignature', alias, signature);
 
 			} else {
-				updatingSignature = Radio.signature.request('update:accountSignature', alias.accountId, signature);
+				updatingSignature = Radio.signature.request('update:accountSignature', alias, signature);
 			}
 
 			this.ui.updateButton.prop('disabled', true);

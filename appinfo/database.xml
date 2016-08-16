@@ -109,7 +109,6 @@
 			<field>
 				<name>signature</name>
 				<type>clob</type>
-				<notnull>true</notnull>
 			</field>
 
 			<index>
@@ -195,7 +194,6 @@
 			<field>
 				<name>signature</name>
 				<type>clob</type>
-				<notnull>true</notnull>
 			</field>
 		</declaration>
 	</table>

@@ -40,7 +40,6 @@ class TestMailAccount extends \PHPUnit_Framework_TestCase {
 		$a->setOutboundUser('spiderman');
 		$a->setOutboundPassword('xxxx');
 		$a->setOutboundSslMode('ssl');
-		$a->setSignature('Thanks You');
 
 		$this->assertEquals(array(
 			'accountId' => 12345,
@@ -54,7 +53,7 @@ class TestMailAccount extends \PHPUnit_Framework_TestCase {
 			'smtpPort' => 458,
 			'smtpUser' => 'spiderman',
 			'smtpSslMode' => 'ssl',
-			'signature' => 'Thanks You'
+			'signature' => null
 		), $a->toJson());
 	}
 

@@ -28,15 +28,15 @@ define(function(require) {
 	Radio.signature.reply('saveAccountSignature', saveAccountSignature);
 
 	/**
-	 * @param aliasId
+	 * @param alias
 	 * @param signature
 	 * @returns {undefined}
 	 */
-	function saveAliasSignature(aliasId, signature) {
+	function saveAliasSignature(alias, signature) {
 		var defer = $.Deferred();
 
 		var url = OC.generateUrl('/apps/mail/aliases/{id}/signature', {
-			id: aliasId
+			id: alias.aliasId
 		});
 		var data = {
 			type: 'POST',
@@ -58,15 +58,15 @@ define(function(require) {
 	}
 
 	/**
-	 * @param accountId
+	 * @param account
 	 * @param signature
 	 * @returns {undefined}
 	 */
-	function saveAccountSignature(accountId, signature) {
+	function saveAccountSignature(account, signature) {
 		var defer = $.Deferred();
 
 		var url = OC.generateUrl('/apps/mail/accounts/{id}/signature', {
-			id: accountId
+			id: account.accountId
 		});
 		var data = {
 			type: 'POST',

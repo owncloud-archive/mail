@@ -28,12 +28,12 @@ define(function(require) {
 	Radio.signature.reply('update:accountSignature', updateAccountSignature);
 
 	/**
-	 * @param aliasId
+	 * @param alias
 	 * @param signature
 	 * @returns {undefined}
 	 */
-	function updateAliasSignature(aliasId, signature) {
-		var updatingSignature = Radio.signature.request('saveAliasSignature', aliasId, signature);
+	function updateAliasSignature(alias, signature) {
+		var updatingSignature = Radio.signature.request('saveAliasSignature', alias, signature);
 
 		$.when(updatingSignature).fail(function() {
 			Radio.ui.trigger('error:show', t('mail', 'Saving Signature Failed.'));
@@ -43,12 +43,12 @@ define(function(require) {
 	}
 
 	/**
-	 * @param accountId
+	 * @param account
 	 * @param signature
 	 * @returns {undefined}
 	 */
-	function updateAccountSignature(accountId, signature) {
-		var updatingSignature = Radio.signature.request('saveAccountSignature', accountId, signature);
+	function updateAccountSignature(account, signature) {
+		var updatingSignature = Radio.signature.request('saveAccountSignature', account, signature);
 
 		$.when(updatingSignature).fail(function() {
 			Radio.ui.trigger('error:show', t('mail', 'Saving Signature Failed.'));

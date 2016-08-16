@@ -534,7 +534,7 @@ define(function(require) {
 		},
 		showSignature: function() {
 			var alias = this.findAliasById(this.$('.mail-account').find(':selected').val());
-			if(alias.signature){
+			if (alias.signature) {
 				if (!this.isReply()) {
 					this.$('textarea[name="body"]').val('\n\n' + alias.signature);
 				}else {

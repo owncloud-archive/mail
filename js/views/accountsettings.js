@@ -62,6 +62,7 @@ define(function(require) {
 			var savingAlias = Radio.aliases.request('save:alias', this.currentAccount, alias);
 			$.when(savingAlias).done(function(data) {
 				_this.currentAccount.get('aliases').add(data);
+				Radio.signature.trigger('aliases:change');
 			});
 
 			$.when(savingAlias).always(function() {

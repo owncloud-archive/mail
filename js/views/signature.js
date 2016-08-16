@@ -41,6 +41,11 @@ define(function(require) {
 		},
 		initialize: function(options) {
 			this.currentAccount = options.currentAccount;
+			var _this = this;
+			this.listenTo(Radio.signature, 'aliases:change', function() {
+				_this.buildAliases();
+				_this.render();
+			});
 			this.buildAliases();
 		},
 		buildAliases: function() {
@@ -73,8 +78,7 @@ define(function(require) {
 			return _.find(this.aliases, function(alias) { return parseInt(alias.id)  === parseInt(id); });
 		},
 		showSignature: function() {
-			var alias = this.findAliasById(this.$('.mail-account').
-			find(':selected').val());
+			var alias = this.findAliasById(this.$('.mail-account').find(':selected').val());
 			this.ui.signatureBody.val(alias.signature);
 		},
 		updateSignature: function(event) {

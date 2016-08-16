@@ -46,6 +46,7 @@ define(function(require) {
 			this.ui.deleteButton.attr('class', 'icon-loading-small');
 			$.when(deletingAlias).done(function() {
 				currentAccount.get('aliases').remove(_this.model);
+				Radio.signature.trigger('aliases:change');
 			});
 			$.when(deletingAlias).always(function() {
 				var aliases = currentAccount.get('aliases');

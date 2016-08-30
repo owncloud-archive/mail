@@ -47,21 +47,34 @@ class AliasMapperTest extends \PHPUnit_Framework_TestCase {
 		$db = \OC::$server->getDatabaseConnection();
 		$this->db = new Db($db);
 		$this->mapper = new AliasMapper($this->db);
+	}
+
+	public function testFind(){
 
 		$this->alias = new Alias();
 		$this->alias->setAccountId(1);
 		$this->alias->setAlias('alias@marvel.com');
 		$this->alias->setName('alias');
-	}
 
-	public function testFind(){
-
-		$userId = 123;
-		/** @var MailAccount $b */
+		/** @var Alias $b */
 		$b = $this->mapper->insert($this->alias);
 
-		$result = $this->mapper->find($b->getId(), $userId);
+		$result = $this->mapper->find($b->getId(), 'user12345');
+
 		$this->assertEquals($b, $result);
+	}
+
+	protected function tearDown() {
+		parent::tearDown();
+
+		$sql = 'DELETE FROM *PREFIX*mail_aliases WHERE `id` = ?';
+		$stmt = $this->db->prepare($sql);
+		if (!empty($this->alias)) {
+			$stmt->execute([$this->alias->getId()]);
+		}
+		if (!empty($this->address2)) {
+			$stmt->execute([$this->alias->getId()]);
+		}
 	}
 
 }

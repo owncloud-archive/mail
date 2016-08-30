@@ -23,8 +23,9 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\JSONResponse;
 use OCA\Mail\Controller\AliasesController;
 use OCP\IUserSession;
+use Test\TestCase;
 
-class AliasesControllerTest extends PHPUnit_Framework_TestCase {
+class AliasesControllerTest extends TestCase {
 
 	private $controller;
 	private $appName = 'mail';
@@ -41,10 +42,8 @@ class AliasesControllerTest extends PHPUnit_Framework_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$this->userSession = $this->getMockBuilder('OCP\IUserSession')
-			->disableOriginalConstructor()
 			->getMock();
 		$this->user = $this->getMockBuilder('OCP\IUser')
-			->disableOriginalConstructor()
 			->getMock();
 
 		$this->userSession->expects($this->once())
@@ -56,7 +55,7 @@ class AliasesControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function testIndex() {
 		$aliases = [];
-		$accountId = 28;
+		$accountId = 123;
 
 		$this->user->expects($this->once())
 			->method('getUID')
@@ -74,6 +73,7 @@ class AliasesControllerTest extends PHPUnit_Framework_TestCase {
 				// complete this
 			]
 		]);
+
 		$this->assertEquals($expectedResponse, $response);
 	}
 

@@ -97,12 +97,6 @@ DROP TABLE oc_mail_accounts;
 DROP TABLE oc_mail_collected_addresses;
 ```
 
-Go to ownCloud Mail in the browser and run this from the developer console to clear the cache:
-```
-localStorage.clear();
-```
-
-
 ## Configuration
 
 Certain advanced or experimental features need to be specifically enabled in your `config.php`:

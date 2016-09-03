@@ -431,18 +431,22 @@ class AccountsControllerTest extends \Test\TestCase {
 	}
 
 	public function testUpdateSignature() {
+		$signature = "Thank You";
+		$accountId = 123;
 		$this->accountService->expects($this->once())
 			->method('updateSignature')
-			->with($this->equalTo($this->accountId), $this->equalTo($this->userId), $this->equalTo("Signature"));
+			->with($this->equalTo($this->accountId), $this->equalTo($this->userId), $this->equalTo($signature))
+			->will($this->returnValue([
+				'id' => $accountId,
+				'signature' => $signature
+			]));
 
-		$response = $this->controller->updateSignature($this->accountId, "Signature");
+		$response = $this->controller->updateSignature($this->accountId, $signature);
 
-		$expectedResponse = new JSONResponse([
-			[
-				'accountId' => 123,
-				'signature' => 'Signature'
-			]
-		]);
+		$expectedResponse = [
+			'id' => $accountId,
+			'signature' => $signature
+		];
 		$this->assertEquals($expectedResponse, $response);
 	}
 

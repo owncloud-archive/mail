@@ -51,17 +51,47 @@ class AliasMapperTest extends \PHPUnit_Framework_TestCase {
 
 	public function testFind(){
 
+		$accountMapper = new MailAccountMapper($this->db);
+
+		$account = new MailAccount();
+		$account->setName('Peter Parker');
+		$account->setInboundHost('mail.marvel.com');
+		$account->setInboundPort(159);
+		$account->setInboundUser('spiderman');
+		$account->setInboundPassword('xxxxxxxx');
+		$account->setInboundSslMode('tls');
+		$account->setEmail('peter.parker@marvel.com');
+		$account->setOutboundHost('smtp.marvel.com');
+		$account->setOutboundPort(458);
+		$account->setOutboundUser('spiderman');
+		$account->setOutboundPassword('xxxx');
+		$account->setOutboundSslMode('ssl');
+		$account->setUserId('user12345');
+
+		$a = $accountMapper->insert($account);
+
 		$this->alias = new Alias();
-		$this->alias->setAccountId(1);
+		$this->alias->setAccountId($a->getId());
 		$this->alias->setAlias('alias@marvel.com');
 		$this->alias->setName('alias');
 
 		/** @var Alias $b */
 		$b = $this->mapper->insert($this->alias);
-
-		$result = $this->mapper->find($b->getId(), 'user12345');
-
-		$this->assertEquals($b, $result);
+		$result = $this->mapper->find($b->getId(), $account->getUserId());
+		$this->assertEquals(
+			[
+				'accountId' => $this->alias->getAccountId(),
+				'name' => $this->alias->getName(),
+				'alias' => $this->alias->getAlias(),
+				'id' => $this->alias->getId()
+			],
+			[
+				'accountId' => $result->getAccountId(),
+				'name' => $result->getName(),
+				'alias' => $result->getAlias(),
+				'id' => $result->getId()
+			]
+		);
 	}
 
 	protected function tearDown() {
@@ -72,8 +102,11 @@ class AliasMapperTest extends \PHPUnit_Framework_TestCase {
 		if (!empty($this->alias)) {
 			$stmt->execute([$this->alias->getId()]);
 		}
-		if (!empty($this->address2)) {
-			$stmt->execute([$this->alias->getId()]);
+
+		$sql = 'DELETE FROM *PREFIX*mail_accounts WHERE `user_id` = ?';
+		$stmt = $this->db->prepare($sql);
+		if (!empty($this->alias)) {
+			$stmt->execute(['user12345']);
 		}
 	}
 

@@ -28,10 +28,9 @@ use OCA\Mail\Service\AliasesService;
 class AliasesServiceTest extends TestCase {
 
 	private $service;
-	private $user = 'user12345';
+	private $user = 'herbert';
 	private $mapper;
-	private $alias1;
-	private $alias2;
+	private $alias;
 
 	protected function setUp() {
 		parent::setUp();
@@ -40,7 +39,7 @@ class AliasesServiceTest extends TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$this->service = new AliasesService($this->mapper);
-		$this->alias1 = $this->getMockBuilder('OCA\Mail\Db\Alias')
+		$this->alias = $this->getMockBuilder('OCA\Mail\Db\Alias')
 			->disableOriginalConstructor()
 			->getMock();
 	}
@@ -51,10 +50,10 @@ class AliasesServiceTest extends TestCase {
 		$this->mapper->expects($this->once())
 			->method('findAll')
 			->with($accountId, $this->user)
-			->will($this->returnValue([$this->alias1]));
+			->will($this->returnValue([$this->alias]));
 
 		$expected = [
-			new Alias($this->alias1)
+			$this->alias
 		];
 		$actual = $this->service->findAll($accountId, $this->user);
 
@@ -63,14 +62,14 @@ class AliasesServiceTest extends TestCase {
 	}
 
 	public function testFind() {
-		$aliasId = 1;
+		$aliasId = 123;
 
 		$this->mapper->expects($this->once())
 			->method('find')
 			->with($aliasId, $this->user)
-			->will($this->returnValue($this->alias1));
+			->will($this->returnValue($this->alias));
 
-		$expected = new Alias($this->alias1);
+		$expected = $this->alias;
 		$actual = $this->service->find($aliasId, $this->user);
 
 		$this->assertEquals($expected, $actual);
@@ -89,27 +88,38 @@ class AliasesServiceTest extends TestCase {
 
 		$this->mapper->expects($this->once())
 			->method('insert')
-			->with($aliasEntity);
+			->with($aliasEntity)
+		    ->will($this->returnValue($aliasEntity));
 
-		$actual = $this->service->create($accountId, $alias, $aliasName);
+		$result = $this->service->create($accountId, $alias, $aliasName);
 
-		$expected = null;
-
-		$this->assertEquals($expected, $actual);
+		$this->assertEquals(
+			[
+				'accountId' => $aliasEntity->getAccountId(),
+				'name' => $aliasEntity->getName(),
+				'alias' => $aliasEntity->getAlias(),
+				'id' => $aliasEntity->getId()
+			],
+			[
+				'accountId' => $result->getAccountId(),
+				'name' => $result->getName(),
+				'alias' => $result->getAlias(),
+				'id' => $result->getId()
+			]
+		);
 
 	}
 
 	public function testDelete() {
-
-		$aliasId = 33;
+		$aliasId = 123;
 
 		$this->mapper->expects($this->once())
 			->method('find')
 			->with($aliasId, $this->user)
-			->will($this->returnValue($this->alias1));
+			->will($this->returnValue($this->alias));
 		$this->mapper->expects($this->once())
 			->method('delete')
-			->with($this->alias1);
+			->with($this->alias);
 
 		$this->service->delete($aliasId, $this->user);
 

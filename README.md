@@ -124,3 +124,9 @@ You can use the php mail function to send mails. This is needed for some webhost
 ```php
 'app.mail.transport' => 'php-mail'
 ```
+
+Known issues
+------------
+
+- Does not autoconfig web.de email accounts (no workaround, yet)
+- Shows deleted mails (Workaround: compress folders in thunderbird)

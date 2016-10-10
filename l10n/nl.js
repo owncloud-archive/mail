@@ -37,7 +37,7 @@ OC.L10N.register(
     "Error while deleting message." : "Fout bij verwijderen bericht.",
     "Connecting" : "Verbinden",
     "Connect" : "Verbinden",
-    "Inbox" : "Inbakje",
+    "Inbox" : "Postvak In",
     "Sent" : "Verzonden",
     "Drafts" : "Concepten",
     "Archive" : "Archief",

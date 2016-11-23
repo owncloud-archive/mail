@@ -57,6 +57,8 @@ class HtmlTest extends \PHPUnit_Framework_TestCase {
 			['<a href="https://ci.owncloud.org/job/ownCloud-Documentation(7.0)/504/changes" rel="noreferrer" target="_blank">ci.owncloud.org/job/ownCloud-Documentation(7.0)/504/changes</a>', 'https://ci.owncloud.org/job/ownCloud-Documentation(7.0)/504/changes'],
 			['<a href="https://communities.coverity.com/community/scan-(open-source)/content" rel="noreferrer" target="_blank">communities.coverity.com/community/scan-(open-source)/content</a>', 'https://communities.coverity.com/community/scan-(open-source)/content'],
 			['<a href="https://ma.ellak.gr/events/5%CE%BF%CF%82-%CE%B5%CE%BA%CF%80%CE%B1%CE%B9%CE%B4%CE%B5%CF%85%CF%84%CE%B9%CE%BA%CF%8C%CF%82-%CE%BA%CF%8D%CE%BA%CE%BB%CE%BF%CF%82-%CF%83%CE%B5%CE%BC%CE%B9%CE%BD%CE%B1%CF%81%CE%AF%CF%89%CE%BD-%CE%B5-5/" rel="noreferrer" target="_blank">ma.ellak.gr/events/5ος-εκπαιδευτικός-κύκλος-σεμιναρίων-ε-5/</a>', 'https://ma.ellak.gr/events/5ος-εκπαιδευτικός-κύκλος-σεμιναρίων-ε-5/'],
+			['<a href="http://forum.tld/forum/login.php?a=pwd&u=15192&i=b4987f9f357f9506761285c2b452cff6ea3d3aff" rel="noreferrer" target="_blank">forum.tld/forum/login.php?a=pwd&u=15192&i=b4987f9f357f9506761285c2b452cff6ea3d3aff</a>', 'http://forum.tld/forum/login.php?a=pwd&u=15192&i=b4987f9f357f9506761285c2b452cff6ea3d3aff'],
+			['<a href="https://people.gnome.org/~av" rel="noreferrer" target="_blank">https://people.gnome.org/~av</a>', 'https://people.gnome.org/~av'],
 		];
 	}
 

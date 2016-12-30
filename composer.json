@@ -1,8 +1,11 @@
 {
+	"config": {
+		"secure-http": false
+	},
 	"repositories": [
 		{
 			"type": "pear",
-			"url": "https://pear.horde.org"
+			"url": "http://pear.horde.org"
 		}
 	],
 	"require": {

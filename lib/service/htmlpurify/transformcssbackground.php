@@ -47,6 +47,7 @@ class TransformCSSBackground extends HTMLPurifier_AttrTransform {
 	 */
 	public function transform($attr, $config, $context) {
 		if (!isset($attr['style']) ||
+			preg_match('/\S/', $attr['style']) === 0 || // empty or whitespace
 			strpos($attr['style'], 'background') === false) {
 			return $attr;
 		}
